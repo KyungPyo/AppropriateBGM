@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- 액션바 -->
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/main_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize">
+
+    </android.support.v7.widget.Toolbar>
+    <!-- 액션바 -->
+
+    <!-- 메인화면+메뉴 -->
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/main_layout_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+        <!-- 메인화면 -->
+        <RelativeLayout
+            android:id="@+id/main_layout_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".MainActivity"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="10dp"
+            android:background="#00dfdfdf">
+
+            <LinearLayout
+                android:id="@+id/main_group_selectcategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="5dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:paddingRight="2dp"
+                    android:src="@drawable/ic_local_offer_black_18dp"/>
+
+                <TextView
+                    android:id="@+id/main_txt_currentcategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text="카테고리명여덟ㅅ"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/main_group_filemanage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:onClick="onClickFilemanage">
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_edit_black_18dp"
+                    android:paddingRight="2dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text="파일관리"/>
+
+            </LinearLayout>
+
+            <!--파일관리 눌렀을 경우 펼쳐지는 항목-->
+            <LinearLayout
+                android:id="@+id/main_group_filemanagegroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:visibility="invisible">
+
+                <LinearLayout
+                    android:id="@+id/main_group_changecategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/ic_edit_black_18dp"
+                        android:paddingRight="2dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="카테고리변경"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/main_group_deletefile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/ic_delete_black_18dp"
+                        android:paddingRight="2dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="파일삭제"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/main_group_editcomplete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onClickFilemanage">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/ic_edit_black_18dp"
+                        android:paddingRight="2dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="편집완료"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+            <!--파일관리 눌렀을 경우 펼쳐지는 항목-->
+
+            <!--재생관리 툴 부분-->
+            <LinearLayout
+                android:id="@+id/main_group_playtool"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_alignParentBottom="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/text_playtime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00:00"/>
+
+                    <SeekBar
+                        android:id="@+id/seekbar_main"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:layout_weight="8"/>
+
+                    <TextView
+                        android:id="@+id/text_maxtime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00:00"/>
+
+                    <!--<ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/btn_volume"
+                        android:layout_weight="1"/>음량조절 버튼-->
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/main_btn_play"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_play_circle_outline_black_48dp"
+                        android:layout_weight="2"/>
+
+                    <ImageView
+                        android:id="@+id/main_btn_pause"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_play_circle_outline_black_48dp"
+                        android:layout_weight="2"/>
+
+                    <ImageView
+                        android:id="@+id/main_btn_stop"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_play_circle_outline_black_48dp"
+                        android:layout_weight="2"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+            <!--재생관리 툴 부분-->
+
+            <ListView
+                android:id="@+id/main_list_soundlist"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/main_group_selectcategory"
+                android:layout_above="@id/main_group_playtool">
+            </ListView>
+
+        </RelativeLayout>
+        <!-- 메인화면 -->
+
+        <!-- 메뉴 -->
+        <LinearLayout
+            android:id="@+id/main_layout_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:orientation="vertical"
+            android:background="#FFFFFF">
+
+            <Button
+                android:id="@+id/main_to_record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="녹음"
+                android:onClick="onClickMenuSelection"/>
+            <Button
+                android:id="@+id/main_to_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="즐겨찾기"
+                android:onClick="onClickMenuSelection"/>
+            <Button
+                android:id="@+id/main_to_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="카테고리설정"
+                android:onClick="onClickMenuSelection"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="환경설정"/>
+
+        </LinearLayout>
+        <!-- 메뉴 -->
+
+    </android.support.v4.widget.DrawerLayout>
+    <!-- 메인화면+메뉴 -->
+
+</LinearLayout>
+
