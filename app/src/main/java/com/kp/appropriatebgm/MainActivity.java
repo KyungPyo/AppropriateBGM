@@ -1,4 +1,6 @@
 package com.kp.appropriatebgm;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -133,9 +135,13 @@ public class MainActivity extends AppCompatActivity {
     // Parameter : View(클릭한 뷰 정보)
     // Use : 메뉴안에 선택할 수 있는 버튼을 눌렀을 때 발생하는 이벤트 처리. 다른 액티비티로 이동하는데 사용된다.
     public void onClickMenuSelection(View v){
+        Intent intent = new Intent();
+        ComponentName componentName = null;
         switch (v.getId()){
             case R.id.main_to_record:{
-
+                componentName = new ComponentName("com.kp.appropritebgm", "com.kp.appropritebgm.record.RecordActivity");
+                intent.setComponent(componentName);
+                startActivity(intent);
                 break;
             }
             case R.id.main_to_favorite:{
