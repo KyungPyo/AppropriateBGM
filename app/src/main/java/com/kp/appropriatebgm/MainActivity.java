@@ -85,11 +85,8 @@ public class MainActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         leftMenuWidth = (int) ((metrics.widthPixels) * 0.75);
 
-        // 메뉴 레이아웃의 파라미터 가져와서 설정하기
+        // 메뉴 레이아웃의 파라미터 가져와서 가로 크기 설정하기
         menuLayout.getLayoutParams().width = leftMenuWidth;
-//        LinearLayout.LayoutParams menuLayoutParams = (LinearLayout.LayoutParams)menuLayout.getLayoutParams(); // 설정 복사해서
-//        menuLayoutParams.width = leftMenuWidth;         // 변경해서
-//        menuLayout.setLayoutParams(menuLayoutParams);   // 적용하기
     }
 
     // Method : 메뉴 레이아웃 설정
