@@ -20,6 +20,10 @@ public class DBManager extends SQLiteOpenHelper {
     private static DBManager mDBManager = null;
     private SQLiteDatabase mDataBase = null;
 
+    // Method : 싱글톤 인스턴스 받아오기
+    // Return Value : DBManger(사용하는 DB의 인스턴스)
+    // Parameter : context(사용하려는 Activity)
+    // Use : 앱 전체에서 중복적으로 객체를 생성하는것을 방지하기 위해 싱글톤으로 인스턴스 생성하는 메소드
     public static DBManager getInstance (Context context) {
         if (mDBManager == null){
             mDBManager = new DBManager(context, DB_NAME, null, DB_VERSION);
@@ -28,6 +32,10 @@ public class DBManager extends SQLiteOpenHelper {
         return mDBManager;
     }
 
+    // Method : 생성자
+    // Return Value : void
+    // Parameter : context(사용하려는 Activity), dbName(사용하는 DB명), factory, version(DB버전)
+    // Use : 최초 앱 실행되면 같이 실행되어 객체가 하나 만들어진다. 최초실행이면 DB를 생성하면서 onCreate를 실행한다.
     private DBManager (Context context, String dbName, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, dbName, factory, version);
         mContext = context;
@@ -84,7 +92,10 @@ public class DBManager extends SQLiteOpenHelper {
 
     }
 
-    // 내장브금 DB에 추가하는 메소드
+    // Method : 내장 음악파일추가
+    // Return Value : void
+    // Parameter : SQLiteDatabase(앱에서 사용하는 DB)
+    // Use : 내장음악파일의 정보를 처음 실행할 때 DB에 입력하는 역할
     private void insertInnerBGM(SQLiteDatabase db){
         String query;
 
