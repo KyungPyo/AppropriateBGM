@@ -38,7 +38,6 @@ public class FavoriteActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("만들어져따", "내ㅐㅐㅐ가 온크리에이트다ㅏㅏㅏㅏ");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_favorite);
@@ -47,8 +46,6 @@ public class FavoriteActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);           // Toolbar를 액션바로 사용한다
         getSupportActionBar().setTitle(null);   // 액션바에 타이틀 제거
-       // setCustomActionbar();
-
 
     }
 

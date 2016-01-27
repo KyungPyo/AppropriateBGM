@@ -31,7 +31,7 @@ public class ListMakingManager {
 
         Cursor musics = dbManager.select("BGMList", colums);
         Log.d("DB리셋하기 전 ", musics.getCount() + "");
-        if (musics.getCount() == 0) {
+        if (musics.getCount() == 0) { //DB에 값이 없다면 Media 파일들의 정보를 DB에 추가
             Cursor c = context.getContentResolver().query(
                     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                     new String[]{MediaStore.Audio.Media._ID,
@@ -50,7 +50,7 @@ public class ListMakingManager {
                 }
 
             }
-        } else {
+        } else {//있다면 값들을 받아와서 BGM 리스트를 구성
             //이부분
             while(musics.moveToNext()) {
                 tmpMusic = new Music(musics.getString(2), musics.getString(1), musics.getString(0));
