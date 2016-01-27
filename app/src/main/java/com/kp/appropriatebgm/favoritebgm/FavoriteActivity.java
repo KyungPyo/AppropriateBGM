@@ -25,7 +25,7 @@ public class FavoriteActivity extends AppCompatActivity {
     Toolbar toolbar;
     Switch onOffSwitch;
 
-    FavoriteListAdapter adapter;
+    BGMListAdapter adapter;
     ArrayList<Music> favoriteMusicList;
     DBManager dbManager=DBManager.getInstance(this);
     Cursor bgm;
@@ -96,7 +96,7 @@ public class FavoriteActivity extends AppCompatActivity {
         //listView 설정
         favoriteMusicList=new ArrayList<Music>();
         favoriteList=(ListView)findViewById(R.id.favorite_list);
-        adapter=new FavoriteListAdapter(this,favoriteMusicList);
+        adapter=new BGMListAdapter(this,favoriteMusicList);
         favoriteList.setAdapter(adapter);
         //즐겨찾기 List중 아이템클릭시 Method
         favoriteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
