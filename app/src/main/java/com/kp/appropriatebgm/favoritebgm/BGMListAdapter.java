@@ -97,11 +97,4 @@ public class BGMListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void setFocus(View v){
-        v.setBackgroundColor(Color.rgb(186, 215, 255));
-    }
-
-    public void releaseFocus(View v){
-        v.setBackgroundColor(Color.WHITE);
-    }
 }

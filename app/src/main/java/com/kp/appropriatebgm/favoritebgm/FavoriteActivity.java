@@ -25,9 +25,9 @@ public class FavoriteActivity extends AppCompatActivity {
     Toolbar toolbar;
     Switch onOffSwitch;
 
-    FavoriteListAdapter adapter;
+    BGMListAdapter adapter;
     ArrayList<Music> favoriteMusicList;
-    DBManager dbManager=DBManager.getInstance(this);
+    DBManager dbManager=DBManager.getInstance(this);//DB
     Cursor bgm;
 
 
@@ -38,7 +38,6 @@ public class FavoriteActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("만들어져따", "내ㅐㅐㅐ가 온크리에이트다ㅏㅏㅏㅏ");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_favorite);
@@ -47,27 +46,28 @@ public class FavoriteActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);           // Toolbar를 액션바로 사용한다
         getSupportActionBar().setTitle(null);   // 액션바에 타이틀 제거
-       // setCustomActionbar();
-
 
     }
 
 
-    //***즐겨찾기 목록을 Load 해주는 Method
+    // Method : 목록 Making
+    // Return Value : void
+    // Parameter : void
+    // Use : favorite Array List Setting
     private void loadFavoriteList(){
         Music tmp=new Music("","","");
         //미리 비어있는 list를 만들고
         for(int i=0;i<FAVORITE_SIZE;i++){
             favoriteMusicList.add(tmp);
         }
-        bgm=dbManager.select("Favorite",favorite_columns);
+        bgm=dbManager.select("Favorite",favorite_columns); //DB
 
         //만약 즐겨찾기 db에 데이터가 있다면
         if(bgm.getCount()!=0){
             while(bgm.moveToNext()){
                 //favorite_id 즉 저장된 position의 현재값을 삭제하고
                 favoriteMusicList.remove(bgm.getInt(0));
-                Music m=dbManager.selectByMusicId("BGMList", columns, bgm.getInt(1));
+                Music m=dbManager.selectByMusicId("BGMList", columns, bgm.getInt(1));//DB
                 //해당 position에 db에 있는 값을 저장해 ListView에서 그 포지션에 보여지도록 한다.
                 favoriteMusicList.add(bgm.getInt(0),m);
             }
@@ -75,7 +75,10 @@ public class FavoriteActivity extends AppCompatActivity {
 
     }
 
-    //초기화 Method
+    // Method : 초기설정
+    // Return Value : void
+    // Parameter : void
+    // Use : View를 객체와 연결, listView 설정
     private void init(){
 
         toolbar=(Toolbar)findViewById(R.id.favorite_toolbar);
@@ -90,7 +93,7 @@ public class FavoriteActivity extends AppCompatActivity {
         //listView 설정
         favoriteMusicList=new ArrayList<Music>();
         favoriteList=(ListView)findViewById(R.id.favorite_list);
-        adapter=new FavoriteListAdapter(this,favoriteMusicList);
+        adapter=new BGMListAdapter(this,favoriteMusicList);
         favoriteList.setAdapter(adapter);
         //즐겨찾기 List중 아이템클릭시 Method
         favoriteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -110,16 +113,19 @@ public class FavoriteActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    //다른 액티비티로 부터 응답받았을 때 실행되는 Method
+    // Method : 액티비티 응답 받기
+    // Return Value : void
+    // Parameter : requestCode-요청 코드, resultCode-응답받는 코드, data-응답받는 intent
+    // Use : 각각의 result 코드에 맞춰 액티비티 응답 처리
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode==RESULT_OK){
+        if(resultCode==RESULT_OK){//result OK
             Music tmp=(Music)data.getSerializableExtra("selectedMusic");
             int tmpPosition=data.getIntExtra("position",0);
             favoriteMusicList.remove(tmpPosition);
             favoriteMusicList.add(tmpPosition,tmp);
             adapter.notifyDataSetChanged();
-        }else if(resultCode==RESULT_CANCELED){
+        }else if(resultCode==RESULT_CANCELED){//result Canceled
             Toast.makeText(getApplicationContext(), "즐겨찾기 추가를 취소하셨습니다. ", Toast.LENGTH_SHORT).show();
         }
     }
