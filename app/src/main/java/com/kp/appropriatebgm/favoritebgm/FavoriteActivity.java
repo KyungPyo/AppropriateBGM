@@ -53,7 +53,10 @@ public class FavoriteActivity extends AppCompatActivity {
     }
 
 
-    //***즐겨찾기 목록을 Load 해주는 Method
+    // Method : 목록 Making
+    // Return Value : void
+    // Parameter : void
+    // Use : favorite Array List Setting
     private void loadFavoriteList(){
         Music tmp=new Music("","","");
         //미리 비어있는 list를 만들고
@@ -75,7 +78,10 @@ public class FavoriteActivity extends AppCompatActivity {
 
     }
 
-    //초기화 Method
+    // Method : 초기설정
+    // Return Value : void
+    // Parameter : void
+    // Use : View를 객체와 연결, listView 설정
     private void init(){
 
         toolbar=(Toolbar)findViewById(R.id.favorite_toolbar);
@@ -110,16 +116,19 @@ public class FavoriteActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    //다른 액티비티로 부터 응답받았을 때 실행되는 Method
+    // Method : 액티비티 응답 받기
+    // Return Value : void
+    // Parameter : requestCode-요청 코드, resultCode-응답받는 코드, data-응답받는 intent
+    // Use : 각각의 result 코드에 맞춰 액티비티 응답 처리
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode==RESULT_OK){
+        if(resultCode==RESULT_OK){//result OK
             Music tmp=(Music)data.getSerializableExtra("selectedMusic");
             int tmpPosition=data.getIntExtra("position",0);
             favoriteMusicList.remove(tmpPosition);
             favoriteMusicList.add(tmpPosition,tmp);
             adapter.notifyDataSetChanged();
-        }else if(resultCode==RESULT_CANCELED){
+        }else if(resultCode==RESULT_CANCELED){//result Canceled
             Toast.makeText(getApplicationContext(), "즐겨찾기 추가를 취소하셨습니다. ", Toast.LENGTH_SHORT).show();
         }
     }

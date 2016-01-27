@@ -62,7 +62,10 @@ public class SelectBgmActivity extends AppCompatActivity {
 
     }
 
-    // List뷰의 Header에 비워두기 버튼을 추가한다.
+    // Method : 리스트에 헤더 추가
+    // Return Value : void
+    // Parameter : void
+    // Use :  List뷰의 Header에 비워두기 버튼을 추가한다.
     private void addHeaderToList(){
 
         View headerView=getLayoutInflater().inflate(R.layout.favorite_listview_header_layout,null);
@@ -89,8 +92,10 @@ public class SelectBgmActivity extends AppCompatActivity {
 
     }
 
-
-    //카테고리를 DB에서 가져와서 Spinner에서 보여주는 클래스
+    // Method : DB 에서 카테고리 받아오기
+    // Return Value : void
+    // Parameter : void
+    // Use :  카테고리를 DB 에서 가져와서 Spinner 에서 보여주는 클래스
     private void getCategory(){
         Toast.makeText(getApplicationContext(), "카테고리 목록을 만듦 ", Toast.LENGTH_SHORT).show();
         cursor=dbManager.select("Category", null);
@@ -124,8 +129,10 @@ public class SelectBgmActivity extends AppCompatActivity {
         cateSpinner.setAdapter(categoryAdapter);
     }
 
-    //초기화
-
+    // Method : Setting Listeners
+    // Return Value : void
+    // Parameter : void
+    // Use :  리스너 정의
     private void setListeners(){
         //Text가 바뀌는 이벤트가 발생할 때
         editsearch.addTextChangedListener(new TextWatcher() {
@@ -229,6 +236,10 @@ public class SelectBgmActivity extends AppCompatActivity {
         });
     }
 
+    // Method : 초기설정
+    // Return Value : void
+    // Parameter : void
+    // Use : View를 객체와 연결, listView 설정
     private void init(){
         searchButton=(ImageView)findViewById(R.id.search_button);
         editsearch=(EditText)findViewById(R.id.search);
