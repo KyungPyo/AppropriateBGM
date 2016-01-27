@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     DisplayMetrics metrics;
     int leftMenuWidth;
 
+    //안녕
     // View 선언
     private ImageView actionbarMenuBtn;
     private ImageView actionbarSearchBtn;
