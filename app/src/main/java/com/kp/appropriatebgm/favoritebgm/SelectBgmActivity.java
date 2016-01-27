@@ -96,7 +96,7 @@ public class SelectBgmActivity extends AppCompatActivity {
     // Method : DB 에서 카테고리 받아오기
     // Return Value : void
     // Parameter : void
-    // Use :  카테고리를 DB 에서 가져와서 Spinner 에서 보여주는 클래스
+    // Use :  카테고리를 DB 에서 가져와서 Spinner 에서 보여주는 Method
     private void getCategory(){
         Toast.makeText(getApplicationContext(), "카테고리 목록을 만듦 ", Toast.LENGTH_SHORT).show();
         cursor=dbManager.select("Category", null);//DB
@@ -172,6 +172,7 @@ public class SelectBgmActivity extends AppCompatActivity {
                     isVisible=false;
                     editsearch.setText("");
 
+                    //키보드 숨기기
                     imm.hideSoftInputFromWindow(editsearch.getWindowToken(), 0);
                 }
             }
