@@ -27,7 +27,7 @@ public class FavoriteActivity extends AppCompatActivity {
 
     BGMListAdapter adapter;
     ArrayList<Music> favoriteMusicList;
-    DBManager dbManager=DBManager.getInstance(this);
+    DBManager dbManager=DBManager.getInstance(this);//DB
     Cursor bgm;
 
 
@@ -63,14 +63,14 @@ public class FavoriteActivity extends AppCompatActivity {
         for(int i=0;i<FAVORITE_SIZE;i++){
             favoriteMusicList.add(tmp);
         }
-        bgm=dbManager.select("Favorite",favorite_columns);
+        bgm=dbManager.select("Favorite",favorite_columns); //DB
 
         //만약 즐겨찾기 db에 데이터가 있다면
         if(bgm.getCount()!=0){
             while(bgm.moveToNext()){
                 //favorite_id 즉 저장된 position의 현재값을 삭제하고
                 favoriteMusicList.remove(bgm.getInt(0));
-                Music m=dbManager.selectByMusicId("BGMList", columns, bgm.getInt(1));
+                Music m=dbManager.selectByMusicId("BGMList", columns, bgm.getInt(1));//DB
                 //해당 position에 db에 있는 값을 저장해 ListView에서 그 포지션에 보여지도록 한다.
                 favoriteMusicList.add(bgm.getInt(0),m);
             }

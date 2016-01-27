@@ -27,7 +27,7 @@ public class SelectBgmActivity extends AppCompatActivity {
 
     Music selectedMusic=null;
     ArrayList<Music> musics;
-    DBManager dbManager=DBManager.getInstance(this);
+    DBManager dbManager=DBManager.getInstance(this);//DB
     ListMakingManager makeList=new ListMakingManager(dbManager);
     Toolbar toolbar;
     ImageView searchButton;
@@ -79,7 +79,7 @@ public class SelectBgmActivity extends AppCompatActivity {
                 position = intent.getIntExtra("position", 0);
 
                 //해당 position은 DB에서 Favorite_id 이므로 해당 id가 있는 row를 지운다.
-                dbManager.delete("Favorite", "favorite_id=" + position, null);
+                dbManager.delete("Favorite", "favorite_id=" + position, null);//DB
 
                 intent.putExtra("selectedMusic", tmp);
                 intent.putExtra("position", position);
@@ -92,13 +92,14 @@ public class SelectBgmActivity extends AppCompatActivity {
 
     }
 
+    //!!!!!!!!!수정필요!!!!!!!!!!
     // Method : DB 에서 카테고리 받아오기
     // Return Value : void
     // Parameter : void
     // Use :  카테고리를 DB 에서 가져와서 Spinner 에서 보여주는 클래스
     private void getCategory(){
         Toast.makeText(getApplicationContext(), "카테고리 목록을 만듦 ", Toast.LENGTH_SHORT).show();
-        cursor=dbManager.select("Category", null);
+        cursor=dbManager.select("Category", null);//DB
 
         while(cursor.moveToNext()){
             Category tmp=new Category(cursor.getString(0),cursor.getString(1));
@@ -113,7 +114,7 @@ public class SelectBgmActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //지금 보여지고 있는 ArrayList를 클리어
                 musics.clear();
-                cursor=dbManager.selectByCategoryId("BGMList",columns,categoryList.get(position).getCateId());
+                cursor=dbManager.selectByCategoryId("BGMList",columns,categoryList.get(position).getCateId());//DB
                 while(cursor.moveToNext()){
                     //해당 카테고리에 있는 BGM만 받아서 List를 재구성
                     musics.add(new Music(cursor.getString(2),cursor.getString(1),cursor.getString(0)));
@@ -199,7 +200,7 @@ public class SelectBgmActivity extends AppCompatActivity {
                     intent.putExtra("position", position);
 
                     //같은 자리에 있는지 확인
-                    Cursor bgm = dbManager.select("Favorite", favorite_columns);
+                    Cursor bgm = dbManager.select("Favorite", favorite_columns);//DB
                     while (bgm.moveToNext()) {
                         if (bgm.getInt(0) == position) {
                             isExist = true;
@@ -213,12 +214,12 @@ public class SelectBgmActivity extends AppCompatActivity {
                     if (isExist) {//존재하면 업데이트
                         ContentValues addRowValue = new ContentValues();
                         addRowValue.put("bgm_id", selectedMusic.getMusicId());
-                        dbManager.update("Favorite", addRowValue, "favorite_id=" + position, null);
+                        dbManager.update("Favorite", addRowValue, "favorite_id=" + position, null);//DB
                     } else {//존재하지 않으면 추가 -> 이거 왜하냐면 딱 Favorite 크기만큼만 추가하려고
                         ContentValues addRowValue = new ContentValues();
                         addRowValue.put("favorite_id", position);
                         addRowValue.put("bgm_id", selectedMusic.getMusicId());
-                        dbManager.insert("Favorite", addRowValue);
+                        dbManager.insert("Favorite", addRowValue);//DB
                     }
 
                     setResult(RESULT_OK, intent);
