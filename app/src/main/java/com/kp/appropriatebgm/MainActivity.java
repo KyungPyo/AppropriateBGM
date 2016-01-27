@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.kp.appropriatebgm.favoritebgm.FavoriteActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     /**** 멤버 선언 ****/
@@ -140,13 +142,17 @@ public class MainActivity extends AppCompatActivity {
         ComponentName componentName = null;
         switch (v.getId()){
             case R.id.main_to_record:{
-                componentName = new ComponentName("com.kp.appropritebgm", "com.kp.appropritebgm.record.RecordActivity");
+                componentName = new ComponentName("com.kp.appropriatebgm", "com.kp.appropriatebgm.record.RecordActivity");
                 intent.setComponent(componentName);
                 startActivity(intent);
                 break;
             }
             case R.id.main_to_favorite:{
 
+               /* componentName = new ComponentName("com.kp.appropriatebgm", "com.kp.appropriatebgm.favoritebgm.FavoriteActivity");
+                intent.setComponent(componentName);*/
+                intent.setClass(getApplicationContext(), FavoriteActivity.class);
+                startActivity(intent);
                 break;
             }
             case R.id.main_to_category:{

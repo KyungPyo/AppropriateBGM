@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.choi.favoriteactivitytest.SelectBgmActivity"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:padding="10dp">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/selectbgm_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:layout_alignParentTop="true">
+
+        <ImageView
+            android:id="@+id/search_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_search_black_24dp"
+            android:layout_gravity="right"/>
+        <EditText
+            android:id="@+id/search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:layout_gravity="left"/>
+
+
+    </android.support.v7.widget.Toolbar>
+
+
+    <Button
+        android:id="@+id/save_favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="확인" />
+
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_toRightOf="@id/save_favorite"
+        android:text="취소"
+        />
+
+    <Spinner
+        android:id="@+id/select_category"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:spinnerMode="dialog"
+        android:prompt="@string/spinner_dialog_name"
+        android:layout_below="@id/selectbgm_toolbar"/>
+    <ListView
+        android:id="@+id/musicList"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/save_favorite"
+        android:layout_below="@id/select_category"
+        android:choiceMode="singleChoice"/>
+
+
+
+
+</RelativeLayout>
