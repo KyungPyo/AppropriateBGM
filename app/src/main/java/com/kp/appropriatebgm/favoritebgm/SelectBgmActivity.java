@@ -4,12 +4,10 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -34,7 +32,7 @@ public class SelectBgmActivity extends AppCompatActivity {
 
     ListView list;
     BGMListAdapter adapter;
-    EditText editsearch;
+    EditText editSearch;
     String [] favorite_columns={"favorite_id","bgm_id"};
     String [] columns={"bgm_id","bgm_name","bgm_path"};
     int position;
@@ -96,7 +94,7 @@ public class SelectBgmActivity extends AppCompatActivity {
     // Method : DB 에서 카테고리 받아오기
     // Return Value : void
     // Parameter : void
-    // Use :  카테고리를 DB 에서 가져와서 Spinner 에서 보여주는 클래스
+    // Use :  카테고리를 DB 에서 가져와서 Spinner 에서 보여주는 Method
     private void getCategory(){
         Toast.makeText(getApplicationContext(), "카테고리 목록을 만듦 ", Toast.LENGTH_SHORT).show();
         cursor=dbManager.select("Category", null);//DB
@@ -136,12 +134,12 @@ public class SelectBgmActivity extends AppCompatActivity {
     // Use :  리스너 정의
     private void setListeners(){
         //Text가 바뀌는 이벤트가 발생할 때
-        editsearch.addTextChangedListener(new TextWatcher() {
+        editSearch.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void afterTextChanged(Editable arg0) {
                 // TODO Auto-generated method stub
-                String text = editsearch.getText().toString().toLowerCase(Locale.getDefault());
+                String text = editSearch.getText().toString().toLowerCase(Locale.getDefault());
                 adapter.filter(text);
             }
 
@@ -164,15 +162,16 @@ public class SelectBgmActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!isVisible){
-                    editsearch.setVisibility(View.VISIBLE);
+                    editSearch.setVisibility(View.VISIBLE);
                     isVisible=true;
                 }else{
                     final InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-                    editsearch.setVisibility(View.INVISIBLE);
+                    editSearch.setVisibility(View.INVISIBLE);
                     isVisible=false;
-                    editsearch.setText("");
+                    editSearch.setText("");
 
-                    imm.hideSoftInputFromWindow(editsearch.getWindowToken(), 0);
+                    //키보드 숨기기
+                    imm.hideSoftInputFromWindow(editSearch.getWindowToken(), 0);
                 }
             }
         });
@@ -243,10 +242,10 @@ public class SelectBgmActivity extends AppCompatActivity {
     // Use : View를 객체와 연결, listView 설정
     private void init(){
         searchButton=(ImageView)findViewById(R.id.search_button);
-        editsearch=(EditText)findViewById(R.id.search);
+        editSearch=(EditText)findViewById(R.id.search);
         toolbar=(Toolbar)findViewById(R.id.favorite_toolbar);
         list=(ListView)findViewById(R.id.musicList);
-        editsearch=(EditText)findViewById(R.id.search);
+        editSearch=(EditText)findViewById(R.id.search);
         musics=makeList.makeList(this);
 
         adapter=new BGMListAdapter(this,musics);
