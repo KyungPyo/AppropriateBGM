@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         initMember();           // 멤버변수 초기화
         initMenuLayoutSize();   // 메뉴 레이아웃 크기설정
         initDrawerToggle();     // 네비게이션 드로워 리스너설정
+
+
     }
 
     // Method : 초기설정

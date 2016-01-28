@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.kp.appropriatebgm.DBController.DBManager;
+
 /**
  * Created by KP on 2016-01-27.
  */

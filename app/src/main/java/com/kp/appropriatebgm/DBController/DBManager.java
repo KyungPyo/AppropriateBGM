@@ -1,12 +1,16 @@
-package com.kp.appropriatebgm;
+package com.kp.appropriatebgm.DBController;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.kp.appropriatebgm.R;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * Created by KP on 2016-01-27.
@@ -107,4 +111,30 @@ public class DBManager extends SQLiteOpenHelper {
         query = query.replace("#", Integer.toString(R.raw.trapcard));
         db.execSQL(query);
     }
+
+    /*****  DB 결과 요청(select)  *****/
+    public ArrayList<BGMInfo> getBGMList(int categoryId){
+        Cursor cursor;
+        String query;
+        BGMInfo bgmInfo;
+        ArrayList<BGMInfo> result = new ArrayList<>();
+
+        query = "SELECT bgm_id, bgm_name, bgm_path, innerfile FROM BGMList";
+        if (categoryId != 1){
+            query = query + " WHERE category_id = " + categoryId;
+        }
+
+        cursor = mDataBase.rawQuery(query, null);
+
+        if(cursor != null){
+            while(cursor.moveToNext()){
+                bgmInfo = new BGMInfo(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getInt(3), cursor.getInt(4));
+                result.add(bgmInfo);
+            }
+        }
+
+        return result;
+    }
+
+    /*****  DB 결과 요청(select)  *****/
 }
