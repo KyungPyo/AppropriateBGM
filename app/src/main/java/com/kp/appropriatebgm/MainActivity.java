@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 
+import com.kp.appropriatebgm.Category.CategoryActivity;
 import com.kp.appropriatebgm.favoritebgm.FavoriteActivity;
 
 public class MainActivity extends AppCompatActivity {

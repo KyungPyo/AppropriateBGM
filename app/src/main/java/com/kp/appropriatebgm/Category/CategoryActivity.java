@@ -1,4 +1,4 @@
-package com.kp.appropriatebgm;
+package com.kp.appropriatebgm.Category;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.kp.appropriatebgm.R;
 
 
 //카테고리 액티비티
@@ -267,76 +268,6 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
         }
         return super.onOptionsItemSelected(item);
     }
-    // Class : CtgCursorAdapter (리스트에 설정할 커서 어댑터)
-    // Use : 리스트에 띄울 데이터를 설정하기 위한 클래스
-    class CtgCursorAdapter extends CursorAdapter
-    {
-        CheckBox tvchk;
-
-        // Method : 커서 어댑터 생성자
-        // Use : context(액티비티). c(사용할 커서), flags( 어댑터의 동작을 결정 )
-        public CtgCursorAdapter(Context context, Cursor c, int flags) {
-            super(context, c, flags);
-        }
-
-        // Method : 각 아이템의 속성 지정
-        // Return value : void
-        // paremeter : view(띄울 뷰), context(액티비티), cursor(커서)
-        // Use : 리스트의 아이템의 초기값 및 속성을 설정해주는 기능입니다. 객체가 있는 경우에 호출
-        @Override
-        public void bindView(View view, Context context, Cursor cursor) {
-            TextView tvName = (TextView) view.findViewById( R.id.tv_name );
-            tvchk = (CheckBox) view.findViewById( R.id.tv_chk );
-
-            String name = cursor.getString(cursor.getColumnIndex(KEY_NAME));
-            tvchk.setVisibility(View.INVISIBLE);
-
-
-            tvName.setText(name);
-        }
-
-        // Method : 리스트 뷰에 표시될 뷰를 설정
-        // Return value : View
-        // parameter : context(액티비티), cursor(커서), parent(부모 뷴)
-        // Use : 리스트 뷰에 표시될 뷰를 설정하는 기능입니다. 뷰 객체가 null인 경우에 호출
-        @Override
-        public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            LayoutInflater inflater = LayoutInflater.from( context );
-            View v = inflater.inflate( R.layout.list_item, parent, false );
-            return v;
-        }
-
-    }
-    // Class : CtgDBHelper (DB 설정 클래스)
-    // Use : DB의 파일명 및 DB의 초기 테이블 생성의 기능
-    class CtgDBHelper extends SQLiteOpenHelper
-    {
-        // Method : 생성자
-        // Use : context(액티비티), 디비파일명, db 버전 등을 설정하는 생성자입니다.
-        public CtgDBHelper(Context context)
-        {
-            super(context, "CtgData.db", null, 2); //null : 표준커서 사용시 null 값을 주면 됨
-        }
-
-        // Method : DBHelper 객체 생성 시 초기 실행
-        // parameter : db (sqlite디비)
-        // Use : Category DBTable 생성
-        public void onCreate(SQLiteDatabase db)
-        {
-            // AUTOINCREMENT 속성 사용 시 PRIMARY KEY로 지정한다.
-            CtgCreate(TABLE_NAME, KEY_NAME, db);
-        }
-        // Method : DBHelper 업그레이드
-        // parameter : db(sqlite 디비), oldVersion(구버전), newVersion(최신버전)
-        // Use : 버전이 맞지 않을 시에 테이블을 내리고 다시 생성하는 기능
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
-        {
-            String query = String.format("DROP TABLE IF EXISTS %s", TABLE_NAME);
-            db.execSQL( query );
-            onCreate( db );
-        }
-
-    }
     // Method : 카테고리 리스트 아이템 클릭
     // Return value : void
     // paremeter : parentView, 클릭 뷰, 클릭 아이템 위치, 클릭 아이템 아이디
@@ -444,17 +375,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
         cursor = db.rawQuery(querySelectAll, null);
         myAdapter.changeCursor(cursor);
     }
-    // Method : 카테고리 테이블 생성
-    // Return value : void
-    // paremeter : 테이블명, 테이블의 카테고리 이름 attribute, 테이블을 생성할 db
-    // Use : DBHelper의 oncreate의 db 매개변수를 받아와 id(auto increment)와 카테고리 이름을 가지는 카테고리 테이블을 생성한다.
-    public void CtgCreate(String table, String t_title, SQLiteDatabase sqldb)
-    {
-        String query = String.format("CREATE TABLE %s ("
-                + "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "%s TEXT UNIQUE );", TABLE_NAME, KEY_NAME);
-        sqldb.execSQL(query);
-    }
+
     // Method : 카테고리 체크 부분 삭제
     // Return value : void
     // paremeter : 테이블명, 리스트뷰
