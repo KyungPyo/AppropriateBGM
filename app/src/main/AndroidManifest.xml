@@ -19,6 +19,8 @@
         <activity android:name=".MainActivity"/>
         <activity android:name=".favoritebgm.FavoriteActivity"/>
         <activity android:name=".favoritebgm.SelectBgmActivity"/>
+        <activity android:name=".CategoryActivity"
+            android:label="카테고리 설정" />
 
 
     </application>

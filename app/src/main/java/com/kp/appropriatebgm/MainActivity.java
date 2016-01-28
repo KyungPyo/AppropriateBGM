@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+
 import com.kp.appropriatebgm.favoritebgm.FavoriteActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -154,6 +155,8 @@ public class MainActivity extends AppCompatActivity {
             }
             case R.id.main_to_category:{
 
+                intent.setClass(getApplicationContext(), CategoryActivity.class);
+                startActivity(intent);
                 break;
             }
         }
