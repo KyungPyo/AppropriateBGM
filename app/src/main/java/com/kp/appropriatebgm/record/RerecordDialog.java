@@ -1,4 +1,4 @@
-package com.kp.appropriatebgm.record.popup;
+package com.kp.appropriatebgm.record;
 
 import android.app.Dialog;
 import android.content.Context;

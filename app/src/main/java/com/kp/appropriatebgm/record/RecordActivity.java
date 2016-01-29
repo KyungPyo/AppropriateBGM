@@ -28,7 +28,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.kp.appropriatebgm.R;
-import com.kp.appropriatebgm.record.popup.RerecordDialog;
 
 public class RecordActivity extends AppCompatActivity {
     // 녹음 관련
