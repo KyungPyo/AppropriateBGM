@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.kp.appropriatebgm.R;
 
 
-public class RerecordDialog extends Dialog{
+public class CancelRecordDlg extends Dialog{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,20 +30,20 @@ public class RerecordDialog extends Dialog{
 		setClickListener(mLeftClickListener , mRightClickListener);
 	}
 	
-	public RerecordDialog(Context context) {
+	public CancelRecordDlg(Context context) {
 		// Dialog 배경을 투명 처리 해준다.
 		super(context , android.R.style.Theme_Translucent_NoTitleBar);
 	}
 	
-	public RerecordDialog(Context context, String title,
-						  View.OnClickListener singleListener) {
+	public CancelRecordDlg(Context context, String title,
+						   View.OnClickListener singleListener) {
 		super(context , android.R.style.Theme_Translucent_NoTitleBar);
 		this.mTitle = title;
 		this.mLeftClickListener = singleListener;
 	}
 	
-	public RerecordDialog(Context context, String title, String content,
-						  View.OnClickListener leftListener, View.OnClickListener rightListener) {
+	public CancelRecordDlg(Context context, String title, String content,
+						   View.OnClickListener leftListener, View.OnClickListener rightListener) {
 		super(context , android.R.style.Theme_Translucent_NoTitleBar);
 		this.mTitle = title;
 		this.mContent = content;

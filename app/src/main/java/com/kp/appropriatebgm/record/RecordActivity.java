@@ -56,7 +56,7 @@ public class RecordActivity extends AppCompatActivity {
     private ImageView btnSave = null;
 
     //다이얼로그
-    private RerecordDialog mRerecordDialog;
+    private CancelRecordDlg mRerecordDialog;
 
 //    private ImageView btnStop = null;
 
@@ -290,7 +290,7 @@ public class RecordActivity extends AppCompatActivity {
                         if(uri !=null){
                             Log.i("111","i'm inn");
                             //다이얼로그 호출
-                            mRerecordDialog = new RerecordDialog(this,
+                            mRerecordDialog = new CancelRecordDlg(this,
                                     " 경 고 ",
                                     " 다시 만드시겠습니까? ",
                                     dlgleftClickListener,
