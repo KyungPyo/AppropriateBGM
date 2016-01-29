@@ -29,19 +29,30 @@ public class CancelRecordDlg extends Dialog{
 		setContent(mContent);
 		setClickListener(mLeftClickListener , mRightClickListener);
 	}
-	
+
+	// Method : 초기설정
+	// Return Value : void
+	// Parameter : context
+	// Use : Dialog의 배경을 투명처리해줘서 뒷배경이 보이게 한다.
 	public CancelRecordDlg(Context context) {
-		// Dialog 배경을 투명 처리 해준다.
 		super(context , android.R.style.Theme_Translucent_NoTitleBar);
 	}
-	
+
+	// Method : 초기설정
+	// Return Value : void
+	// Parameter : context, title, singleListener(저장버튼 선택한 파라미터)
+	// Use : Dialog이기 때문에 타이틀바를 없에준다.
 	public CancelRecordDlg(Context context, String title,
 						   View.OnClickListener singleListener) {
 		super(context , android.R.style.Theme_Translucent_NoTitleBar);
 		this.mTitle = title;
 		this.mLeftClickListener = singleListener;
 	}
-	
+
+	// Method : 초기설정
+	// Return Value : void
+	// Parameter : context, title, content, leftListener, rightListener
+	// Use : 제목, 내용, 하단의 좌우 버튼의 선언
 	public CancelRecordDlg(Context context, String title, String content,
 						   View.OnClickListener leftListener, View.OnClickListener rightListener) {
 		super(context , android.R.style.Theme_Translucent_NoTitleBar);

@@ -21,26 +21,34 @@ public class RecordManager {
         dirName = "AppropriteBGM";
         init();
     }
+
+    // Method : 생성자 호출
+    // Return Value : void
+    // Parameter : appName
+    // Use :  디덱토리명을 넘겨주고 init() 호출.
     public RecordManager(String appName) {
         // 디렉토리명은 외부에서 생성자를 호출할 때 string.xml의 app_name을 넘겨준다.
         dirName = appName;
         init();
     }
 
+    // Method : 기존 경로에 녹음한 파일을 저장
+    // Return Value : void
+    // Parameter : View
+    // Use :   외장메모리 기본경로/어플명 에 녹음한 파일을 저장한다.
     private void init() {
-        // 외장메모리 기본경로/어플명 에 녹음한 파일을 저장한다.
         path = Environment.getExternalStorageDirectory() + File.separator + dirName;
         Log.i("dir_path", path);
         File file = new File(path);
         filename = "record_temp.mp3";   // 임시 파일명
-        // 디렉토리가 존재하지 않으면 생성
+        // Use :  디렉토리가 존재하지 않으면 생성
         if ( !file.exists() ) {
             file.mkdirs();
             Log.i("make dir", "excuted : " + file.exists());
         }
     }
 
-    // 녹음 시작
+    //Use : 녹음 시작
     public void start() {
 
         Log.i("Rec", "prepare to recording(RecordManager)");
@@ -65,7 +73,7 @@ public class RecordManager {
         }
     }
 
-    // 녹음 중지
+    //Use:  녹음 중지
     public void stop() {
         Log.i("Rec", "stop recording(RecordManager)");
         isRecording = false;
@@ -82,7 +90,10 @@ public class RecordManager {
     }
 
 
-    // 녹음중입니까?
+    // Method : 현재 녹음여부를 판단.
+    // Return Value : boolean
+    // Parameter : Void
+    // Use :   녹음중인지 확인.
     public boolean isRecording() {
         return isRecording;
     }

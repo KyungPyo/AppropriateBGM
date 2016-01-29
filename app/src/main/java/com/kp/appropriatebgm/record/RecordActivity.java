@@ -238,8 +238,15 @@ public class RecordActivity extends AppCompatActivity {
         setPopupWindow();
     }
 
-    //SeekBar 리스너 //
+
+
+    // Method : SeekbarListener
     private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+
+
+        // Return Value : boolean
+        // Parameter : fromUser
+        // Use : 저장중인 임시파일이나 재생준비중인 음원이 바뀌었는지 확인
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser) {
@@ -258,7 +265,12 @@ public class RecordActivity extends AppCompatActivity {
         }
     };
 
-    //녹음이 된 이후, Temp폴더에서 임시저장된 음원을 가지고와서 재생준비 //
+
+
+    // Method : 녹음이후 Temp폴더에서 임시저장된 음원을가지고와서 재생을 준비
+    // Return Value : void
+    // Parameter : void
+    // Use : 녹음이 된 이후, Temp폴더에서 임시저장된 음원을 가지고와서 재생준비 //
     public void prepareRecordFileToPlay() {
         uri = Uri.fromFile(new File(recordManager.getPath())); // 파일준비
         music = MediaPlayer.create(this, uri);                 // 파일 재생준비
@@ -271,25 +283,28 @@ public class RecordActivity extends AppCompatActivity {
         setTimeText(recordPlayTimeText, 0);
     }
 
-    // 녹음 버튼 클릭
+
+    // Method : 녹음하기 클릭
+    // Return Value : void
+    // Parameter : View
+    // Use : 녹음 버튼 클릭을하면 각각의 뷰에 대한 상황에 맞는 처리.
     public void onClick_startRecord(View v) {
         switch (v.getId()) {
             case R.id.btn_startRecord :
             {
 
                 if (v.getId() == R.id.btn_startRecord) {
-                    //재생중이면 재생중이던것을 정지하고 녹음
+                    // Use : 재생중이면 재생중이던것을 정지하고 녹음
                     if (music != null && music.isPlaying()) {    // 재생중이면
                         music.stop();           // 재생중이던거 정지하고
                         btnPlay.setImageResource(R.drawable.btn_play);  // 일시정지 버튼 다시 재생버튼으로 바꾸고
                     }
-                    //녹음중이 아니면
+                    // Use : 녹음중이 아니면
                     if (!recordManager.isRecording()) {
 
-                        // 녹음이 된 임시파일이 있다면
+                        // Use : 녹음이 된 임시파일이 있다면 다이얼로그를 호출
                         if(uri !=null){
                             Log.i("111","i'm inn");
-                            //다이얼로그 호출
                             mRerecordDialog = new CancelRecordDlg(this,
                                     " 경 고 ",
                                     " 다시 만드시겠습니까? ",
@@ -298,7 +313,7 @@ public class RecordActivity extends AppCompatActivity {
                             mRerecordDialog.show();
 
                         }
-                        //녹음된 파일이 없다면
+                        // Use :녹음된 파일이 없다면 녹음을 시작한다.
                         else {
                             recordTask = new RecordTask();
                             recordTask.execute();  // 녹음 시작
@@ -307,9 +322,9 @@ public class RecordActivity extends AppCompatActivity {
                         }
 
                     }
-                    //녹음 중이라면
+                    // Use : 녹음 중이라면 녹음을 중지한다.
                     else {
-                        recordTask.cancel(true);   // 녹음 중지
+                        recordTask.cancel(true);
                         v.setBackgroundResource(R.drawable.btn_startrecord_selector);// 녹음버튼의 이미지를 녹음 준비중으로 변경
                         btnRecordUp.setImageResource(R.drawable.btn_startrecord_selector1);// 녹음버튼의 이미지를 녹음 준비중으로 변경
                     }
@@ -325,22 +340,25 @@ public class RecordActivity extends AppCompatActivity {
         }
     }
 
-    // 재생 버튼 클릭
+
+    // Method : 재생하기
+    // Return Value : void
+    // Parameter : View
+    // Use : 재생 버튼 클릭을 했을때 각각의 뷰에 대한 상황에 맞는 처리.
     public void onClick_playRecord(View v) {
         switch (v.getId()) {
             // 재생버튼
             case R.id.btn_play_atvrecord: {
-                //재생중과 녹음중이 아니라면
+                // Use : 재생중과 녹음중이 아니라면 재생 시작 후 seekbar&textview 처리
                 if (!music.isPlaying() && !recordManager.isRecording()) {
                     music.start();
                     btnPlay.setImageResource(R.drawable.btn_pause);
                     playTask = new PlayTask();
-                    // 재생 시작 후 seekbar&textview 처리
                     playTask.execute();
                 }
-                // 재생중이거나 녹음중이라면
+                // Use : 재생중이거나 녹음중이라면 일시정지
                 else {
-                    music.pause(); //일시정지
+                    music.pause();
                     btnPlay.setImageResource(R.drawable.btn_play);
                 }
                 break;
@@ -352,7 +370,11 @@ public class RecordActivity extends AppCompatActivity {
 
     /**** 다이얼로그 클릭리스너  ****/
 
-    // 왼쪽 '네' 버튼을 눌렀을 경우
+
+    // Method : CancelDlg 출력
+    // Return Value : void
+    // Parameter : View
+    // Use :  왼쪽 '네' 버튼을 눌렀을 경우 본래의 액티비티로 복귀하며 녹음을 시작한다.
     private View.OnClickListener dlgleftClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -365,7 +387,11 @@ public class RecordActivity extends AppCompatActivity {
 
         }
     };
-    //오늘쪽 아니오를 눌렀을 경우
+
+    // Method : CancelDlg 출력
+    // Return Value : void
+    // Parameter : View
+    // Use :  오른쪽 아니오 버튼을 눌렀을 경우 본래의 액티비티로 복귀한다.
     private View.OnClickListener dlgrightClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -377,7 +403,10 @@ public class RecordActivity extends AppCompatActivity {
 
 
 
-    // Record Activity에서 저장버튼 클릭 하면 다이얼로그가 출력된다
+    // Method : 저장버튼 클릭시 Dlg 출력
+    // Return Value : void
+    // Parameter : View
+    // Use : Record Activity에서 저장버튼 클릭 하면 다이얼로그가 출력된다
     public void onClick_save(View v) {
         if (v.getId() == R.id.btn_save_atvrecord) {
             selectCategory = 0;     // 혹시나 저장됐던 카테고리번호 초기화
@@ -387,7 +416,10 @@ public class RecordActivity extends AppCompatActivity {
     }
 
 
-    // 재생시간 표시하는 텍스트뷰 설정
+    // Method : 하단부의 재생가능시간
+    // Return Value : void
+    // Parameter : targetView - 해당뷰 , timeMs - 해당뷰의 재생시간
+    // Use :  재생시간 표시하는 텍스트뷰 설정
     public void setTimeText(TextView targetView, int timeMs) {
         int sec = 0, min = 0;
         String timeText = "";
@@ -406,7 +438,10 @@ public class RecordActivity extends AppCompatActivity {
         targetView.setText(timeText);
     }
 
-    // 저장버튼을 눌렀을 때 출력되는 팝업윈도우 설정(버튼 이벤트리스너 포함)
+    // Method : 저장버튼 이벤트 리스너
+    // Return Value : void
+    // Parameter : void
+    // Use : 저장버튼을 눌렀을 때 출력되는 팝업윈도우 설정(버튼 이벤트리스너 포함)
     public void setPopupWindow() {
 
         mPopupLayout = getLayoutInflater().inflate(R.layout.popup_saverecord, null);    // 팝업으로 띄울 xml 연결
@@ -451,8 +486,10 @@ public class RecordActivity extends AppCompatActivity {
 
 
 
-
-        /***** (팝업윈도우 내 클릭이벤트) 팝업윈도우의 저장버튼을 클릭 ****/
+        // Method : 팝업윈도우내 저장버튼 클릭
+        // Return Value : void
+        // Parameter : View
+        // Use :  저장버튼을 눌렀을때의 동작들.
         popSaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -465,23 +502,30 @@ public class RecordActivity extends AppCompatActivity {
                 filenameEt.setSelectAllOnFocus(true);
                 File f = new File(filenameEt.getText().toString());
 
-                // 파일 저장할때의 예외처리문들.
+                // Use : 파일명이 입력안됬을때.
                 if (filenameEt.length() == 0) {     // 파일명 입력확인
                     Toast.makeText(RecordActivity.this, "파일명을 입력해주세요", Toast.LENGTH_SHORT).show();
                     Log.i("111","파일명 안들어옴");
-                } else if (filenameEt.length() > 8) {
+                }
+                // Use : 파일명이 8글자 초과했을시
+                else if (filenameEt.length() > 8) {
                     Toast.makeText(RecordActivity.this, " 파일명은 8글자를 넘을수 없습니다", Toast.LENGTH_SHORT).show();
                     Log.i("222", "파일명 글자넘어감");
 
-                } else if (selectCategory == 0) {   // 카테고리 선택확인
+                }
+                // Use : 카테고리를 선택안했을시
+                else if (selectCategory == 0) {   // 카테고리 선택확인
                     Toast.makeText(RecordActivity.this, "카테고리를 선택해주세요", Toast.LENGTH_SHORT).show();
                     Log.i("333", "카테고리명 안들어옴");
-                } else if (f.isFile()){
+                }
+                // Use : 파일명이 중복일때
+                else if (f.isFile()){
                     Toast.makeText(RecordActivity.this,"파일이름이 중복입니다.",Toast.LENGTH_SHORT).show();
                     Log.i("444", "파일명 중복");
-                }else{
+                }
+                // Use :  해당 예외처리사항이 아무것도 없을시 저장
+                else{
 
-                    //예외 처리문들의 예외처리를 모두 피해갔을때, 저장이 된다.
                     // (SQLLite insert문 추가필요)
 //                    db = fileDBHelper.getWritableDatabase();
 //                    String query = String.format("INSERT INTO %s values (null, '%s');", TABLE_NAME, filenameEt);
