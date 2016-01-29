@@ -4,5 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="pressed">#B4D4FF</color>
-    <color name="release">#FFFFFF</color>
+    <color name="release">#dadaea</color>
+    <color name="list_press">#dadaea</color>
+    <color name="list_select">#dadada</color>
+
 </resources>

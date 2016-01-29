@@ -15,4 +15,12 @@
 
     <string name="spinner_dialog_name">카테고리를 선택하세요</string>
 
+    <string name="sel_category">카테고리 선택</string>
+
+    <string name="action_settings">메뉴</string>
+
+    <string name="record_sidekick">아래의 녹음 버튼을 눌러 녹음을 시작하세요!</string>
+
+
+
 </resources>
