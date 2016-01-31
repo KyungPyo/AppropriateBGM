@@ -2,6 +2,7 @@ package com.kp.appropriatebgm.DBController;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -103,13 +104,80 @@ public class DBManager extends SQLiteOpenHelper {
     private void insertInnerBGM(SQLiteDatabase db){
         String query;
 
-        query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('인간극장', 'innerfile', #)";
+        query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('인간극장', 'innerfile#', #)";
         query = query.replace("#", Integer.toString(R.raw.human_cinema));
         db.execSQL(query);
 
-        query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('함정카드', 'innerfile', #)";
+        query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('함정카드', 'innerfile#', #)";
         query = query.replace("#", Integer.toString(R.raw.trapcard));
         db.execSQL(query);
+    }
+
+    // Method : 앱 실행시 BGMList 테이블 무결성 체크
+    // Return Value : void
+    // Parameter : fileList(단말기에 저장되어있는 음악파일목록 - [0]파일경로, [1]파일명)
+    // Use : LogoActivity에서 앱이 실행될 때마다 SQLite에 저장된 외장 BGM 목록과 실제 가지고 있는 파일의 목록이 일치하는지 확인한다.
+    public void checkBGMList(ArrayList<String[]> fileList){
+        if(fileList.size() != 0) {
+            checkBGMFileExist(fileList);
+            checkBGMRecordExist(fileList);
+        }
+    }
+
+    // Method : DB에 저장된 파일경로에 파일이 있는지 확인
+    // Return Value : void
+    // Parameter : fileList(단말기에 저장되어있는 음악파일목록 - [0]파일경로, [1]파일명)
+    // Use : DB에 저장되어 있는 BGM의 경로에 파일이 존재하는지 확인하고 없으면 DB에서 삭제한다.
+    private void checkBGMFileExist(ArrayList<String[]> fileList){
+        int fileCount = fileList.size();
+        StringBuffer query = new StringBuffer();
+
+        query.append("SELECT bgm_path FROM BGMList WHERE bgm_path NOT IN (");
+        for (int i = 0; i < fileCount; i++) {
+            query.append("'");
+            query.append(fileList.get(i)[0]);
+            query.append("'");
+            if(i+1 != fileCount)
+                query.append(",");
+        }
+        query.append(");");
+        String completedQuery = query.toString();
+        Log.i("checkBGMFileExist", completedQuery);
+
+        Cursor notExistList = mDataBase.rawQuery(completedQuery, null);
+
+        // 없는 목록을 받아와서 DB에서 지운다
+        while(notExistList.moveToNext()){
+
+        }
+    }
+
+    // Method : 파일경로에 해당하는 DB 레코드가 존재하는지 확인
+    // Return Value : void
+    // Parameter : fileList(단말기에 저장되어있는 음악파일목록 - [0]파일경로, [1]파일명)
+    // Use : 음악파일이 DB의 BGMList 테이블에 레코드로 등록되어있는지 확인하고, 없으면 Insert한다.
+    private void checkBGMRecordExist(ArrayList<String[]> fileList){
+        int fileCount = fileList.size();
+        StringBuffer query;
+
+        for (int i = 0; i < fileCount; i++) {
+            try{
+                query = new StringBuffer();
+                query.append("INSERT INTO BGMList(bgm_path, bgm_name) VALUES(");
+                query.append("'"+fileList.get(i)[0]+"',");
+                query.append("'"+fileList.get(i)[1]+"')");
+                mDataBase.execSQL(query.toString());
+            } catch (SQLiteConstraintException sqlException){
+                Log.i("SQLite Error", "이미 존재하는 값 입력 : "+sqlException.toString());
+            }
+        }
+
+        // 입력 잘됐는지 확인하는 부분(삭제요망)
+        String test = "select * from BGMList";
+        Cursor cursor = mDataBase.rawQuery(test, null);
+        while(cursor.moveToNext()){
+            Log.i("잘나오냐??", cursor.getString(1));
+        }
     }
 
     /*****  DB 결과 요청(select)  *****/
@@ -119,7 +187,7 @@ public class DBManager extends SQLiteOpenHelper {
         BGMInfo bgmInfo;
         ArrayList<BGMInfo> result = new ArrayList<>();
 
-        query = "SELECT bgm_id, bgm_name, bgm_path, innerfile FROM BGMList";
+        query = "SELECT * FROM BGMList";
         if (categoryId != 1){
             query = query + " WHERE category_id = " + categoryId;
         }
@@ -128,7 +196,7 @@ public class DBManager extends SQLiteOpenHelper {
 
         if(cursor != null){
             while(cursor.moveToNext()){
-                bgmInfo = new BGMInfo(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getInt(3), cursor.getInt(4));
+                bgmInfo = new BGMInfo(cursor.getString(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3));
                 result.add(bgmInfo);
             }
         }
@@ -137,4 +205,6 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     /*****  DB 결과 요청(select)  *****/
+
+
 }
