@@ -18,14 +18,14 @@ import java.util.ArrayList;
  */
 public class FavoriteListAdapter extends BaseAdapter {
 
-    Context mContex=null;
+    Context mContext=null;
     ArrayList<Favorite> favoriteArrayList = null;
     LayoutInflater layoutInflater=null;
 
-    public FavoriteListAdapter(Context mContex, ArrayList<Favorite> favoriteList) {
-        this.mContex = mContex;
+    public FavoriteListAdapter(Context mContext, ArrayList<Favorite> favoriteList) {
+        this.mContext = mContext;
         this.favoriteArrayList = favoriteList;
-        layoutInflater= LayoutInflater.from(mContex);
+        layoutInflater= LayoutInflater.from(mContext);
     }
 
     @Override

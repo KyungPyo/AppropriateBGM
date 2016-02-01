@@ -58,9 +58,13 @@ public class FavoriteActivity extends AppCompatActivity {
             }
         });
 
+        favoriteArrayList=new ArrayList<Favorite>();
+
         //listView 설정
+        favoriteArrayList=dbManager.getFavoriteList();//DB
+        Log.d("널이니ㅣㅣㅣㅣㅣ",(favoriteArrayList==null)+"");
         favoriteList=(ListView)findViewById(R.id.favorite_list);
-        adapter=new FavoriteListAdapter(this,favoriteArrayList);
+        adapter=new FavoriteListAdapter(this, favoriteArrayList);
         favoriteList.setAdapter(adapter);
         //즐겨찾기 List중 아이템클릭시 Method
         favoriteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -74,8 +78,6 @@ public class FavoriteActivity extends AppCompatActivity {
                 startActivityForResult(intent, 0);
             }
         });
-
-        favoriteArrayList=dbManager.getFavoriteList(); //DB
         adapter.notifyDataSetChanged();
     }
 
