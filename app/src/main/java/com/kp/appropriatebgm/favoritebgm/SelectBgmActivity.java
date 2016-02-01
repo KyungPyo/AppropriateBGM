@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Locale;
+
+import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.R;
 public class SelectBgmActivity extends AppCompatActivity {
 

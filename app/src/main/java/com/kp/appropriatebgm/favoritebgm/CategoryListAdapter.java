@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.R;
 
 import java.util.ArrayList;
