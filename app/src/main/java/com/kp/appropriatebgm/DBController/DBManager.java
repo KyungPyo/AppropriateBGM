@@ -283,6 +283,31 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
+    // Method : 카테고리명이 중복되는지 확인
+    // Return Value : boolean(중복되면 true, 중복안되면 false)
+    // Parameter : categoryName(중복여부 확인하려는 카테고리명)
+    // Use : CategoryActivity에서 카테고리명 중복체크 요청을 하면 해당 카테고리명으로 DB에서 검색하여 중복되는 값이 있는지 개수를 확인한다.
+    public boolean isExistCategoryName(String categoryName){
+        String query;
+        Cursor cursor;
+
+        query = "SELECT COUNT(*) FROM Category WHERE category_name = '"+categoryName+"'";
+        try {
+            cursor = mDataBase.rawQuery(query, null);
+
+            cursor.moveToNext();
+            if (cursor.getInt(0) == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLiteException e){
+            // 오류가 난 경우는 일단 중복값이 있다고 반환한다.
+            Log.e("isExistCategoryName", e.toString());
+            return true;
+        }
+    }
+
     /*****  DB 결과 요청(select)  *****/
 
 
@@ -292,7 +317,7 @@ public class DBManager extends SQLiteOpenHelper {
     // Return Value : void
     // Parameter : favoriteId(업데이트할 favoriteId), bgmPath(등록할 bgm)
     // Use : 즐겨찾기 등록을 요청하면 DB에 해당 bgm의 경로를 등록한다. bgmPath를 null로 보내주면 해당 즐겨찾기를 삭제한다.
-    public void setFavorite(int favoriteId, String bgmPath){
+    public void updateFavorite(int favoriteId, String bgmPath){
         StringBuffer query = new StringBuffer();
 
         if (bgmPath != null){   // Favorite 등록
@@ -333,9 +358,32 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
+    // Method : 새 카테고리 DB에 추가
+    // Return Value : void
+    // Parameter : categoryName(새로 추가할 카테고리명)
+    // Use : CategoryActivity에서 새로 추가할 카테고리명을 받아서 DB에 추가한다.
     public void insertCategory(String categoryName){
-        String query = "INSERT INTO Category(category_name) VALUES ('"+categoryName+"')";
-        mDataBase.execSQL(query);
+        String query;
+        query = "INSERT INTO Category(category_name) VALUES ('"+categoryName+"')";
+        try {
+            mDataBase.execSQL(query);
+        } catch (SQLiteException e){
+            Log.e("insertCategory", e.toString());
+        }
+    }
+
+    // Method : DB에서 카테고리명 변경
+    // Return Value : void
+    // Parameter : categoryId(변경할 카테고리의 ID), categoryName(변경되고 난 뒤의 카테고리명)
+    // Use : CategoryActivity에서 변경할 카테고리의 ID와 카테고리명을 받아서 DB에 갱신한다.
+    public void updateCategory(int categoryId, String categoryName){
+        String query;
+        query = "UPDATE Category SET category_name = '"+categoryName+"' WHERE category_id = "+categoryId;
+        try {
+            mDataBase.execSQL(query);
+        } catch (SQLiteException e){
+            Log.e("updateCategory", e.toString());
+        }
     }
 
     /*****  DB 등록 요청(insert)  *****/
