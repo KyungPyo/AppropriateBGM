@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.kp.appropriatebgm.DBController.BGMInfo;
 import com.kp.appropriatebgm.R;
 
 import java.util.ArrayList;
@@ -21,19 +22,19 @@ public class BGMListAdapter extends BaseAdapter {
     //*Context 즉 띄워질 Activity 클래스를 받아온다고 생각하면 될듯.
     Context mContex=null;
     //*ListView에 띄워질 Music의 ArrayList
-    ArrayList<Music> aMusicList = null;
+    ArrayList<BGMInfo> aMusicList = null;
     //*검색시 update될 리스트를 저장하는 ArrayList
-    ArrayList<Music> searchingList=null;
+    ArrayList<BGMInfo> searchingList=null;
     //*띄워질 뷰를 infate시켜줄 LayoutInflater
     LayoutInflater layoutInflater=null;
 
 
     //**생성자**
-    public BGMListAdapter(Context mContex, ArrayList<Music> musicList) {
+    public BGMListAdapter(Context mContex, ArrayList<BGMInfo> musicList) {
         this.mContex = mContex;
         this.aMusicList = musicList;
         layoutInflater= LayoutInflater.from(mContex);
-        searchingList=new ArrayList<Music>();
+        searchingList=new ArrayList<BGMInfo>();
         searchingList.addAll(aMusicList);
     }
 
@@ -66,7 +67,7 @@ public class BGMListAdapter extends BaseAdapter {
             viewHolder=(ViewHolder)itemLayout.getTag();
         }
 
-        viewHolder.name.setText(aMusicList.get(position).getMusicName());
+        viewHolder.name.setText(aMusicList.get(position).getBgmName());
 
         return itemLayout;
     }
@@ -86,9 +87,9 @@ public class BGMListAdapter extends BaseAdapter {
         }
         else
         {
-            for (Music m : searchingList)
+            for (BGMInfo m : searchingList)
             {
-                if (m.getMusicName().toLowerCase(Locale.getDefault()).contains(charText))
+                if (m.getBgmName().toLowerCase(Locale.getDefault()).contains(charText))
                 {
                     aMusicList.add(m);
                 }
