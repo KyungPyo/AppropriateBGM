@@ -181,11 +181,15 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     /*****  DB 결과 요청(select)  *****/
+    // Method : BGMList 불러오기
+    // Return Value : ArrayList<BGMInfo> (BGMList 테이블에 저장된 정보 리스트)
+    // Parameter : categoryId(요청한 Activity에서 검색하려는 카테고리 번호)
+    // Use : DB에 저장된 BGM 정보를 불러오는 메소드. 원하는 카테고리를 선택해서 요청하고, categoryId가 1인경우에 전체목록 반환
     public ArrayList<BGMInfo> getBGMList(int categoryId){
+        ArrayList<BGMInfo> result = new ArrayList<>();
         Cursor cursor;
         String query;
         BGMInfo bgmInfo;
-        ArrayList<BGMInfo> result = new ArrayList<>();
 
         query = "SELECT * FROM BGMList";
         if (categoryId != 1){
@@ -194,11 +198,38 @@ public class DBManager extends SQLiteOpenHelper {
 
         cursor = mDataBase.rawQuery(query, null);
 
-        if(cursor != null){
-            while(cursor.moveToNext()){
-                bgmInfo = new BGMInfo(cursor.getString(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3));
-                result.add(bgmInfo);
-            }
+        if(cursor == null) {
+            return null;
+        }
+
+        while(cursor.moveToNext()){
+            bgmInfo = new BGMInfo(cursor.getString(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3));
+            result.add(bgmInfo);
+        }
+
+        return result;
+    }
+
+    // Method : Category List 불러오기
+    // Return Value : ArrayList<Category> (BGMList 테이블에 저장된 정보 리스트)
+    // Parameter : void
+    // Use : DB에 저장된 전체 Category 정보를 불러오는 메소드.
+    public ArrayList<Category> getCategoryList(){
+        ArrayList<Category> result = new ArrayList<>();
+        Cursor cursor;
+        String query;
+        Category category;
+
+        query = "SELECT * FROM Category";
+        cursor = mDataBase.rawQuery(query, null);
+
+        if(cursor == null) {
+            return null;
+        }
+
+        while (cursor.moveToNext()){
+            category = new Category(cursor.getInt(0), cursor.getString(1));
+            result.add(category);
         }
 
         return result;

@@ -22,6 +22,10 @@ import com.kp.appropriatebgm.DBController.*;
 import java.util.ArrayList;
 import java.util.Locale;
 
+<<<<<<< HEAD
+=======
+import com.kp.appropriatebgm.DBController.Category;
+>>>>>>> d3af8253b1f8cc7e2b89c1b23f55897b0bf529a8
 import com.kp.appropriatebgm.R;
 
 public class SelectBgmActivity extends AppCompatActivity {
