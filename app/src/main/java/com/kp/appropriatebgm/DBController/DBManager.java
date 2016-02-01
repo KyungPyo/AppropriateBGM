@@ -333,6 +333,11 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
+    public void insertCategory(String categoryName){
+        String query = "INSERT INTO Category(category_name) VALUES ('"+categoryName+"')";
+        mDataBase.execSQL(query);
+    }
+
     /*****  DB 등록 요청(insert)  *****/
 
 
