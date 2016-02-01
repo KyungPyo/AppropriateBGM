@@ -1,9 +1,13 @@
 package com.kp.appropriatebgm.DBController;
 
+import java.io.Serializable;
+
 /**
  * Created by KP on 2016-01-28.
  */
-public class BGMInfo {
+public class BGMInfo implements Serializable{
+
+    private static final long serialVersionUID=100000L;
 
     private String bgmName;
     private String bgmPath;

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -169,8 +170,8 @@ public class DBManager extends SQLiteOpenHelper {
                 query.append("'"+fileList.get(i)[0]+"',");
                 query.append("'"+fileList.get(i)[1]+"')");
                 mDataBase.execSQL(query.toString());
-            } catch (SQLiteConstraintException sqlException){
-                Log.i("SQLite Error", "이미 존재하는 값 입력 : "+sqlException.toString());
+            } catch (SQLiteConstraintException e){
+                Log.i("SQLite Error", "이미 존재하는 값 입력 : "+e.toString());
             }
         }
 
@@ -198,18 +199,23 @@ public class DBManager extends SQLiteOpenHelper {
             query = query + " WHERE category_id = " + categoryId;
         }
 
-        cursor = mDataBase.rawQuery(query, null);
+        try{
+            cursor = mDataBase.rawQuery(query, null);
 
-        if(cursor == null) {
+            if(cursor == null) {
+                return null;
+            }
+
+            while(cursor.moveToNext()){
+                bgmInfo = new BGMInfo(cursor.getString(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3));
+                result.add(bgmInfo);
+            }
+
+            return result;
+        } catch (SQLiteException e){
+            Log.e("getBGMList", e.toString());
             return null;
         }
-
-        while(cursor.moveToNext()){
-            bgmInfo = new BGMInfo(cursor.getString(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3));
-            result.add(bgmInfo);
-        }
-
-        return result;
     }
 
     // Method : Category List 불러오기
@@ -223,18 +229,23 @@ public class DBManager extends SQLiteOpenHelper {
         Category category;
 
         query = "SELECT * FROM Category";
-        cursor = mDataBase.rawQuery(query, null);
+        try {
+            cursor = mDataBase.rawQuery(query, null);
 
-        if(cursor == null) {
+            if (cursor == null) {
+                return null;
+            }
+
+            while (cursor.moveToNext()) {
+                category = new Category(cursor.getInt(0), cursor.getString(1));
+                result.add(category);
+            }
+
+            return result;
+        } catch (SQLiteException e){
+            Log.e("getCategoryList", e.toString());
             return null;
         }
-
-        while (cursor.moveToNext()){
-            category = new Category(cursor.getInt(0), cursor.getString(1));
-            result.add(category);
-        }
-
-        return result;
     }
 
     // Method : Favorite List 불러오기
@@ -247,31 +258,64 @@ public class DBManager extends SQLiteOpenHelper {
         String query;
         Favorite favorite;
 
-        query = "SELECT f.favorite_id, f.bgm_path, b.bgm_name FROM favorite f, bgmlist b " +
-                "WHERE f.bgm_path = b.bgm_path ORDER BY f.favorite_id";
-        cursor = mDataBase.rawQuery(query, null);
+        query = "SELECT f.favorite_id, f.bgm_path, b.bgm_name FROM favorite AS f LEFT JOIN bgmlist AS b " +
+                "ON f.bgm_path = b.bgm_path ORDER BY f.favorite_id";
 
-        if(cursor == null) {
+        try {
+            cursor = mDataBase.rawQuery(query, null);
+
+            if (cursor == null) {
+                return null;
+            }
+
+            // Favorite 개수만큼 반복하면서 해당 번호에 설정된 즐겨찾기가 있으면 값을 넣어서 보내고 없으면 null로 보낸다.
+            while(cursor.moveToNext()){
+                favorite = new Favorite(cursor.getInt(0), cursor.getString(1), cursor.getString(2));
+                result.add(favorite);
+            }
+
+            for(int i=0; i<result.size(); i++)
+                Log.i("favoriteList test", result.get(i).getFavoriteId() + result.get(i).getBgmName());
+
+            return result;
+        } catch (SQLiteException e) {
+            Log.e("getFavoriteList", e.toString());
             return null;
         }
-
-        cursor.moveToNext();
-        for (int i=0; i<FAVORITE_SIZE; i++){
-            int id = cursor.getInt(0);
-            if (id != i){
-                favorite = new Favorite(i, null, null);
-            } else {
-                favorite = new Favorite(i, cursor.getString(1), cursor.getString(2));
-                cursor.moveToNext();
-            }
-            result.add(favorite);
-        }
-
-        return result;
     }
-
 
     /*****  DB 결과 요청(select)  *****/
 
 
+    /*****  DB 등록 요청(insert/update)  *****/
+
+    // Method : Favorite 등록 및 삭제
+    // Return Value : void
+    // Parameter : favoriteId(업데이트할 favoriteId), bgmPath(등록할 bgm)
+    // Use : 즐겨찾기 등록을 요청하면 DB에 해당 bgm의 경로를 등록한다. bgmPath를 null로 보내주면 해당 즐겨찾기를 삭제한다.
+    public void setFavorite(int favoriteId, String bgmPath){
+        StringBuffer query = new StringBuffer();
+
+        if (bgmPath != null){   // Favorite 등록
+            query.append("UPDATE favorite SET bgm_path='");
+            query.append(bgmPath + "'");
+        } else {                // Favorite 삭제
+            query.append("UPDATE favorite SET bgm_path=null");
+        }
+        query.append(" WHERE favorite_id=");
+        query.append(favoriteId);
+
+        try {
+            mDataBase.execSQL(query.toString());
+        } catch (SQLiteException e) {
+            Log.e("setFavorite", e.toString());
+        }
+    }
+
+    // Method :
+    // Return Value :
+    // Parameter :
+    // Use :
+
+    /*****  DB 등록 요청(insert)  *****/
 }
