@@ -10,8 +10,16 @@ public class Favorite {
 
     public Favorite(int favoriteId, String bgmPath, String bgmName) {
         this.favoriteId = favoriteId;
-        this.bgmPath = bgmPath;
-        this.bgmName = bgmName;
+        if (bgmPath.equals("")) {
+            this.bgmPath = null;
+        } else {
+            this.bgmPath = bgmPath;
+        }
+        if (bgmName.equals("")) {
+            this.bgmName = null;
+        } else {
+            this.bgmName = bgmName;
+        }
     }
 
     public void setFavoriteId(int favoriteId) {
