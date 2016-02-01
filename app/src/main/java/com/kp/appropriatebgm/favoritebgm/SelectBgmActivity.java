@@ -1,6 +1,5 @@
 package com.kp.appropriatebgm.favoritebgm;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -18,28 +17,29 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.kp.appropriatebgm.DBController.*;
+
 import java.util.ArrayList;
 import java.util.Locale;
+
 import com.kp.appropriatebgm.R;
+
 public class SelectBgmActivity extends AppCompatActivity {
 
-    Music selectedMusic=null;
-    ArrayList<Music> musics;
-    DBManager dbManager=DBManager.getInstance(this);//DB
-    ListMakingManager makeList=new ListMakingManager(dbManager);
+    BGMInfo selectedBGM = null;
+    ArrayList<BGMInfo> bgms;
+    DBManager dbManager = DBManager.getInstance(this);//DB
     Toolbar toolbar;
     ImageView searchButton;
 
     ListView list;
     BGMListAdapter adapter;
     EditText editSearch;
-    String [] favorite_columns={"favorite_id","bgm_id"};
-    String [] columns={"bgm_id","bgm_name","bgm_path"};
     int position;
-    boolean isVisible=false;
+    boolean isVisible = false;
 
     Cursor cursor;
-    ArrayList<Category> categoryList=new ArrayList<Category>();
+    ArrayList<Category> categoryList = new ArrayList<Category>();
     //Focusing 하는 곳에서 쓰일 이전 View 저장용 View 변수
 
     CategoryListAdapter categoryAdapter;
@@ -64,22 +64,20 @@ public class SelectBgmActivity extends AppCompatActivity {
     // Return Value : void
     // Parameter : void
     // Use :  List뷰의 Header에 비워두기 버튼을 추가한다.
-    private void addHeaderToList(){
+    private void addHeaderToList() {
 
-        View headerView=getLayoutInflater().inflate(R.layout.favorite_listview_header_layout,null);
-        clear_favorite=(Button)headerView.findViewById(R.id.clearItem);
+        View headerView = getLayoutInflater().inflate(R.layout.favorite_listview_header_layout, null);
+        clear_favorite = (Button) headerView.findViewById(R.id.clearItem);
         //비워두기 버튼 클릭 리스너
         clear_favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Music tmp = new Music("", "");
                 Intent intent = getIntent();
                 position = intent.getIntExtra("position", 0);
 
                 //해당 position은 DB에서 Favorite_id 이므로 해당 id가 있는 row를 지운다.
-                dbManager.delete("Favorite", "favorite_id=" + position, null);//DB
+                dbManager.delete(position);//DB
 
-                intent.putExtra("selectedMusic", tmp);
                 intent.putExtra("position", position);
 
                 setResult(RESULT_OK, intent);
@@ -95,28 +93,25 @@ public class SelectBgmActivity extends AppCompatActivity {
     // Return Value : void
     // Parameter : void
     // Use :  카테고리를 DB 에서 가져와서 Spinner 에서 보여주는 Method
-    private void getCategory(){
+    private void getCategory() {
         Toast.makeText(getApplicationContext(), "카테고리 목록을 만듦 ", Toast.LENGTH_SHORT).show();
-        cursor=dbManager.select("Category", null);//DB
+        ArrayList<Category>=dbManager.selectCategory();//DB
 
-        while(cursor.moveToNext()){
-            Category tmp=new Category(cursor.getString(0),cursor.getString(1));
+        while (cursor.moveToNext()) {
+            Category tmp = new Category(cursor.getString(0), cursor.getString(1));
             categoryList.add(tmp);
         }
-        categoryAdapter=new CategoryListAdapter(this,categoryList);
-        cateSpinner=(Spinner)findViewById(R.id.select_category);
+        categoryAdapter = new CategoryListAdapter(this, categoryList);
+        cateSpinner = (Spinner) findViewById(R.id.select_category);
 
         //스피너에서 item을 선택했을 때
         cateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //지금 보여지고 있는 ArrayList를 클리어
-                musics.clear();
-                cursor=dbManager.selectByCategoryId("BGMList",columns,categoryList.get(position).getCateId());//DB
-                while(cursor.moveToNext()){
-                    //해당 카테고리에 있는 BGM만 받아서 List를 재구성
-                    musics.add(new Music(cursor.getString(2),cursor.getString(1),cursor.getString(0)));
-                }
+                bgms.clear();
+                bgms.addAll(dbManager.getBGMList(categoryList.get(position).getCateId()));//int형
+
                 adapter.notifyDataSetChanged();
             }
 
@@ -132,7 +127,7 @@ public class SelectBgmActivity extends AppCompatActivity {
     // Return Value : void
     // Parameter : void
     // Use :  리스너 정의
-    private void setListeners(){
+    private void setListeners() {
         //Text가 바뀌는 이벤트가 발생할 때
         editSearch.addTextChangedListener(new TextWatcher() {
 
@@ -161,13 +156,13 @@ public class SelectBgmActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                if(!isVisible){
+                if (!isVisible) {
                     editSearch.setVisibility(View.VISIBLE);
-                    isVisible=true;
-                }else{
-                    final InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                    isVisible = true;
+                } else {
+                    final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                     editSearch.setVisibility(View.INVISIBLE);
-                    isVisible=false;
+                    isVisible = false;
                     editSearch.setText("");
 
                     //키보드 숨기기
@@ -180,7 +175,7 @@ public class SelectBgmActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                selectedMusic = musics.get(position - 1);
+                selectedBGM = bgms.get(position - 1);
 
             }
         });
@@ -191,15 +186,15 @@ public class SelectBgmActivity extends AppCompatActivity {
                 boolean isExist = false;
                 Intent intent = getIntent();
                 position = intent.getIntExtra("position", 0);
-                if (selectedMusic == null) {//리스크 클릭이 안된 상태에서 확인을 눌렀을 때 취소
+                if (selectedBGM == null) {//리스크 클릭이 안된 상태에서 확인을 눌렀을 때 취소
                     setResult(RESULT_CANCELED);
                     finish();
                 } else {
-                    intent.putExtra("selectedMusic", selectedMusic);
+                    intent.putExtra("selectedBGM", selectedBGM);
                     intent.putExtra("position", position);
 
                     //같은 자리에 있는지 확인
-                    Cursor bgm = dbManager.select("Favorite", favorite_columns);//DB
+                    Cursor bgm = dbManager.selectFavorite();//DB
                     while (bgm.moveToNext()) {
                         if (bgm.getInt(0) == position) {
                             isExist = true;
@@ -209,16 +204,10 @@ public class SelectBgmActivity extends AppCompatActivity {
                         }
                     }
 
-
                     if (isExist) {//존재하면 업데이트
-                        ContentValues addRowValue = new ContentValues();
-                        addRowValue.put("bgm_id", selectedMusic.getMusicId());
-                        dbManager.update("Favorite", addRowValue, "favorite_id=" + position, null);//DB
+                        dbManager.update(selectedBGM.getBgmId(), position);//DB
                     } else {//존재하지 않으면 추가 -> 이거 왜하냐면 딱 Favorite 크기만큼만 추가하려고
-                        ContentValues addRowValue = new ContentValues();
-                        addRowValue.put("favorite_id", position);
-                        addRowValue.put("bgm_id", selectedMusic.getMusicId());
-                        dbManager.insert("Favorite", addRowValue);//DB
+                        dbManager.insert(selectedBGM.getBgmId(), position);//DB
                     }
 
                     setResult(RESULT_OK, intent);
@@ -240,19 +229,19 @@ public class SelectBgmActivity extends AppCompatActivity {
     // Return Value : void
     // Parameter : void
     // Use : View를 객체와 연결, listView 설정
-    private void init(){
-        searchButton=(ImageView)findViewById(R.id.search_button);
-        editSearch=(EditText)findViewById(R.id.search);
-        toolbar=(Toolbar)findViewById(R.id.favorite_toolbar);
-        list=(ListView)findViewById(R.id.musicList);
-        editSearch=(EditText)findViewById(R.id.search);
-        musics=makeList.makeList(this);
+    private void init() {
+        searchButton = (ImageView) findViewById(R.id.search_button);
+        editSearch = (EditText) findViewById(R.id.search);
+        toolbar = (Toolbar) findViewById(R.id.favorite_toolbar);
+        list = (ListView) findViewById(R.id.musicList);
+        editSearch = (EditText) findViewById(R.id.search);
+        bgms = dbManager.getBGMList(1);
 
-        adapter=new BGMListAdapter(this,musics);
+        adapter = new BGMListAdapter(this, bgms);
         list.setAdapter(adapter);
 
-        save=(Button)findViewById(R.id.save_favorite);
-        cancel=(Button)findViewById(R.id.cancel);
+        save = (Button) findViewById(R.id.save_favorite);
+        cancel = (Button) findViewById(R.id.cancel);
 
         getCategory();
 
