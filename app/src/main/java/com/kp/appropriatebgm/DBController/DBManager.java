@@ -235,6 +235,32 @@ public class DBManager extends SQLiteOpenHelper {
         return result;
     }
 
+    // Method : Favorite List 불러오기
+    // Return Value : ArrayList<Favorite> (BGMList 테이블에 저장된 정보 리스트)
+    // Parameter : void
+    // Use : DB에 저장된 전체 Favorite 정보를 불러오는 메소드. bgm_path 값이 없을 때에는 null을 넣어 보내준다.
+    public ArrayList<Favorite> getFavoriteList(){
+        ArrayList<Favorite> result = new ArrayList<>();
+        Cursor cursor;
+        String query;
+        Favorite favorite;
+
+        query = "SELECT * FROM Favorite order by favorite_id";
+        cursor = mDataBase.rawQuery(query, null);
+
+        if(cursor == null) {
+            return null;
+        }
+
+        while (cursor.moveToNext()){
+            favorite = new Favorite(cursor.getInt(0), cursor.getString(1));
+            result.add(favorite);
+        }
+
+        return result;
+    }
+
+
     /*****  DB 결과 요청(select)  *****/
 
 
