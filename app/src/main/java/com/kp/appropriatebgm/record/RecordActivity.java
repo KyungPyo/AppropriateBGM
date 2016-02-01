@@ -60,6 +60,7 @@ public class RecordActivity extends AppCompatActivity {
 
     //다이얼로그
     private CancelRecordDlg mRerecordDialog;
+    private Category selectedCategory;
 
 //    private ImageView btnStop = null;
 
@@ -476,7 +477,8 @@ public class RecordActivity extends AppCompatActivity {
         categorySel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectCategory = (int) id;
+                selectedCategory=categoryList.get(position);
+                Log.d("CategoryId",selectedCategory.getCateId()+"");
             }
 
             @Override
@@ -516,7 +518,7 @@ public class RecordActivity extends AppCompatActivity {
 
                 }
                 // Use : 카테고리를 선택안했을시
-                else if (selectCategory == 0) {   // 카테고리 선택확인
+                else if (selectedCategory == null) {   // 카테고리 선택확인
                     Toast.makeText(RecordActivity.this, "카테고리를 선택해주세요", Toast.LENGTH_SHORT).show();
                     Log.i("333", "카테고리명 안들어옴");
                 }
@@ -538,9 +540,10 @@ public class RecordActivity extends AppCompatActivity {
                     File file = new File(recordManager.getPath());
                     File renamedFile = new File(recordManager.getDirPath() + File.separator + newFileName + ".mp3");
                     file.renameTo(renamedFile);
-                    dbManager.insertBGM(recordManager.getDirPath(), newFileName, selectCategory);
+                    dbManager.insertBGM(recordManager.getDirPath(), newFileName, selectedCategory.getCateId());
 //                    Log.e("111",dbManager.)
                     // 파일을 이름변경해서 남기고 액티비티 종료(메인 액티비티로 돌아간다)
+
                     finish();
                 }
             }
