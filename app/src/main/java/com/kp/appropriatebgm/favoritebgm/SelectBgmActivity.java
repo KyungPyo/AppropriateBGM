@@ -1,13 +1,11 @@
 package com.kp.appropriatebgm.favoritebgm;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -18,12 +16,14 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.kp.appropriatebgm.DBController.*;
+import com.kp.appropriatebgm.DBController.BGMInfo;
+import com.kp.appropriatebgm.DBController.Category;
+import com.kp.appropriatebgm.DBController.DBManager;
+import com.kp.appropriatebgm.DBController.Favorite;
+import com.kp.appropriatebgm.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
-
-import com.kp.appropriatebgm.R;
 
 public class SelectBgmActivity extends AppCompatActivity {
 
@@ -75,7 +75,7 @@ public class SelectBgmActivity extends AppCompatActivity {
                 position = intent.getIntExtra("position", 0);
 
                 //해당 position은 DB에서 Favorite_id 이므로 해당 id가 있는 row를 지운다.
-                dbManager.setFavorite(position,null);//DB
+                dbManager.updateFavorite(position,null);//DB
 
                 intent.putExtra("position", position);
 
@@ -196,7 +196,7 @@ public class SelectBgmActivity extends AppCompatActivity {
                 } else if(isCollision(dbManager.getFavoriteList(),selectedBGM)){
                     Toast.makeText(getApplicationContext(), "중복된 파일이 즐겨찾기에 존재합니다.", Toast.LENGTH_SHORT).show();
                 } else{
-                    dbManager.setFavorite(position,selectedBGM.getBgmPath());//DB
+                    dbManager.updateFavorite(position,selectedBGM.getBgmPath());//DB
 
                     setResult(RESULT_OK, intent);
                     finish();
