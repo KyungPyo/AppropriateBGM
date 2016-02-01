@@ -91,7 +91,8 @@ public class FavoriteActivity extends AppCompatActivity {
             BGMInfo tmp=(BGMInfo)data.getSerializableExtra("selectedBGM");//여기
             int tmpPosition=data.getIntExtra("position",0);
             favoriteArrayList.remove(tmpPosition);
-            favoriteArrayList.add(tmpPosition,new Favorite(tmpPosition,tmp.getBgmPath(),tmp.getBgmName()));
+            if(tmp!=null)
+                favoriteArrayList.add(tmpPosition,new Favorite(tmpPosition,tmp.getBgmPath(),tmp.getBgmName()));
             adapter.notifyDataSetChanged();
         }else if(resultCode==RESULT_CANCELED){//result Canceled
             Toast.makeText(getApplicationContext(), "즐겨찾기 추가를 취소하셨습니다. ", Toast.LENGTH_SHORT).show();
