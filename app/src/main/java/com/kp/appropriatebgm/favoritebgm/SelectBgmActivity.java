@@ -22,10 +22,6 @@ import com.kp.appropriatebgm.DBController.*;
 import java.util.ArrayList;
 import java.util.Locale;
 
-<<<<<<< HEAD
-=======
-import com.kp.appropriatebgm.DBController.Category;
->>>>>>> d3af8253b1f8cc7e2b89c1b23f55897b0bf529a8
 import com.kp.appropriatebgm.R;
 
 public class SelectBgmActivity extends AppCompatActivity {
@@ -36,6 +32,8 @@ public class SelectBgmActivity extends AppCompatActivity {
     Toolbar toolbar;
     ImageView searchButton;
 
+    ArrayList<Category> categoryList;
+
     ListView list;
     BGMListAdapter adapter;
     EditText editSearch;
@@ -43,8 +41,6 @@ public class SelectBgmActivity extends AppCompatActivity {
     boolean isVisible = false;
 
     Cursor cursor;
-    ArrayList<Category> categoryList = new ArrayList<Category>();
-    //Focusing 하는 곳에서 쓰일 이전 View 저장용 View 변수
 
     CategoryListAdapter categoryAdapter;
     Button save;
@@ -92,19 +88,14 @@ public class SelectBgmActivity extends AppCompatActivity {
 
     }
 
-    //!!!!!!!!!수정필요!!!!!!!!!!
     // Method : DB 에서 카테고리 받아오기
     // Return Value : void
     // Parameter : void
     // Use :  카테고리를 DB 에서 가져와서 Spinner 에서 보여주는 Method
     private void getCategory() {
         Toast.makeText(getApplicationContext(), "카테고리 목록을 만듦 ", Toast.LENGTH_SHORT).show();
-        ArrayList<Category>=dbManager.selectCategory();//DB
+        categoryList=dbManager.getCategoryList();//DB
 
-        while (cursor.moveToNext()) {
-            Category tmp = new Category(cursor.getString(0), cursor.getString(1));
-            categoryList.add(tmp);
-        }
         categoryAdapter = new CategoryListAdapter(this, categoryList);
         cateSpinner = (Spinner) findViewById(R.id.select_category);
 
@@ -114,7 +105,7 @@ public class SelectBgmActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //지금 보여지고 있는 ArrayList를 클리어
                 bgms.clear();
-                bgms.addAll(dbManager.getBGMList(Integer.parseInt(categoryList.get(position).getCateId())));//int형
+                bgms.addAll(dbManager.getBGMList(categoryList.get(position).getCateId()));//int형
 
                 adapter.notifyDataSetChanged();
             }
