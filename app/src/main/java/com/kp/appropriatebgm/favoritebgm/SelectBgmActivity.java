@@ -22,6 +22,7 @@ import com.kp.appropriatebgm.DBController.*;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.lang.String;
 
 import com.kp.appropriatebgm.R;
 

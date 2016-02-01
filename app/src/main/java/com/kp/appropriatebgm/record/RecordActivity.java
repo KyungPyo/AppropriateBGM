@@ -27,7 +27,10 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.kp.appropriatebgm.DBController.Category;
+import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.R;
+import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 
 public class RecordActivity extends AppCompatActivity {
     // 녹음 관련
@@ -68,6 +71,10 @@ public class RecordActivity extends AppCompatActivity {
     private EditText filenameEt = null;
     private Spinner categorySel = null;
     private int selectCategory = 0;
+
+    DBManager dbManager = DBManager.getInstance(this);//DB
+    ArrayList<Category> categoryList;
+    CategoryListAdapter categoryAdapter;
 
     // 저장 관련
 //    private RecordFileDBHelper fileDBHelper;
@@ -458,17 +465,12 @@ public class RecordActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.WRAP_CONTENT, true);
         // 백그라운드를 설정해야 사용자가 팝업윈도우 밖을 클릭했을때 종료된다.
         mPopupWindow.setBackgroundDrawable(new ColorDrawable());
-
         // 카테고리 스피너에 아이템 추가 (SQLLite select문 추가필요)
+        categoryList= dbManager.getCategoryList();
+        categoryAdapter = new CategoryListAdapter(this,categoryList);
+
         ArrayList<String> spinnerItem = new ArrayList<>();
         spinnerItem.add("카테고리를 선택하세요");
-
-        for (int i = 1; i < 20; i++)
-            spinnerItem.add("카테고리" + i);
-        final ArrayAdapter<String> mAdapter;
-        mAdapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, spinnerItem);
-
-        categorySel.setAdapter(mAdapter);
 
         // 카테고리 선택 스피너 선택 이벤트
         categorySel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -483,7 +485,7 @@ public class RecordActivity extends AppCompatActivity {
             }
         });
 
-
+        categorySel.setAdapter(categoryAdapter);
 
 
         // Method : 팝업윈도우내 저장버튼 클릭
@@ -532,11 +534,12 @@ public class RecordActivity extends AppCompatActivity {
 //                    db.execSQL(query);
 
 
-                    String category = mAdapter.getItem(selectCategory);
 
                     File file = new File(recordManager.getPath());
                     File renamedFile = new File(recordManager.getDirPath() + File.separator + newFileName + ".mp3");
                     file.renameTo(renamedFile);
+                    dbManager.insertBGM(recordManager.getDirPath(), newFileName, selectCategory);
+//                    Log.e("111",dbManager.)
                     // 파일을 이름변경해서 남기고 액티비티 종료(메인 액티비티로 돌아간다)
                     finish();
                 }
