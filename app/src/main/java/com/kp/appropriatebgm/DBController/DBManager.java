@@ -258,8 +258,8 @@ public class DBManager extends SQLiteOpenHelper {
         String query;
         Favorite favorite;
 
-        query = "SELECT f.favorite_id, f.bgm_path, b.bgm_name FROM favorite f, bgmlist b " +
-                "WHERE f.bgm_path = b.bgm_path ORDER BY f.favorite_id";
+        query = "SELECT f.favorite_id, f.bgm_path, b.bgm_name FROM favorite AS f LEFT JOIN bgmlist AS b " +
+                "ON f.bgm_path = b.bgm_path ORDER BY f.favorite_id";
 
         try {
             cursor = mDataBase.rawQuery(query, null);
@@ -269,17 +269,13 @@ public class DBManager extends SQLiteOpenHelper {
             }
 
             // Favorite 개수만큼 반복하면서 해당 번호에 설정된 즐겨찾기가 있으면 값을 넣어서 보내고 없으면 null로 보낸다.
-            cursor.moveToNext();
-            for (int i = 0; i < FAVORITE_SIZE; i++) {
-                int id = cursor.getInt(0);
-                if (id != i) {
-                    favorite = new Favorite(i, null, null);
-                } else {
-                    favorite = new Favorite(i, cursor.getString(1), cursor.getString(2));
-                    cursor.moveToNext();
-                }
+            while(cursor.moveToNext()){
+                favorite = new Favorite(cursor.getInt(0), cursor.getString(1), cursor.getString(2));
                 result.add(favorite);
             }
+
+            for(int i=0; i<result.size(); i++)
+                Log.i("favoriteList test", result.get(i).getFavoriteId() + result.get(i).getBgmName());
 
             return result;
         } catch (SQLiteException e) {
