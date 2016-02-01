@@ -22,8 +22,6 @@ public class DBManager extends SQLiteOpenHelper {
     static final String DB_NAME = "AppropriateBGM_DB";
     static final int DB_VERSION = 1;
 
-    static final int FAVORITE_SIZE = 12;
-
     Context mContext = null;
     private static DBManager mDBManager = null;
     private SQLiteDatabase mDataBase = null;
@@ -184,6 +182,7 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     /*****  DB 결과 요청(select)  *****/
+
     // Method : BGMList 불러오기
     // Return Value : ArrayList<BGMInfo> (BGMList 테이블에 저장된 정보 리스트)
     // Parameter : categoryId(요청한 Activity에서 검색하려는 카테고리 번호)
@@ -316,6 +315,23 @@ public class DBManager extends SQLiteOpenHelper {
     // Return Value :
     // Parameter :
     // Use :
+    public void insertBGM(String bgmPath, String bgmName, int categoryId){
+        StringBuffer query = new StringBuffer();
+
+        query.append("INSERT INTO BGMList(bgm_path, bgm_name, category_id) VALUES ('");
+        query.append(bgmPath);
+        query.append("', '");
+        query.append(bgmName);
+        query.append("', ");
+        query.append(categoryId);
+        query.append(")");
+
+        try {
+            mDataBase.execSQL(query.toString());
+        } catch (SQLiteException e) {
+            Log.e("insertBGM", e.toString());
+        }
+    }
 
     /*****  DB 등록 요청(insert)  *****/
 }
