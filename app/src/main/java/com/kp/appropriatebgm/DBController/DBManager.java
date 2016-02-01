@@ -311,10 +311,10 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
-    // Method :
-    // Return Value :
-    // Parameter :
-    // Use :
+    // Method : 새로운 BGM을 DB에 등록
+    // Return Value : void
+    // Parameter : bgmPath(새로운 BGM의 파일경로), bgmName(BGM의 이름), categoryId(새로운 BGM의 카테고리 분류번호)
+    // Use : 새로운 BGM을 DB에 추가한다. RecordActivity에서 녹음이 완료되면 사용
     public void insertBGM(String bgmPath, String bgmName, int categoryId){
         StringBuffer query = new StringBuffer();
 
@@ -334,4 +334,27 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     /*****  DB 등록 요청(insert)  *****/
+
+
+    /*****  DB 레코드 삭제(delete)  *****/
+
+    // Method : 카테고리 삭제
+    // Return Value : void
+    // Parameter : categoryIdList(삭제할 카테고리 번호 목록을 가지고 있는 배열)
+    // Use : CategoryActivity에서 삭제할 카테고리를 여러개 선택해서 삭제할 때 사용한다. 한개도 삭제 가능하다.
+    public void deleteCategory(int[] categoryIdList){
+        StringBuffer query = new StringBuffer();
+
+        query.append("DELETE FROM Category WHERE category_id in(");
+        for(int i=0; i<categoryIdList.length; i++){
+            query.append(categoryIdList[i]);
+            if(i < categoryIdList.length-1)
+                query.append(",");
+        }
+        query.append(")");
+
+        mDataBase.execSQL(query.toString());
+    }
+
+    /*****  DB 레코드 삭제(delete)  *****/
 }
