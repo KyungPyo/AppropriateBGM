@@ -41,8 +41,6 @@ public class SelectBgmActivity extends AppCompatActivity {
     int position;
     boolean isVisible = false;
 
-    Cursor cursor;
-
     CategoryListAdapter categoryAdapter;
     Button save;
     Button cancel;
@@ -94,7 +92,6 @@ public class SelectBgmActivity extends AppCompatActivity {
     // Parameter : void
     // Use :  카테고리를 DB 에서 가져와서 Spinner 에서 보여주는 Method
     private void getCategory() {
-        Toast.makeText(getApplicationContext(), "카테고리 목록을 만듦 ", Toast.LENGTH_SHORT).show();
         categoryList=dbManager.getCategoryList();//DB
 
         categoryAdapter = new CategoryListAdapter(this, categoryList);
@@ -119,6 +116,18 @@ public class SelectBgmActivity extends AppCompatActivity {
         cateSpinner.setAdapter(categoryAdapter);
     }
 
+    // Method : 즐겨찾기에 이미 해당 파일이 존재하는지 확인
+    // Return Value : boolean
+    // Parameter : temp : 전체 즐겨찾기 목록 받아옴, selectedBGM : 현재 사용자가 선택한 BGM의 정보
+    // Use :  즐겨찾기 목록의 모든 값의 Path와 현재 사용자가 선택한 파일의 Path를 비교하여 중복이 생기면 true;
+    private boolean isCollision(ArrayList<Favorite> temp, BGMInfo selectedBGM){
+        boolean collision=false;
+        for(int i=0;i<temp.size();i++){
+            if(selectedBGM.getBgmPath().equals(temp.get(i).getBgmPath()))
+                collision=true;
+        }
+        return collision;
+    }
     // Method : Setting Listeners
     // Return Value : void
     // Parameter : void
@@ -184,9 +193,9 @@ public class SelectBgmActivity extends AppCompatActivity {
                 if (selectedBGM == null) {//리스크 클릭이 안된 상태에서 확인을 눌렀을 때 취소
                     setResult(RESULT_CANCELED);
                     finish();
-                } else {
-                    intent.putExtra("selectedBGM", selectedBGM);
-                    intent.putExtra("position", position);
+                } else if(isCollision(dbManager.getFavoriteList(),selectedBGM)){
+                    Toast.makeText(getApplicationContext(), "중복된 파일이 즐겨찾기에 존재합니다.", Toast.LENGTH_SHORT).show();
+                } else{
                     dbManager.setFavorite(position,selectedBGM.getBgmPath());//DB
 
                     setResult(RESULT_OK, intent);
