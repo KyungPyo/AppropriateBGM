@@ -51,7 +51,7 @@ public class FavoriteActivity extends AppCompatActivity {
     // Parameter : void
     // Use : favorite Array List Setting
     private void loadFavoriteList(){
-        BGMInfo tmp=new BGMInfo(-1,"","",-1,-1);
+        BGMInfo tmp=new BGMInfo("","",0,0);
         //미리 비어있는 list를 만들고
         for(int i=0;i<FAVORITE_SIZE;i++){
             favoriteBgmList.add(tmp);

@@ -110,7 +110,7 @@ public class SelectBgmActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //지금 보여지고 있는 ArrayList를 클리어
                 bgms.clear();
-                bgms.addAll(dbManager.getBGMList(categoryList.get(position).getCateId()));//int형
+                bgms.addAll(dbManager.getBGMList(Integer.parseInt(categoryList.get(position).getCateId())));//int형
 
                 adapter.notifyDataSetChanged();
             }
