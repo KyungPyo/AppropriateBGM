@@ -76,7 +76,7 @@ public class SelectBgmActivity extends AppCompatActivity {
                 position = intent.getIntExtra("position", 0);
 
                 //해당 position은 DB에서 Favorite_id 이므로 해당 id가 있는 row를 지운다.
-                dbManager.update(null,position);//DB
+                dbManager.setFavorite(position,null);//DB
 
                 intent.putExtra("position", position);
 
@@ -178,7 +178,6 @@ public class SelectBgmActivity extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean isExist = false;
                 Intent intent = getIntent();
                 position = intent.getIntExtra("position", 0);
                 if (selectedBGM == null) {//리스크 클릭이 안된 상태에서 확인을 눌렀을 때 취소
@@ -188,7 +187,7 @@ public class SelectBgmActivity extends AppCompatActivity {
                     intent.putExtra("selectedBGM", selectedBGM);
                     intent.putExtra("position", position);
 
-                   dbManager.update(selectedBGM.getBgmId(), position);//DB
+                   dbManager.setFavorite(position,selectedBGM.getBgmPath());//DB
 
                     setResult(RESULT_OK, intent);
                     finish();
