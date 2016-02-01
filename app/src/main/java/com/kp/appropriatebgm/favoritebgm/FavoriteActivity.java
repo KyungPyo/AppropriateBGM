@@ -1,6 +1,7 @@
 package com.kp.appropriatebgm.favoritebgm;
 import com.kp.appropriatebgm.DBController.BGMInfo;
 import com.kp.appropriatebgm.DBController.DBManager;
+import com.kp.appropriatebgm.DBController.Favorite;
 import com.kp.appropriatebgm.R;
 
 import android.content.Intent;
@@ -21,14 +22,12 @@ import java.util.ArrayList;
 
 public class FavoriteActivity extends AppCompatActivity {
 
-    static int FAVORITE_SIZE=12;
-
     ListView favoriteList;
     Toolbar toolbar;
     Switch onOffSwitch;
 
-    BGMListAdapter adapter;
-    ArrayList<BGMInfo> favoriteBgmList;
+    FavoriteListAdapter adapter;
+    ArrayList<Favorite> favoriteArrayList;
     DBManager dbManager=DBManager.getInstance(this);//DB
     Cursor bgm;
 
@@ -44,33 +43,6 @@ public class FavoriteActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(null);   // 액션바에 타이틀 제거
 
     }
-
-
-    // Method : 목록 Making
-    // Return Value : void
-    // Parameter : void
-    // Use : favorite Array List Setting
-    private void loadFavoriteList(){
-        BGMInfo tmp=new BGMInfo("","",0,0);
-        //미리 비어있는 list를 만들고
-        for(int i=0;i<FAVORITE_SIZE;i++){
-            favoriteBgmList.add(tmp);
-        }
-        bgm=dbManager.selectFavorite(); //DB
-
-        //만약 즐겨찾기 db에 데이터가 있다면
-        if(bgm.getCount()!=0){
-            while(bgm.moveToNext()){
-                //favorite_id 즉 저장된 position의 현재값을 삭제하고
-                favoriteBgmList.remove(bgm.getInt(0));
-                BGMInfo m=dbManager.selectByBgmId(bgm.getInt(1));//DB
-                //해당 position에 db에 있는 값을 저장해 ListView에서 그 포지션에 보여지도록 한다.
-                favoriteBgmList.add(bgm.getInt(0),m);
-            }
-        }
-
-    }
-
     // Method : 초기설정
     // Return Value : void
     // Parameter : void
@@ -87,9 +59,8 @@ public class FavoriteActivity extends AppCompatActivity {
         });
 
         //listView 설정
-        favoriteBgmList=new ArrayList<BGMInfo>();
         favoriteList=(ListView)findViewById(R.id.favorite_list);
-        adapter=new BGMListAdapter(this,favoriteBgmList);
+        adapter=new FavoriteListAdapter(this,favoriteArrayList);
         favoriteList.setAdapter(adapter);
         //즐겨찾기 List중 아이템클릭시 Method
         favoriteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -97,7 +68,6 @@ public class FavoriteActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent();
                 intent.setClass(getApplicationContext(), SelectBgmActivity.class);
-                Log.d("ActivityA", position + "");
                 //현재 클릭된 position값을 넘겨준다.
                 intent.putExtra("position", position);
 
@@ -105,7 +75,7 @@ public class FavoriteActivity extends AppCompatActivity {
             }
         });
 
-        loadFavoriteList();
+        favoriteArrayList=dbManager.getFavoriteList(); //DB
         adapter.notifyDataSetChanged();
     }
 
@@ -118,8 +88,8 @@ public class FavoriteActivity extends AppCompatActivity {
         if(resultCode==RESULT_OK){//result OK
             BGMInfo tmp=(BGMInfo)data.getSerializableExtra("selectedBGM");//여기
             int tmpPosition=data.getIntExtra("position",0);
-            favoriteBgmList.remove(tmpPosition);
-            favoriteBgmList.add(tmpPosition,tmp);
+            favoriteArrayList.remove(tmpPosition);
+            favoriteArrayList.add(tmpPosition,new Favorite(tmpPosition,tmp.getBgmPath(),tmp.getBgmName()));
             adapter.notifyDataSetChanged();
         }else if(resultCode==RESULT_CANCELED){//result Canceled
             Toast.makeText(getApplicationContext(), "즐겨찾기 추가를 취소하셨습니다. ", Toast.LENGTH_SHORT).show();

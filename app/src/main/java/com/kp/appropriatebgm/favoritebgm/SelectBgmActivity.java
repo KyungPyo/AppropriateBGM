@@ -76,7 +76,7 @@ public class SelectBgmActivity extends AppCompatActivity {
                 position = intent.getIntExtra("position", 0);
 
                 //해당 position은 DB에서 Favorite_id 이므로 해당 id가 있는 row를 지운다.
-                dbManager.delete(position);//DB
+                dbManager.update(null,position);//DB
 
                 intent.putExtra("position", position);
 
@@ -188,22 +188,7 @@ public class SelectBgmActivity extends AppCompatActivity {
                     intent.putExtra("selectedBGM", selectedBGM);
                     intent.putExtra("position", position);
 
-                    //같은 자리에 있는지 확인
-                    Cursor bgm = dbManager.selectFavorite();//DB
-                    while (bgm.moveToNext()) {
-                        if (bgm.getInt(0) == position) {
-                            isExist = true;
-                            break;
-                        } else {
-                            isExist = false;
-                        }
-                    }
-
-                    if (isExist) {//존재하면 업데이트
-                        dbManager.update(selectedBGM.getBgmId(), position);//DB
-                    } else {//존재하지 않으면 추가 -> 이거 왜하냐면 딱 Favorite 크기만큼만 추가하려고
-                        dbManager.insert(selectedBGM.getBgmId(), position);//DB
-                    }
+                   dbManager.update(selectedBGM.getBgmId(), position);//DB
 
                     setResult(RESULT_OK, intent);
                     finish();
