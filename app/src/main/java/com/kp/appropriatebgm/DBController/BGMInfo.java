@@ -9,14 +9,12 @@ public class BGMInfo implements Serializable{
 
     private static final long serialVersionUID=100000L;
 
-    private int bgmId;
     private String bgmName;
     private String bgmPath;
     private boolean innerfile;
     private int categoryId;
 
-    public BGMInfo(int bgmId, String bgmName, String bgmPath, int innerfile, int categoryId){
-        this.bgmId = bgmId;
+    public BGMInfo(String bgmName, String bgmPath, int innerfile, int categoryId){
         this.bgmName = bgmName;
         this.bgmPath = bgmPath;
         this.categoryId = categoryId;
@@ -26,7 +24,6 @@ public class BGMInfo implements Serializable{
             this.innerfile = false;
     }
 
-    public int getBgmId(){  return bgmId;   }
     public String getBgmName(){ return bgmName; }
     public String getBgmPath(){ return bgmPath; }
     public boolean isInnerfile(){   return innerfile; }

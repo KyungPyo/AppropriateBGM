@@ -12,17 +12,17 @@ public class CheckPref {
     private SharedPreferences settingPref = null;
 
     public CheckPref(AppCompatActivity activity){
-        // °øÀ¯ ÇÁ·¹ÆÛ·±½º °´Ã¼¸¦ ¾ò¾î¿Â´Ù.
+
         settingPref = activity.getSharedPreferences("AppSetting", Context.MODE_PRIVATE);
     }
 
-    public void setFirstExcute(){   // ÃÖÃÊ½ÇÇà ÈÄ È£Ãâ
+    public void setFirstExcute(){
         SharedPreferences.Editor prefEditor = settingPref.edit();
         prefEditor.putBoolean("FirstExcute", false);
         prefEditor.apply();
     }
 
-    public boolean getFirstExcute(){    // ìµœì´ˆ?¤í–‰ ?¬ë? ë°›ì•„?¤ê¸°(ê¸°ë³¸ê°?true)
+    public boolean getFirstExcute(){
         return settingPref.getBoolean("FirstExcute", true);
     }
 

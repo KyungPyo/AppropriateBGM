@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.gd.category.CategoryActivity">
+    <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/ic_add_black_24dp"
+        android:title="추가"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_trash"
+        android:icon="@drawable/ic_local_drink_black_24dp"
+        android:title="삭제"
+        app:showAsAction="ifRoom" />
+</menu>
