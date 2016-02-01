@@ -21,6 +21,8 @@ public class DBManager extends SQLiteOpenHelper {
     static final String DB_NAME = "AppropriateBGM_DB";
     static final int DB_VERSION = 1;
 
+    static final int FAVORITE_SIZE = 12;
+
     Context mContext = null;
     private static DBManager mDBManager = null;
     private SQLiteDatabase mDataBase = null;
@@ -245,15 +247,23 @@ public class DBManager extends SQLiteOpenHelper {
         String query;
         Favorite favorite;
 
-        query = "SELECT * FROM Favorite order by favorite_id";
+        query = "SELECT f.favorite_id, f.bgm_path, b.bgm_name FROM favorite f, bgmlist b " +
+                "WHERE f.bgm_path = b.bgm_path ORDER BY f.favorite_id";
         cursor = mDataBase.rawQuery(query, null);
 
         if(cursor == null) {
             return null;
         }
 
-        while (cursor.moveToNext()){
-            favorite = new Favorite(cursor.getInt(0), cursor.getString(1));
+        cursor.moveToNext();
+        for (int i=0; i<FAVORITE_SIZE; i++){
+            int id = cursor.getInt(0);
+            if (id != i){
+                favorite = new Favorite(i, null, null);
+            } else {
+                favorite = new Favorite(i, cursor.getString(1), cursor.getString(2));
+                cursor.moveToNext();
+            }
             result.add(favorite);
         }
 
