@@ -1,6 +1,7 @@
 package com.kp.appropriatebgm.record;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -27,7 +29,10 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.kp.appropriatebgm.DBController.Category;
+import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.R;
+import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 
 public class RecordActivity extends AppCompatActivity {
     // 녹음 관련
@@ -57,6 +62,7 @@ public class RecordActivity extends AppCompatActivity {
 
     //다이얼로그
     private CancelRecordDlg mRerecordDialog;
+    private Category selectedCategory;
 
 //    private ImageView btnStop = null;
 
@@ -68,6 +74,10 @@ public class RecordActivity extends AppCompatActivity {
     private EditText filenameEt = null;
     private Spinner categorySel = null;
     private int selectCategory = 0;
+
+    DBManager dbManager = DBManager.getInstance(this);//DB
+    ArrayList<Category> categoryList;
+    CategoryListAdapter categoryAdapter;
 
     // 저장 관련
 //    private RecordFileDBHelper fileDBHelper;
@@ -456,30 +466,49 @@ public class RecordActivity extends AppCompatActivity {
         mPopupWindow = new PopupWindow(mPopupLayout,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT, true);
-        // 백그라운드를 설정해야 사용자가 팝업윈도우 밖을 클릭했을때 종료된다.
-        mPopupWindow.setBackgroundDrawable(new ColorDrawable());
 
-        // 카테고리 스피너에 아이템 추가 (SQLLite select문 추가필요)
+
+        categoryList= dbManager.getCategoryList();
+        categoryAdapter = new CategoryListAdapter(this,categoryList);
+        categorySel.setBackgroundColor(Color.WHITE);
         ArrayList<String> spinnerItem = new ArrayList<>();
         spinnerItem.add("카테고리를 선택하세요");
-
-        for (int i = 1; i < 20; i++)
-            spinnerItem.add("카테고리" + i);
-        final ArrayAdapter<String> mAdapter;
-        mAdapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, spinnerItem);
-
-        categorySel.setAdapter(mAdapter);
 
         // 카테고리 선택 스피너 선택 이벤트
         categorySel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectCategory = (int) id;
+                selectedCategory=categoryList.get(position);
+                Log.d("CategoryId",selectedCategory.getCateId()+"");
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+
+        categorySel.setAdapter(categoryAdapter);
+
+
+        // Method : filenameEt 엔터 및 특수문자 입력 안되기
+        // Return Value : void
+        // Parameter : OnKeyListener()
+        // Use :  안됨.
+        filenameEt.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(keyCode == event.KEYCODE_ENTER ){
+                    Toast.makeText(RecordActivity.this, "특수문자 안됨(단호)", Toast.LENGTH_SHORT).show();
+                    return true;
+                }else if(keyCode == event.KEYCODE_TAB ){
+                    Toast.makeText(RecordActivity.this, "특수문자 안됨(단호)", Toast.LENGTH_SHORT).show();
+                    return true;
+                }else if(keyCode == event.KEYCODE_SPACE ){
+                    Toast.makeText(RecordActivity.this, "특수문자 안됨(단호)", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                return  false;
             }
         });
 
@@ -505,7 +534,7 @@ public class RecordActivity extends AppCompatActivity {
                 // Use : 파일명이 입력안됬을때.
                 if (filenameEt.length() == 0) {     // 파일명 입력확인
                     Toast.makeText(RecordActivity.this, "파일명을 입력해주세요", Toast.LENGTH_SHORT).show();
-                    Log.i("111","파일명 안들어옴");
+                    Log.i("111", "파일명 안들어옴");
                 }
                 // Use : 파일명이 8글자 초과했을시
                 else if (filenameEt.length() > 8) {
@@ -514,30 +543,22 @@ public class RecordActivity extends AppCompatActivity {
 
                 }
                 // Use : 카테고리를 선택안했을시
-                else if (selectCategory == 0) {   // 카테고리 선택확인
+                else if (selectedCategory == null) {   // 카테고리 선택확인
                     Toast.makeText(RecordActivity.this, "카테고리를 선택해주세요", Toast.LENGTH_SHORT).show();
                     Log.i("333", "카테고리명 안들어옴");
                 }
                 // Use : 파일명이 중복일때
-                else if (f.isFile()){
-                    Toast.makeText(RecordActivity.this,"파일이름이 중복입니다.",Toast.LENGTH_SHORT).show();
+                else if (f.isFile()) {
+                    Toast.makeText(RecordActivity.this, "파일이름이 중복입니다.", Toast.LENGTH_SHORT).show();
                     Log.i("444", "파일명 중복");
                 }
                 // Use :  해당 예외처리사항이 아무것도 없을시 저장
-                else{
-
-                    // (SQLLite insert문 추가필요)
-//                    db = fileDBHelper.getWritableDatabase();
-//                    String query = String.format("INSERT INTO %s values (null, '%s');", TABLE_NAME, filenameEt);
-//                    db.execSQL(query);
-
-
-                    String category = mAdapter.getItem(selectCategory);
-
+                else {
                     File file = new File(recordManager.getPath());
                     File renamedFile = new File(recordManager.getDirPath() + File.separator + newFileName + ".mp3");
                     file.renameTo(renamedFile);
-                    // 파일을 이름변경해서 남기고 액티비티 종료(메인 액티비티로 돌아간다)
+                    dbManager.insertBGM(renamedFile.getPath(), newFileName, selectedCategory.getCateId());
+
                     finish();
                 }
             }

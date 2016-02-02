@@ -133,24 +133,50 @@ public class DBManager extends SQLiteOpenHelper {
         int fileCount = fileList.size();
         StringBuffer query = new StringBuffer();
 
-        query.append("SELECT bgm_path FROM BGMList WHERE bgm_path NOT IN (");
-        for (int i = 0; i < fileCount; i++) {
-            query.append("'");
-            query.append(fileList.get(i)[0]);
-            query.append("'");
-            if(i+1 != fileCount)
-                query.append(",");
+        try {
+            query.append("SELECT bgm_path FROM BGMList WHERE innerfile=0 AND bgm_path NOT IN (");
+            for (int i = 0; i < fileCount; i++) {
+                query.append("'");
+                query.append(fileList.get(i)[0]);
+                query.append("'");
+                if (i + 1 != fileCount)
+                    query.append(",");
+            }
+            query.append(");");
+            String completedQuery = query.toString();
+            Log.i("checkBGMFileExist", completedQuery);
+
+            Cursor notExistList = mDataBase.rawQuery(completedQuery, null);
+
+            // 없는 목록을 받아와서 DB에서 지운다. 먼저 없는 BGM 리스트를 String으로 만든다.
+            StringBuffer deleteList = new StringBuffer();
+            while (notExistList.moveToNext()) {
+                deleteList.append("'"+notExistList.getString(0)+"'");
+                if (!notExistList.isLast()) {
+                    deleteList.append(",");
+                }
+            }
+            Log.d("지워진 파일", deleteList.toString()+"");
+
+            // 카테고리 테이블에서 먼저 해당 bgm_path를 참조하고 있는 레코드 값을 null로 만들어준다.
+            query = new StringBuffer();
+            query.append("UPDATE Favorite SET bgm_path = null WHERE bgm_path in(");
+            query.append(deleteList.toString());
+            query.append(")");
+
+            mDataBase.execSQL(query.toString());
+
+            // BGMList 테이블에서 삭제해야 할 bgm_path를 가진 레코드를 삭제한다.
+            query = new StringBuffer();
+            query.append("DELETE FROM BGMList WHERE bgm_path in(");
+            query.append(deleteList.toString());
+            query.append(")");
+
+            mDataBase.execSQL(query.toString());
+        } catch (SQLiteException e){
+            Log.e("checkBGMFileExist", e.toString());
         }
-        query.append(");");
-        String completedQuery = query.toString();
-        Log.i("checkBGMFileExist", completedQuery);
 
-        Cursor notExistList = mDataBase.rawQuery(completedQuery, null);
-
-        // 없는 목록을 받아와서 DB에서 지운다
-        while(notExistList.moveToNext()){
-
-        }
     }
 
     // Method : 파일경로에 해당하는 DB 레코드가 존재하는지 확인
@@ -171,13 +197,6 @@ public class DBManager extends SQLiteOpenHelper {
             } catch (SQLiteConstraintException e){
                 Log.i("SQLite Error", "이미 존재하는 값 입력 : "+e.toString());
             }
-        }
-
-        // 입력 잘됐는지 확인하는 부분(삭제요망)
-        String test = "select * from BGMList";
-        Cursor cursor = mDataBase.rawQuery(test, null);
-        while(cursor.moveToNext()){
-            Log.i("잘나오냐??", cursor.getString(1));
         }
     }
 
@@ -217,7 +236,7 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
-    // Method : Category List 불러오기
+    // Method : Category List 불러오기x
     // Return Value : ArrayList<Category> (BGMList 테이블에 저장된 정보 리스트)
     // Parameter : void
     // Use : DB에 저장된 전체 Category 정보를 불러오는 메소드.
@@ -353,6 +372,7 @@ public class DBManager extends SQLiteOpenHelper {
 
         try {
             mDataBase.execSQL(query.toString());
+            Log.d("category_insertQuery",query.toString());
         } catch (SQLiteException e) {
             Log.e("insertBGM", e.toString());
         }

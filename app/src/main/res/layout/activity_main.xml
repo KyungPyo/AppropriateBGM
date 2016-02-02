@@ -51,12 +51,12 @@
                     android:paddingRight="2dp"
                     android:src="@drawable/ic_local_offer_black_18dp"/>
 
-                <TextView
-                    android:id="@+id/main_txt_currentcategory"
-                    android:layout_width="wrap_content"
+                <Spinner
+                    android:id="@+id/main_spinner_category"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:text="카테고리명여덟ㅅ"/>
+                    android:spinnerMode="dialog"
+                    android:prompt="@string/spinner_dialog_name" />
 
             </LinearLayout>
 
@@ -190,7 +190,7 @@
                     <!--<ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/btn_volume"
+                        android:src="@com.kp.appropriatebgm.drawable/btn_volume"
                         android:layout_weight="1"/>음량조절 버튼-->
 
                 </LinearLayout>

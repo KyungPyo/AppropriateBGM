@@ -24,6 +24,7 @@ import com.kp.appropriatebgm.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.lang.String;
 
 public class SelectBgmActivity extends AppCompatActivity {
 
@@ -54,8 +55,9 @@ public class SelectBgmActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_bgm);
 
         init();
-        //setCustomActionbar();
         addHeaderToList();
+        getCategory();
+        setListeners();
 
     }
 
@@ -84,6 +86,7 @@ public class SelectBgmActivity extends AppCompatActivity {
             }
         });
         list.addHeaderView(headerView);
+        list.setAdapter(adapter);
 
     }
 
@@ -226,14 +229,8 @@ public class SelectBgmActivity extends AppCompatActivity {
         bgms = dbManager.getBGMList(1);
 
         adapter = new BGMListAdapter(this, bgms);
-        list.setAdapter(adapter);
-
         save = (Button) findViewById(R.id.save_favorite);
         cancel = (Button) findViewById(R.id.cancel);
-
-        getCategory();
-
-        setListeners();
 
     }
 }
