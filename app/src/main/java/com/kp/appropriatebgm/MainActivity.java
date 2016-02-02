@@ -222,9 +222,8 @@ public class MainActivity extends AppCompatActivity {
     // Return Value : void
     // Parameter : ckecked: check박스를 보여줄지 숨길지를 결정하는 boolean형 변수
     // Use :  호출부에서 ckeck박스 컨트롤을 요청하면 화면에 반영시켜줌.
-
     void checkBoxVisibility(boolean checked){
-        bgmAdapter.isChecked(checked);
+        bgmAdapter.setCheckBoxVisible(checked);
         bgmAdapter.notifyDataSetChanged();
     }
 

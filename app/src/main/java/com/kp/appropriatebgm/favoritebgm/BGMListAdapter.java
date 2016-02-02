@@ -107,7 +107,7 @@ public class BGMListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void isChecked(boolean checked){
+    public void setCheckBoxVisible(boolean checked){
         isCheckBoxVisible=checked;
     }
 
