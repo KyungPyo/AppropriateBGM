@@ -470,7 +470,6 @@ public class RecordActivity extends AppCompatActivity {
         categoryList= dbManager.getCategoryList();
         categoryAdapter = new CategoryListAdapter(this,categoryList);
         categorySel.setBackgroundColor(Color.WHITE);
-        categorySel.setPopupBackgroundResource(R.drawable.dlgback);
         ArrayList<String> spinnerItem = new ArrayList<>();
         spinnerItem.add("카테고리를 선택하세요");
 

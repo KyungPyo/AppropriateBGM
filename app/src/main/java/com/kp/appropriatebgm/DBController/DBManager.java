@@ -378,6 +378,7 @@ public class DBManager extends SQLiteOpenHelper {
 
         try {
             mDataBase.execSQL(query.toString());
+            Log.d("category_insertQuery",query.toString());
         } catch (SQLiteException e) {
             Log.e("insertBGM", e.toString());
         }
