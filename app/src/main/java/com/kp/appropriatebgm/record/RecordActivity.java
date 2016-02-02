@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -490,6 +491,30 @@ public class RecordActivity extends AppCompatActivity {
         categorySel.setAdapter(categoryAdapter);
 
 
+        // Method : filenameEt 엔터 및 특수문자 입력 안되기
+        // Return Value : void
+        // Parameter : OnKeyListener()
+        // Use :  안됨.
+        filenameEt.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(keyCode == event.KEYCODE_ENTER ){
+                    Toast.makeText(RecordActivity.this, "특수문자 안됨(단호)", Toast.LENGTH_SHORT).show();
+                    return true;
+                }else if(keyCode == event.KEYCODE_TAB ){
+                    Toast.makeText(RecordActivity.this, "특수문자 안됨(단호)", Toast.LENGTH_SHORT).show();
+                    return true;
+                }else if(keyCode == event.KEYCODE_SPACE ){
+                    Toast.makeText(RecordActivity.this, "특수문자 안됨(단호)", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                return  false;
+            }
+        });
+
+
+
+
         // Method : 팝업윈도우내 저장버튼 클릭
         // Return Value : void
         // Parameter : View
@@ -509,7 +534,7 @@ public class RecordActivity extends AppCompatActivity {
                 // Use : 파일명이 입력안됬을때.
                 if (filenameEt.length() == 0) {     // 파일명 입력확인
                     Toast.makeText(RecordActivity.this, "파일명을 입력해주세요", Toast.LENGTH_SHORT).show();
-                    Log.i("111","파일명 안들어옴");
+                    Log.i("111", "파일명 안들어옴");
                 }
                 // Use : 파일명이 8글자 초과했을시
                 else if (filenameEt.length() > 8) {
@@ -523,26 +548,16 @@ public class RecordActivity extends AppCompatActivity {
                     Log.i("333", "카테고리명 안들어옴");
                 }
                 // Use : 파일명이 중복일때
-                else if (f.isFile()){
-                    Toast.makeText(RecordActivity.this,"파일이름이 중복입니다.",Toast.LENGTH_SHORT).show();
+                else if (f.isFile()) {
+                    Toast.makeText(RecordActivity.this, "파일이름이 중복입니다.", Toast.LENGTH_SHORT).show();
                     Log.i("444", "파일명 중복");
                 }
                 // Use :  해당 예외처리사항이 아무것도 없을시 저장
-                else{
-
-                    // (SQLLite insert문 추가필요)
-//                    db = fileDBHelper.getWritableDatabase();
-//                    String query = String.format("INSERT INTO %s values (null, '%s');", TABLE_NAME, filenameEt);
-//                    db.execSQL(query);
-
-
-
+                else {
                     File file = new File(recordManager.getPath());
                     File renamedFile = new File(recordManager.getDirPath() + File.separator + newFileName + ".mp3");
                     file.renameTo(renamedFile);
-                    dbManager.insertBGM(recordManager.getDirPath(), newFileName, selectedCategory.getCateId());
-//                    Log.e("111",dbManager.)
-                    // 파일을 이름변경해서 남기고 액티비티 종료(메인 액티비티로 돌아간다)
+                    dbManager.insertBGM(renamedFile.getPath(), newFileName, selectedCategory.getCateId());
 
                     finish();
                 }
