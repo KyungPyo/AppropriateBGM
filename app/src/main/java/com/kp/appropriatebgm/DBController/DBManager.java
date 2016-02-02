@@ -11,6 +11,7 @@ import android.util.Log;
 import com.kp.appropriatebgm.R;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -147,32 +148,40 @@ public class DBManager extends SQLiteOpenHelper {
             Log.i("checkBGMFileExist", completedQuery);
 
             Cursor notExistList = mDataBase.rawQuery(completedQuery, null);
-            /*
+
             // 없는 목록을 받아와서 DB에서 지운다. 먼저 없는 BGM 리스트를 String으로 만든다.
             StringBuffer deleteList = new StringBuffer();
+            File existCheck;
             while (notExistList.moveToNext()) {
-                deleteList.append("'"+notExistList.getString(0)+"'");
-                if (!notExistList.isLast()) {
-                    deleteList.append(",");
+                existCheck = new File(notExistList.getString(0));
+                // 해당 파일이 정말 존재하지 않으면(미디어풀 DB에 아직 등록되지 않았을 수도 있기 때문에 한번 더 체크)
+                if ( !existCheck.isFile() ) {
+                    // 삭제 리스트에 추가
+                    deleteList.append("'"+notExistList.getString(0)+"'");
+                    if (!notExistList.isLast()) {
+                        deleteList.append(",");
+                    }
                 }
             }
-            Log.d("지워진 파일", deleteList.toString()+"");
+            Log.d("지워질 파일", deleteList.toString()+"");
 
-            // 카테고리 테이블에서 먼저 해당 bgm_path를 참조하고 있는 레코드 값을 null로 만들어준다.
-            query = new StringBuffer();
-            query.append("UPDATE Favorite SET bgm_path = null WHERE bgm_path in(");
-            query.append(deleteList.toString());
-            query.append(")");
+            if (deleteList.length() > 1) {
+                // 카테고리 테이블에서 먼저 해당 bgm_path를 참조하고 있는 레코드 값을 null로 만들어준다.
+                query = new StringBuffer();
+                query.append("UPDATE Favorite SET bgm_path = null WHERE bgm_path in(");
+                query.append(deleteList.toString());
+                query.append(")");
 
-            mDataBase.execSQL(query.toString());
+                mDataBase.execSQL(query.toString());
 
-            // BGMList 테이블에서 삭제해야 할 bgm_path를 가진 레코드를 삭제한다.
-            query = new StringBuffer();
-            query.append("DELETE FROM BGMList WHERE bgm_path in(");
-            query.append(deleteList.toString());
-            query.append(")");
+                // BGMList 테이블에서 삭제해야 할 bgm_path를 가진 레코드를 삭제한다.
+                query = new StringBuffer();
+                query.append("DELETE FROM BGMList WHERE bgm_path in(");
+                query.append(deleteList.toString());
+                query.append(")");
 
-            mDataBase.execSQL(query.toString());*/
+                mDataBase.execSQL(query.toString());
+            }
         } catch (SQLiteException e){
             Log.e("checkBGMFileExist", e.toString());
         }
