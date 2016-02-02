@@ -467,8 +467,9 @@ public class RecordActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT, true);
 
-
         categoryList= dbManager.getCategoryList();
+        categoryList.remove(0);
+
         categoryAdapter = new CategoryListAdapter(this,categoryList);
         categorySel.setBackgroundColor(Color.WHITE);
         ArrayList<String> spinnerItem = new ArrayList<>();
