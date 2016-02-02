@@ -147,7 +147,7 @@ public class DBManager extends SQLiteOpenHelper {
             Log.i("checkBGMFileExist", completedQuery);
 
             Cursor notExistList = mDataBase.rawQuery(completedQuery, null);
-
+            /*
             // 없는 목록을 받아와서 DB에서 지운다. 먼저 없는 BGM 리스트를 String으로 만든다.
             StringBuffer deleteList = new StringBuffer();
             while (notExistList.moveToNext()) {
@@ -172,7 +172,7 @@ public class DBManager extends SQLiteOpenHelper {
             query.append(deleteList.toString());
             query.append(")");
 
-            mDataBase.execSQL(query.toString());
+            mDataBase.execSQL(query.toString());*/
         } catch (SQLiteException e){
             Log.e("checkBGMFileExist", e.toString());
         }
