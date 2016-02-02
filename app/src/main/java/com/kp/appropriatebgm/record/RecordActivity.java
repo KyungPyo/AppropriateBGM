@@ -554,19 +554,10 @@ public class RecordActivity extends AppCompatActivity {
                 }
                 // Use :  해당 예외처리사항이 아무것도 없을시 저장
                 else {
-
-                    // (SQLLite insert문 추가필요)
-//                    db = fileDBHelper.getWritableDatabase();
-//                    String query = String.format("INSERT INTO %s values (null, '%s');", TABLE_NAME, filenameEt);
-//                    db.execSQL(query);
-
-
                     File file = new File(recordManager.getPath());
                     File renamedFile = new File(recordManager.getDirPath() + File.separator + newFileName + ".mp3");
                     file.renameTo(renamedFile);
-                    dbManager.insertBGM(recordManager.getDirPath(), newFileName, selectedCategory.getCateId());
-//                    Log.e("111",dbManager.)
-                    // 파일을 이름변경해서 남기고 액티비티 종료(메인 액티비티로 돌아간다)
+                    dbManager.insertBGM(renamedFile.getPath(), newFileName, selectedCategory.getCateId());
 
                     finish();
                 }
