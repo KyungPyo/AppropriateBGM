@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.kp.appropriatebgm.DBController.DBManager;
+import com.kp.appropriatebgm.record.RecordManager;
 
 import java.util.ArrayList;
 
@@ -33,15 +34,17 @@ public class LogoActivity extends AppCompatActivity {
             message.setText("앱 초기 설정중입니다.");
             Log.i("First Excute!!", "okok");
             mPref.setFirstExcute();
+
+            // RecordManager 객체의 초기설정을 이용하여 기본 디렉토리가 존재하지 않으면 생성한다.
+            RecordManager recordManager = new RecordManager(getString(R.string.app_name));
+            recordManager = null;
         }
 
         // 싱글톤 객체를 받아오면서 상속받은 SQLiteOpenHelper 클래스를 이용하여 DB를 생성/수정/열기 한다.
         dbManager = DBManager.getInstance(this);
-
-        // RecordManager 객체의 초기설정을 이용하여 기본 디렉토리가 존재하지 않으면 생성한다.
-//        RecordManager recordManager = new RecordManager(getString(R.string.app_name));
-//        recordManager = null;
+        // 단말기에 저장된 음악파일 검색 및 무결성 검사
         initStorageBGMFiles();
+
 
         // 로고화면에서 잠시 대기하면서 초기설정을 하고 메인 액티비티로 전환
         Thread waitThread = new Thread("Wait and Start Thread"){
@@ -80,6 +83,7 @@ public class LogoActivity extends AppCompatActivity {
             file[0] = cursor.getString(0);
             file[1] = cursor.getString(1);
             fileList.add(file);
+            Log.i("저장된 파일들", cursor.getString(0)+" : "+cursor.getString(1));
         }
 
         dbManager.checkBGMList(fileList);

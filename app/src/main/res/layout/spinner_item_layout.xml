@@ -4,8 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical"
-    android:background="#ffffff"
+    android:background="#00000000"
     android:paddingBottom="10dp"
+<<<<<<< HEAD
     android:paddingTop="10dp"
     android:orientation="horizontal">
     <TextView
@@ -24,3 +25,13 @@
         android:gravity="center"
         />
 </LinearLayout>
+=======
+    android:paddingTop="10dp">
+<TextView
+    android:id="@+id/category_item"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    android:textColor="#FFCCCC"/>
+    </LinearLayout>
+>>>>>>> 02aa76cb48080abf1c819fc76534fd28964e40f0
