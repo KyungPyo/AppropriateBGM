@@ -1,6 +1,7 @@
 package com.kp.appropriatebgm.record;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -27,7 +28,10 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.kp.appropriatebgm.DBController.Category;
+import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.R;
+import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 
 public class RecordActivity extends AppCompatActivity {
     // 녹음 관련
@@ -57,6 +61,7 @@ public class RecordActivity extends AppCompatActivity {
 
     //다이얼로그
     private CancelRecordDlg mRerecordDialog;
+    private Category selectedCategory;
 
 //    private ImageView btnStop = null;
 
@@ -68,6 +73,10 @@ public class RecordActivity extends AppCompatActivity {
     private EditText filenameEt = null;
     private Spinner categorySel = null;
     private int selectCategory = 0;
+
+    DBManager dbManager = DBManager.getInstance(this);//DB
+    ArrayList<Category> categoryList;
+    CategoryListAdapter categoryAdapter;
 
     // 저장 관련
 //    private RecordFileDBHelper fileDBHelper;
@@ -456,25 +465,21 @@ public class RecordActivity extends AppCompatActivity {
         mPopupWindow = new PopupWindow(mPopupLayout,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT, true);
-        // 백그라운드를 설정해야 사용자가 팝업윈도우 밖을 클릭했을때 종료된다.
-        mPopupWindow.setBackgroundDrawable(new ColorDrawable());
 
-        // 카테고리 스피너에 아이템 추가 (SQLLite select문 추가필요)
+
+        categoryList= dbManager.getCategoryList();
+        categoryAdapter = new CategoryListAdapter(this,categoryList);
+        categorySel.setBackgroundColor(Color.WHITE);
+        categorySel.setPopupBackgroundResource(R.drawable.dlgback);
         ArrayList<String> spinnerItem = new ArrayList<>();
         spinnerItem.add("카테고리를 선택하세요");
-
-        for (int i = 1; i < 20; i++)
-            spinnerItem.add("카테고리" + i);
-        final ArrayAdapter<String> mAdapter;
-        mAdapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, spinnerItem);
-
-        categorySel.setAdapter(mAdapter);
 
         // 카테고리 선택 스피너 선택 이벤트
         categorySel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectCategory = (int) id;
+                selectedCategory=categoryList.get(position);
+                Log.d("CategoryId",selectedCategory.getCateId()+"");
             }
 
             @Override
@@ -483,7 +488,7 @@ public class RecordActivity extends AppCompatActivity {
             }
         });
 
-
+        categorySel.setAdapter(categoryAdapter);
 
 
         // Method : 팝업윈도우내 저장버튼 클릭
@@ -514,7 +519,7 @@ public class RecordActivity extends AppCompatActivity {
 
                 }
                 // Use : 카테고리를 선택안했을시
-                else if (selectCategory == 0) {   // 카테고리 선택확인
+                else if (selectedCategory == null) {   // 카테고리 선택확인
                     Toast.makeText(RecordActivity.this, "카테고리를 선택해주세요", Toast.LENGTH_SHORT).show();
                     Log.i("333", "카테고리명 안들어옴");
                 }
@@ -532,12 +537,14 @@ public class RecordActivity extends AppCompatActivity {
 //                    db.execSQL(query);
 
 
-                    String category = mAdapter.getItem(selectCategory);
 
                     File file = new File(recordManager.getPath());
                     File renamedFile = new File(recordManager.getDirPath() + File.separator + newFileName + ".mp3");
                     file.renameTo(renamedFile);
+                    dbManager.insertBGM(recordManager.getDirPath(), newFileName, selectedCategory.getCateId());
+//                    Log.e("111",dbManager.)
                     // 파일을 이름변경해서 남기고 액티비티 종료(메인 액티비티로 돌아간다)
+
                     finish();
                 }
             }
