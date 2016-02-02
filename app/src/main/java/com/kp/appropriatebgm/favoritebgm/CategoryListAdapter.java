@@ -40,6 +40,8 @@ public class CategoryListAdapter extends BaseAdapter {
         return position;
     }
 
+    public int getlistId(int position){ return categoryArrayList.get(position).getCateId(); }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View itemLayout=convertView;

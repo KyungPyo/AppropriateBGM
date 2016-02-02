@@ -316,9 +316,9 @@ public class DBManager extends SQLiteOpenHelper {
 
             cursor.moveToNext();
             if (cursor.getInt(0) == 0) {
-                return true;
-            } else {
                 return false;
+            } else {
+                return true;
             }
         } catch (SQLiteException e){
             // 오류가 난 경우는 일단 중복값이 있다고 반환한다.

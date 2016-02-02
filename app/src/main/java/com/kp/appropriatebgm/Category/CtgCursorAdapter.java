@@ -9,7 +9,10 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.R;
+
+import java.util.ArrayList;
 
 /**
  * Created by GD on 2016-01-28.
@@ -21,6 +24,7 @@ public class CtgCursorAdapter extends CursorAdapter
     final static String KEY_ID = "_id";
     final static String KEY_NAME = "name";
     final static String TABLE_NAME = "ctgtable";
+    ArrayList<Category> ctgArrayList = null;
 
     CheckBox tvchk;
 
