@@ -8,10 +8,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,6 +31,7 @@ import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 import com.kp.appropriatebgm.favoritebgm.FavoriteActivity;
 
 import java.util.ArrayList;
+import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Category> categoryList;
     private Spinner categorySpinner;
     private BGMListAdapter bgmAdapter;
+
+    private CheckBox bgmCkeckBox;
     /**** 멤버 선언 ****/
 
     /**** 화면 설정 ****/
@@ -201,15 +206,27 @@ public class MainActivity extends AppCompatActivity {
                 if(groupFileManage.getVisibility() == View.INVISIBLE) {
                     groupFileManage.setVisibility(View.VISIBLE);
                     btnFileManage.setVisibility(View.INVISIBLE);
+                    checkBoxVisibility(true);
                 } else {
                     groupFileManage.setVisibility(View.INVISIBLE);
                     btnFileManage.setVisibility(View.VISIBLE);
+                    checkBoxVisibility(false);
                 }
                 break;
             }
         }
     }
     /**** 기타 이벤트 부분 ****/
+
+    // Method : CheckBox controller
+    // Return Value : void
+    // Parameter : ckecked: check박스를 보여줄지 숨길지를 결정하는 boolean형 변수
+    // Use :  호출부에서 ckeck박스 컨트롤을 요청하면 화면에 반영시켜줌.
+
+    void checkBoxVisibility(boolean checked){
+        bgmAdapter.isChecked(checked);
+        bgmAdapter.notifyDataSetChanged();
+    }
 
     // Method : Main의 BGMList 초기 설정
     // Return Value : void

@@ -10,18 +10,17 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:padding="5dp"
+        android:padding="15dp"
         android:layout_marginLeft="3dp"
         android:textSize="13dp"
         android:gravity="left" />
 
     <CheckBox
         android:id="@+id/tv_chk"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:padding="8dp"
         android:gravity="center"
-        android:focusable="false"
-        android:visibility="invisible"/>
+        android:focusable="false" />
 
 </LinearLayout>
