@@ -151,12 +151,12 @@ public class DBManager extends SQLiteOpenHelper {
             // 없는 목록을 받아와서 DB에서 지운다. 먼저 없는 BGM 리스트를 String으로 만든다.
             StringBuffer deleteList = new StringBuffer();
             while (notExistList.moveToNext()) {
-                deleteList.append(notExistList.getString(0));
+                deleteList.append("'"+notExistList.getString(0)+"'");
                 if (!notExistList.isLast()) {
                     deleteList.append(",");
                 }
             }
-            Log.d("지워진 파일", deleteList.toString());
+            Log.d("지워진 파일", deleteList.toString()+"");
 
             // 카테고리 테이블에서 먼저 해당 bgm_path를 참조하고 있는 레코드 값을 null로 만들어준다.
             query = new StringBuffer();
@@ -185,7 +185,7 @@ public class DBManager extends SQLiteOpenHelper {
     // Use : 음악파일이 DB의 BGMList 테이블에 레코드로 등록되어있는지 확인하고, 없으면 Insert한다.
     private void checkBGMRecordExist(ArrayList<String[]> fileList){
         int fileCount = fileList.size();
-        StringBuffer query = null;
+        StringBuffer query;
 
         for (int i = 0; i < fileCount; i++) {
             try{
