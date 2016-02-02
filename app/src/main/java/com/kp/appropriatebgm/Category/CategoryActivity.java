@@ -255,7 +255,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                 }
                 // Use : 리스트 크기만큼의 반복문을 돌려 각각의 리스트 아이템의 체크박스에 접근하여
                 //       체크박스의 숨김 / 표시 여부를 설정한다.
-                for(int i=0 ; i<ctg_Listview.getCount() ; i++)
+                for(int i=2 ; i<ctg_Listview.getCount() ; i++)
                 {
                     ViewGroup child = (ViewGroup) ctg_Listview.getChildAt(i);
                     CheckBox listchk = (CheckBox) child.getChildAt(1);
@@ -280,66 +280,80 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long lid) {
         final int itemId = ctgAdapter.getlistId(position);
-        final CharSequence[] property_items = {"이름 변경", "삭 제", "취 소"};
-        AlertDialog.Builder alertDig = new AlertDialog.Builder(view.getContext());
-        alertDig.setTitle(R.string.ctg_long_property);
-        alertDig.setItems(property_items, new DialogInterface.OnClickListener(){
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //Log.e("id --------", Long.toString(itemid));
-                //Log.e("item --------", Integer.toString(which));
-                switch(which)
-                {
-                    case 0:
-                        // Use : 이름 변경의 경우
-                        // 이름 변경을 하는 다이얼로그를 띄우며 변경 시 해당 아이템의 아이디를 받아 다이얼로그의 EditText의 값을 DB에 갱신하는 UPDATE 연산 수행
-                        final EditText nametxt = new EditText(CategoryActivity.this);
-                        nametxt.setSingleLine(true);
-                        final String modifyTitleStr = nametxt.getText().toString();
-                        AlertDialog.Builder name_Dig = new AlertDialog.Builder(CategoryActivity.this)
-                                .setTitle("이름 변경");
-                        name_Dig.setView(nametxt);
 
-                        name_Dig.setNegativeButton(R.string.ctg_addctl_btn, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
-                        //변경 버튼
-                        .setPositiveButton(R.string.ctg_add_btn, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    //UPDATE 메소드
-                                    CtgUpdate(modifyTitleStr, itemId);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+        if(position>=2) {
+            final CharSequence[] property_items = {"이름 변경", "삭 제", "취 소"};
+            AlertDialog.Builder alertDig = new AlertDialog.Builder(view.getContext());
+            alertDig.setTitle(R.string.ctg_long_property);
+            alertDig.setItems(property_items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Log.e("id --------", Long.toString(itemid));
+                    //Log.e("item --------", Integer.toString(which));
+                    switch (which) {
+                        case 0:
+                            // Use : 이름 변경의 경우
+                            // 이름 변경을 하는 다이얼로그를 띄우며 변경 시 해당 아이템의 아이디를 받아 다이얼로그의 EditText의 값을 DB에 갱신하는 UPDATE 연산 수행
+                            final EditText nametxt = new EditText(CategoryActivity.this);
+                            nametxt.setSingleLine(true);
+                            AlertDialog.Builder name_Dig = new AlertDialog.Builder(CategoryActivity.this)
+                                    .setTitle("이름 변경");
+                            name_Dig.setView(nametxt);
+
+                            name_Dig.setNegativeButton(R.string.ctg_addctl_btn, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
                                 }
-                            }
-                        });      //취소 버튼
+                            })
+                                    //변경 버튼
+                                    .setPositiveButton(R.string.ctg_add_btn, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            try {
+                                                String modifyTitleStr = nametxt.getText().toString();
+                                                if (CtgcheckRepetition(modifyTitleStr) == true) {
+                                                    AlertDialog.Builder repeat_Dig = new AlertDialog.Builder(CategoryActivity.this);
+                                                    repeat_Dig.setTitle("카테고리 이름이 중복됩니다.")
+                                                            .setNegativeButton("확인", new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface indialog, int which) {
+                                                                    indialog.cancel();
+                                                                }
+                                                            });
+                                                    repeat_Dig.show();
+                                                } else {
+                                                    CtgUpdate(modifyTitleStr, itemId);
+                                                }
+                                                //UPDATE 메소드
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });      //취소 버튼
 
-                        name_Dig.setMessage(R.string.ctg_modify_message);
-                        name_Dig.show();
-                        nametxt.setText("");
-                        break;
-                    case 1:
-                        // Use : 카테고리 삭제의 경우
-                        //      해당 아이템의 id를 가져와 DELETE 연산을 수행
+                            name_Dig.setMessage(R.string.ctg_modify_message);
+                            name_Dig.show();
+                            nametxt.setText("");
+                            break;
+                        case 1:
+                            // Use : 카테고리 삭제의 경우
+                            //      해당 아이템의 id를 가져와 DELETE 연산을 수행
 
-                        CtgDelete(itemId);
-                        dialog.dismiss();
-                        break;
-                    case 2:
-                        //취소의 경우 다이얼로그를 닫는다.
-                        dialog.cancel();
-                        break;
-                    default:
-                        break;
+                            CtgDelete(itemId);
+                            dialog.dismiss();
+                            break;
+                        case 2:
+                            //취소의 경우 다이얼로그를 닫는다.
+                            dialog.cancel();
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }
-        });
-        alertDig.show();
+            });
+            alertDig.show();
+        }
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event){
@@ -348,7 +362,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
             if (keyCode == android.view.KeyEvent.KEYCODE_BACK && fab.getVisibility()==View.VISIBLE) {
                 fab.setVisibility(View.INVISIBLE);
                 fab.setEnabled(false);
-                for(int i=0 ; i<ctg_Listview.getCount() ; i++)
+                for(int i=2 ; i<ctg_Listview.getCount() ; i++)
                 {
                     ViewGroup child = (ViewGroup) ctg_Listview.getChildAt(i);
                     CheckBox listchk = (CheckBox) child.getChildAt(1);
@@ -380,8 +394,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     public void CtgInsert(String t_title)
     {
         dbManager.insertCategory(t_title);
-        ctgArrayList = dbManager.getCategoryList();
-        ctgAdapter.notifyDataSetChanged();
+        CtgDBInit();
     }
     // Method : 카테고리 이름 업데이트(변경)
     // Return value : void
@@ -390,8 +403,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     //      changeCursor을 통해 리스트 최신화
     public void CtgUpdate(String t_title, int listId) {
         dbManager.updateCategory(listId, t_title);
-        ctgArrayList = dbManager.getCategoryList();
-        ctgAdapter.notifyDataSetChanged();
+        CtgDBInit();
     }
     // Method : 카테고리 삭제
     // Return value : void
@@ -403,8 +415,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
         int[] delete_list = new int[1];
         delete_list[0] = listid;
         dbManager.deleteCategory(delete_list);
-        ctgArrayList = dbManager.getCategoryList();
-        ctgAdapter.notifyDataSetChanged();
+        CtgDBInit();
     }
 
     // Method : 카테고리 체크 부분 삭제
@@ -432,8 +443,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
         //      changeCursor을 통해 리스트 최신화
         //      더 이상 값이 없는 경우의 무한 루프를 고려 조건으로 반복문 탈출
         dbManager.deleteCategory(check_list);
-        ctgArrayList = dbManager.getCategoryList();
-        ctgAdapter.notifyDataSetChanged();
+        CtgDBInit();
 
     }
     // Method : 카테고리 이름 중복 처리
@@ -445,4 +455,16 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
         return dbManager.isExistCategoryName(s_title);
     }
 
+    // Method : DB 다시 받아오기
+    // Return value : void
+    // paremeter : void
+    // Use : 카테고리 ListView의 추가,삭제,갱신과 같은 변화가 일어날 시 DB를 다시 받아와 리스트를 쉽게 갱신하도록 선언을 분리해놓았다.
+    public void CtgDBInit()
+    {
+        ctgArrayList = dbManager.getCategoryList();
+        ctgAdapter = new CategoryListAdapter(this, ctgArrayList);
+        // Use : list에 커서 어댑터 연결 및 아이템클릭리스너 설정
+        ctg_Listview.setAdapter(ctgAdapter);
+        ctgAdapter.notifyDataSetChanged();
+    }
 }
