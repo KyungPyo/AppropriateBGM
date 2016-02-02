@@ -11,14 +11,24 @@ import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 
 
 import com.kp.appropriatebgm.Category.CategoryActivity;
+import com.kp.appropriatebgm.DBController.BGMInfo;
+import com.kp.appropriatebgm.DBController.Category;
+import com.kp.appropriatebgm.DBController.DBManager;
+import com.kp.appropriatebgm.favoritebgm.BGMListAdapter;
+import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 import com.kp.appropriatebgm.favoritebgm.FavoriteActivity;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,6 +56,14 @@ public class MainActivity extends AppCompatActivity {
     private View btnMoveToRecord;
     private View btnMoveToFavorite;
     private View btnMoveToCategory;
+
+    private ListView bgmListView;
+    private CategoryListAdapter categoryAdapter;
+    private DBManager dbManager;
+    private ArrayList<BGMInfo> bgmList;
+    private ArrayList<Category> categoryList;
+    private Spinner categorySpinner;
+    private BGMListAdapter bgmAdapter;
     /**** 멤버 선언 ****/
 
     /**** 화면 설정 ****/
@@ -57,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
         initMember();           // 멤버변수 초기화
         initMenuLayoutSize();   // 메뉴 레이아웃 크기설정
         initDrawerToggle();     // 네비게이션 드로워 리스너설정
+        initBgmList();          // BGMList 초기 구성
+        initCategory();         // 카테고리 목록 초기 구성 및 이벤트 정의
 
 
     }
@@ -77,6 +97,11 @@ public class MainActivity extends AppCompatActivity {
         btnMoveToRecord = findViewById(R.id.main_to_record);
         btnMoveToFavorite = findViewById(R.id.main_to_favorite);
         btnMoveToCategory = findViewById(R.id.main_to_category);
+
+        bgmListView=(ListView)findViewById(R.id.main_list_soundlist);
+        categorySpinner=(Spinner)findViewById(R.id.main_spinner_category);
+
+        dbManager=DBManager.getInstance(this);
 
         setSupportActionBar(toolbar);           // Toolbar를 액션바로 사용한다
         getSupportActionBar().setTitle(null);   // 액션바에 타이틀 제거
@@ -185,5 +210,41 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     /**** 기타 이벤트 부분 ****/
+
+    // Method : Main의 BGMList 초기 설정
+    // Return Value : void
+    // Parameter : void
+    // Use :  DB에서 전체리스트를 가져오고 list뷰의 어댑터 설정을 담당. onCreate에서 호출
+    private void initBgmList(){
+        bgmList=dbManager.getBGMList(1);
+        bgmAdapter=new BGMListAdapter(this,bgmList);
+        bgmListView.setAdapter(bgmAdapter);
+    }
+
+    // Method : DB 에서 카테고리 받아오기
+    // Return Value : void
+    // Parameter : void
+    // Use :  카테고리를 DB 에서 가져와서 Spinner 에서 보여주는 Method
+    private void initCategory() {
+        categoryList=dbManager.getCategoryList();//DB
+        categoryAdapter = new CategoryListAdapter(this, categoryList);
+
+        //스피너에서 item을 선택했을 때
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //지금 보여지고 있는 ArrayList를 클리어
+                bgmList.clear();
+                bgmList.addAll(dbManager.getBGMList(categoryList.get(position).getCateId()));
+                bgmAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        categorySpinner.setAdapter(categoryAdapter);
+    }
 
 }

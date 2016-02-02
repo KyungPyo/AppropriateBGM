@@ -134,7 +134,7 @@ public class DBManager extends SQLiteOpenHelper {
         StringBuffer query = new StringBuffer();
 
         try {
-            query.append("SELECT bgm_path FROM BGMList WHERE bgm_path NOT IN (");
+            query.append("SELECT bgm_path FROM BGMList WHERE innerfile=0 AND bgm_path NOT IN (");
             for (int i = 0; i < fileCount; i++) {
                 query.append("'");
                 query.append(fileList.get(i)[0]);
@@ -148,7 +148,7 @@ public class DBManager extends SQLiteOpenHelper {
 
             Cursor notExistList = mDataBase.rawQuery(completedQuery, null);
 
-            // 없는 목록을 받아와서 DB에서 지운다
+            // 없는 목록을 받아와서 DB에서 지운다. 먼저 없는 BGM 리스트를 String으로 만든다.
             StringBuffer deleteList = new StringBuffer();
             while (notExistList.moveToNext()) {
                 deleteList.append(notExistList.getString(0));
@@ -156,6 +156,7 @@ public class DBManager extends SQLiteOpenHelper {
                     deleteList.append(",");
                 }
             }
+            Log.d("지워진 파일", deleteList.toString());
 
             // 카테고리 테이블에서 먼저 해당 bgm_path를 참조하고 있는 레코드 값을 null로 만들어준다.
             query = new StringBuffer();
@@ -184,7 +185,7 @@ public class DBManager extends SQLiteOpenHelper {
     // Use : 음악파일이 DB의 BGMList 테이블에 레코드로 등록되어있는지 확인하고, 없으면 Insert한다.
     private void checkBGMRecordExist(ArrayList<String[]> fileList){
         int fileCount = fileList.size();
-        StringBuffer query;
+        StringBuffer query = null;
 
         for (int i = 0; i < fileCount; i++) {
             try{
@@ -196,13 +197,6 @@ public class DBManager extends SQLiteOpenHelper {
             } catch (SQLiteConstraintException e){
                 Log.i("SQLite Error", "이미 존재하는 값 입력 : "+e.toString());
             }
-        }
-
-        // 입력 잘됐는지 확인하는 부분(삭제요망)
-        String test = "select * from BGMList";
-        Cursor cursor = mDataBase.rawQuery(test, null);
-        while(cursor.moveToNext()){
-            Log.i("잘나오냐??", cursor.getString(1));
         }
     }
 

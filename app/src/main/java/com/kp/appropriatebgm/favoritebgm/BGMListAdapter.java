@@ -59,9 +59,9 @@ public class BGMListAdapter extends BaseAdapter {
         ViewHolder viewHolder=null;
 
         if(itemLayout==null){
-            itemLayout=layoutInflater.inflate(R.layout.music_list_layout,null);
+            itemLayout=layoutInflater.inflate(R.layout.list_item,null);
             viewHolder=new ViewHolder();
-            viewHolder.name=(TextView)itemLayout.findViewById(R.id.musicName);
+            viewHolder.name=(TextView)itemLayout.findViewById(R.id.tv_name);
             itemLayout.setTag(viewHolder);
         }else{
             viewHolder=(ViewHolder)itemLayout.getTag();
