@@ -12,6 +12,29 @@ import com.kp.appropriatebgm.R;
 
 
 public class CancelRecordDlg extends Dialog{
+	/*
+	 * Layout
+	 */
+	private TextView mTitleView;
+	private TextView mContentView;
+	private Button mLeftButton;
+	private Button mRightButton;
+	private String mTitle;
+	private String mContent;
+
+
+	private View.OnClickListener mLeftClickListener;
+	private View.OnClickListener mRightClickListener;
+
+	/*
+	 * Layout
+	 */
+	private void setLayout(){
+		mTitleView = (TextView) findViewById(R.id.tv_title);
+		mContentView = (TextView) findViewById(R.id.tv_content);
+		mLeftButton = (Button) findViewById(R.id.bt_left);
+		mRightButton = (Button) findViewById(R.id.bt_right);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,29 +104,7 @@ public class CancelRecordDlg extends Dialog{
 		}
 	}
 	
-	/*
-	 * Layout
-	 */
-	private TextView mTitleView;
-	private TextView mContentView;
-	private Button mLeftButton;
-	private Button mRightButton;
-	private String mTitle;
-	private String mContent;
-	
-	
-	private View.OnClickListener mLeftClickListener;
-	private View.OnClickListener mRightClickListener;
-	
-	/*
-	 * Layout
-	 */
-	private void setLayout(){
-		mTitleView = (TextView) findViewById(R.id.tv_title);
-		mContentView = (TextView) findViewById(R.id.tv_content);
-		mLeftButton = (Button) findViewById(R.id.bt_left);
-		mRightButton = (Button) findViewById(R.id.bt_right);
-	}
+
 	
 }
 

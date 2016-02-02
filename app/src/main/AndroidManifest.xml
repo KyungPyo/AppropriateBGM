@@ -22,7 +22,8 @@
         <activity android:name=".favoritebgm.SelectBgmActivity"/>
         <activity android:name=".Category.CategoryActivity"
             android:label="카테고리 설정" />
-        <activity android:name=".record.RecordActivity" />
+        <activity android:name=".record.RecordActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
 
 
     </application>
