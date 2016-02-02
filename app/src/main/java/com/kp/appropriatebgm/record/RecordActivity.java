@@ -1,6 +1,7 @@
 package com.kp.appropriatebgm.record;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -464,12 +465,12 @@ public class RecordActivity extends AppCompatActivity {
         mPopupWindow = new PopupWindow(mPopupLayout,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT, true);
-        // 백그라운드를 설정해야 사용자가 팝업윈도우 밖을 클릭했을때 종료된다.
-        mPopupWindow.setBackgroundDrawable(new ColorDrawable());
-        // 카테고리 스피너에 아이템 추가 (SQLLite select문 추가필요)
+
+
         categoryList= dbManager.getCategoryList();
         categoryAdapter = new CategoryListAdapter(this,categoryList);
-
+        categorySel.setBackgroundColor(Color.WHITE);
+        categorySel.setPopupBackgroundResource(R.drawable.dlgback);
         ArrayList<String> spinnerItem = new ArrayList<>();
         spinnerItem.add("카테고리를 선택하세요");
 
