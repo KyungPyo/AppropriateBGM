@@ -2,20 +2,13 @@ package com.kp.appropriatebgm.Category;
 
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,11 +22,13 @@ import android.widget.TextView;
 
 import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.DBController.DBManager;
-import com.kp.appropriatebgm.MainActivity;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 //카테고리 액티비티
@@ -45,6 +40,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     ArrayList<Category> ctgArrayList;
     CategoryListAdapter ctgAdapter;
     ListView ctg_Listview;
+    HashMap<String, Integer> ctgcheckList;
 
     // Use : Select 쿼리 (LIST를 계속 갱신해주는 데 필요한 쿼리)
     //final static String querySelectAll = String.format( " SELECT * FROM %s ", TABLE_NAME );
@@ -53,16 +49,14 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.category_toolbar);
         setSupportActionBar(toolbar);
 
         ctgArrayList = new ArrayList<Category>();
 
-        // Use : DBHelper 객체 생성 및 db 설정
+        ctgcheckList = new HashMap<String, Integer>();
 
-        // Use : 커서에 select sql문 설정 및 커서 어댑터 객체 생성
-
-        ctg_Listview = (ListView) findViewById( R.id.lv_name_age );
+        ctg_Listview = (ListView) findViewById( R.id.category_listView_categoryList );
         ctgArrayList = dbManager.getCategoryList();
 
         ctgAdapter = new CategoryListAdapter(this, ctgArrayList);
@@ -72,7 +66,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
 
 
         // Use : 체크 후 삭제 버튼 (floatingActionButton이다)
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.category_check_delete_btn);
         fab.setVisibility(View.INVISIBLE);
         fab.setEnabled(false);
 
@@ -102,28 +96,26 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_category, menu);
+        getMenuInflater().inflate(R.menu.actionbar_category_menu, menu);
         return true;
     }
 
-    //Method : 액션바 버튼 액션 설정
+    //Method : 액션바 버튼 이벤트 설정
     //Return value : boolean
     //Paremeter : void
     //Use : 액션바(menu_category)에 구현되어 있는 추가 버튼과 삭제 버튼의 기능을 설정하기 위해 사용한다.
-    //      추가 버튼(action_add)의 경우 다이얼로그를 띄워 DB에 INSERT 쿼리를 실행하며,
-    //      삭제 버튼(action_trash)의 경우 체크박스를 리스트에 띄워 항목을 체크할 수 있도록 한다.
+    //      추가 버튼(category_actionbar_add)의 경우 다이얼로그를 띄워 DB에 INSERT 쿼리를 실행하며,
+    //      삭제 버튼(category_actionbar_delete)의 경우 체크박스를 리스트에 띄워 항목을 체크할 수 있도록 한다.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
 
-        String text = null;
-
         switch(id)
         {
-            // Use : 추가(action_add) 버튼 클릭하는 경우
+            // Use : 추가(category_actionbar_add) 버튼 클릭하는 경우
             // 다이얼로그를 띄워서 추가 시 다이얼로그의 EditText의 값을 DB에 넣는 INSERT 연산 수행 및 취소 버튼
-            case R.id.action_add:
+            case R.id.category_actionbar_add:
                 final AlertDialog.Builder add_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
                 add_Digbuild.setTitle("카테고리 추가");
                 final EditText inputtxt = new EditText(this);
@@ -160,7 +152,6 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                                      // Use : 위의 예외들을 통과한 경우 DB INSERT 연산 수행
                                      if(CtgTitleCheckable(inputtxt)){
                                          CtgInsert(c_title);
-                                         ctgAdapter.notifyDataSetChanged();
                                          add_Dig.dismiss();
                                      }
 
@@ -175,38 +166,25 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                 inputtxt.setText("");
                 break;
 
-            // Use : 삭제(action_trash) 버튼 클릭하는 경우
+            // Use : 삭제(category_actionbar_delete) 버튼 클릭하는 경우
             // 체크 삭제 버튼을 띄우도록 한다. 다시 한번 더 클릭 시 원래 메뉴로 돌아가는 기능
-            case R.id.action_trash:
-                text = "trash click";
+            case R.id.category_actionbar_delete:
+
                 // Use : 삭제 버튼이 보이지 않을 경우에 휴지통을 누르면 보이도록 한다.
                 if(fab.getVisibility() == View.INVISIBLE)
                 {
                     fab.setVisibility(View.VISIBLE);
                     fab.setEnabled(true);
+                    setCheckBoxVisibility(true);
                 }
+
                 // Use ; 삭제 버튼이 보이는 경우 원래 리스트 상태로 돌아가려고 할 때 숨기도록 한다.
                 else if(fab.getVisibility() == View.VISIBLE)
                 {
                     fab.setVisibility(View.INVISIBLE);
                     fab.setEnabled(false);
+                    setCheckBoxVisibility(false);
                 }
-                // Use : 리스트 크기만큼의 반복문을 돌려 각각의 리스트 아이템의 체크박스에 접근하여
-                //       체크박스의 숨김 / 표시 여부를 설정한다.
-                for(int i=2 ; i<ctg_Listview.getCount() ; i++)
-                {
-                    ViewGroup child = (ViewGroup) ctg_Listview.getChildAt(i);
-                    CheckBox listchk = (CheckBox) child.getChildAt(1);
-                    if (listchk.getVisibility() == View.INVISIBLE) {
-                        listchk.setVisibility(View.VISIBLE);
-                        listchk.setEnabled(true);
-                    } else if (listchk.getVisibility() == View.VISIBLE) {
-                        listchk.setVisibility(View.INVISIBLE);
-                        listchk.setEnabled(false);
-                    }
-
-                }
-
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -252,7 +230,6 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                                                 String modifyTitleStr = nametxt.getText().toString();
                                                 if(CtgTitleCheckable(nametxt)){
                                                     CtgUpdate(modifyTitleStr, itemId);
-                                                    ctgAdapter.notifyDataSetChanged();
                                                 }
                                                 //UPDATE 메소드
                                             } catch (Exception e) {
@@ -291,19 +268,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
             if (keyCode == android.view.KeyEvent.KEYCODE_BACK && fab.getVisibility()==View.VISIBLE) {
                 fab.setVisibility(View.INVISIBLE);
                 fab.setEnabled(false);
-                for(int i=2 ; i<ctg_Listview.getCount() ; i++)
-                {
-                    ViewGroup child = (ViewGroup) ctg_Listview.getChildAt(i);
-                    CheckBox listchk = (CheckBox) child.getChildAt(1);
-                    if (listchk.getVisibility() == View.INVISIBLE) {
-                        listchk.setVisibility(View.VISIBLE);
-                        listchk.setEnabled(true);
-                    } else if (listchk.getVisibility() == View.VISIBLE) {
-                        listchk.setVisibility(View.INVISIBLE);
-                        listchk.setEnabled(false);
-                    }
-
-                }
+                setCheckBoxVisibility(false);
                 return true;
             }
             /*if (keyCode == android.view.KeyEvent.KEYCODE_BACK) {
@@ -355,41 +320,30 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     //      changeCursor을 통해 리스트 최신화
     public void CtgcheckDelete(ListView listview)
     {
-        int[] check_list = new int[100];
-        //int chk_del[] = new int[100];     // delete 연산을 수행하는 데 필요한 id 배열 선언
-        int listsize = listview.getCount();
-        int n=0;
-        for(int i=0; i < listsize ; i++) {                      // list 크기만큼 반복문을 돌려서 각각의 list에 접근
-            ViewGroup child = (ViewGroup) listview.getChildAt(i);
-            CheckBox list_chk = (CheckBox) child.getChildAt(1); // 각각 list의 checkbox 객체에 접근
-            if(list_chk.isChecked() == true) {                  // 체크가 되어 있을시에 itemid에 현재 체크되어있는 리스트의 id 저장
-                int itemid = ctgAdapter.getlistId(i);
-                check_list[i] = itemid;
-                n++;
+        ArrayList<Integer> check_arr = new ArrayList<Integer>();
+        ctgcheckList = ctgAdapter.addCheckData();
+        int check_list[];
+        Log.e("checklist",ctgcheckList.values()+"");
+        for(int i=0 ; i < listview.getCount() ; i++)
+        {
+            Log.e("checklistname", ctgcheckList.containsKey(ctgAdapter.getlistName(i)) + "");
+            Log.e("checklist",ctgcheckList.containsValue(i)+"");
+            if(ctgcheckList.containsKey(ctgAdapter.getlistName(i)))
+            {
+                check_arr.add(ctgAdapter.getlistId(i));
             }
         }
         // Use : 체크되어 있던 아이디를 저장한 배열의 값을 이용하여 반복문을 돌려 DELETE 연산 수행
         //      changeCursor을 통해 리스트 최신화
         //      더 이상 값이 없는 경우의 무한 루프를 고려 조건으로 반복문 탈출
+        check_list = new int[check_arr.size()];
+        for(int i=0 ; i <check_arr.size() ; i++)
+        {
+            check_list[i] = check_arr.get(i);
+        }
         dbManager.deleteCategory(check_list);
         CtgDBInit();
 
-    }
-    // Method : 카테고리 이름 중복 처리
-    // Return value : void
-    // paremeter : 리스트(카테고리)의 아이템 이름, 아이템 아이디
-    // Use : db를 통해 카테고리 이름을 검색한 후 해당 카테고리가 존재할 시 다이얼로그로 알려주는 메소드
-    public void CtgcheckRepetition(String title)
-    {
-            AlertDialog.Builder repeat_Dig = new AlertDialog.Builder(CategoryActivity.this);
-            repeat_Dig.setTitle("카테고리 이름이 중복됩니다.")
-                    .setNegativeButton("확인", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface indialog, int which) {
-                            indialog.cancel();
-                        }
-                    });
-            repeat_Dig.show();
     }
 
     // Method : 카테고리 추가/갱신 조건 검사
@@ -399,10 +353,20 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     public boolean CtgTitleCheckable(EditText editText)
     {
             String t_title = editText.getText().toString();
+            //Use : 카테고리 이름 중복 처리 (이름이 중복될 경우 다이얼로그로 알려준다)
             if (dbManager.isExistCategoryName(t_title)) {
-                CtgcheckRepetition(t_title);
+                AlertDialog.Builder repeat_Dig = new AlertDialog.Builder(CategoryActivity.this);
+                repeat_Dig.setTitle("카테고리 이름이 중복됩니다.")
+                        .setNegativeButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface indialog, int which) {
+                                indialog.cancel();
+                            }
+                        });
+                repeat_Dig.show();
                 return false;
             }
+            //Use : 카테고리 이름이 8자 이상인 경우 처리 (다이얼로그)
             else if (editText.length() > 8) {
                 AlertDialog.Builder eight_Dig = new AlertDialog.Builder(CategoryActivity.this);
                 eight_Dig.setTitle("카테고리 글자 수를 8자 이하로 해주십시오.")
@@ -429,8 +393,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                 return false;
             }
 
-
-            // 첫번째 공백 및 마지막 공백 예외 처리 넣을 부분 ************************************************** (완료) 주석만 넣자!
+            //Use : 카테고리 이름 처음에 공백이 들어간 경우 처리
             else if(t_title.charAt(0) == ' ')
             {
                 AlertDialog.Builder firstblank_Dig = new AlertDialog.Builder(CategoryActivity.this);
@@ -444,6 +407,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                 firstblank_Dig.show();
                 return false;
             }
+            //Use : 카테고리 이름 끝에 공백이 들어간 경우 처리
             else if(t_title.charAt(editText.length()-1) == ' ')
             {
                 AlertDialog.Builder lastblank_Dig = new AlertDialog.Builder(CategoryActivity.this);
@@ -474,5 +438,22 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
         // Use : list에 커서 어댑터 연결 및 아이템클릭리스너 설정
         ctg_Listview.setAdapter(ctgAdapter);
         ctgAdapter.notifyDataSetChanged();
+    }
+    // Method : CheckBox controller
+    // Return Value : void
+    // Parameter : ckecked: check박스를 보여줄지 숨길지를 결정하는 boolean형 변수
+    // Use :  호출부에서 ckeck박스 컨트롤을 요청하면 화면에 반영시켜줌.
+    private void setCheckBoxVisibility(boolean checked){
+        ctgAdapter.setCheckBoxEnable(checked);
+        ctgAdapter.notifyDataSetChanged();
+    }
+
+    public void addCheckData(String title, int number)
+    {
+        ctgcheckList.put(title, number);
+    }
+    public void removeCheckData(String title)
+    {
+        ctgcheckList.remove(title);
     }
 }
