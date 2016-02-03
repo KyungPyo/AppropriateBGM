@@ -47,7 +47,7 @@ public class BGMListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public BGMInfo getItem(int position) {
         return aMusicList.get(position);
     }
 

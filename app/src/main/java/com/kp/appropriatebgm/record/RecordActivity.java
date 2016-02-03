@@ -1,5 +1,10 @@
 package com.kp.appropriatebgm.record;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.drawable.BitmapDrawable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Window;
 import android.content.Intent;
 import android.graphics.Color;
@@ -27,6 +32,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.DBController.DBManager;
@@ -361,7 +367,7 @@ public class RecordActivity extends AppCompatActivity {
     public void onClick_save(View v) {
         if (v.getId() == R.id.recordActivity_btn_saveAtvrecord) {
             // 팝업윈도우 출력
-            mPopupWindow.showAtLocation(mPopupLayout, Gravity.CENTER, 0, 0);
+            mPopupWindow.showAtLocation(mPopupLayout, Gravity.CENTER, 0, -120);
         }
     }
 
@@ -402,7 +408,7 @@ public class RecordActivity extends AppCompatActivity {
         mPopupWindow = new PopupWindow(mPopupLayout,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT, true);
-
+        mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
         categoryList = dbManager.getCategoryList();
         categoryList.remove(0);
         categoryAdapter = new CategoryListAdapter(this, categoryList);
@@ -420,26 +426,38 @@ public class RecordActivity extends AppCompatActivity {
             }
         });
         categorySel.setAdapter(categoryAdapter);
-        // Method : filenameEt 엔터 및 특수문자 입력 안되기
+
+        // Method : Edittext 엔터 및 특수문자 입력 안되기
         // Return Value : void
-        // Parameter : OnKeyListener()
-        // Use :  안됨.
-        filenameEt.setOnKeyListener(new View.OnKeyListener() {
+        // Parameter : void
+        // Use :  한글 영어 숫자말고는 아에 입력이 안됨.
+        TextWatcher watcher = new TextWatcher() {
+            String text;
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == event.KEYCODE_ENTER) {
-                    Toast.makeText(RecordActivity.this, "특수문자 안됨(단호)", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (keyCode == event.KEYCODE_TAB) {
-                    Toast.makeText(RecordActivity.this, "특수문자 안됨(단호)", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (keyCode == event.KEYCODE_SPACE) {
-                    Toast.makeText(RecordActivity.this, "특수문자 안됨(단호)", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                return false;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                text = s.toString();
             }
-        });
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                int length = s.toString().length();
+                if (length > 0) {
+                    Pattern ps = Pattern.compile("^[a-zA-Z0-9ㄱ-ㅎ가-흐]+$");//영문, 숫자, 한글만 허용
+                    if (!ps.matcher(s).matches()) {
+                        filenameEt.setText(text);
+                        filenameEt.setSelection(filenameEt.length());
+                    }
+                }
+            }
+
+        };
+        filenameEt.addTextChangedListener(watcher);
+
         // Method : 팝업윈도우내 저장버튼 클릭
         // Return Value : void
         // Parameter : View
@@ -451,7 +469,6 @@ public class RecordActivity extends AppCompatActivity {
                 filenameEt.setHint("파일명을 입력해주세요");
                 filenameEt.setSingleLine(true);//한줄입력
                 filenameEt.setSelectAllOnFocus(false);
-                File f = new File(filenameEt.getText().toString());
                 // Use : 파일명이 입력안됬을때.
                 if (filenameEt.length() == 0) {     // 파일명 입력확인
                     Toast.makeText(RecordActivity.this, "파일명을 입력해주세요", Toast.LENGTH_SHORT).show();
@@ -468,12 +485,13 @@ public class RecordActivity extends AppCompatActivity {
                     Log.i("333", "카테고리명 안들어옴");
                 }
                 // Use : 파일명이 중복일때
-                else if (f.isFile()) {
+                else if (dbManager.isExistFileName(newFileName)) {
                     Toast.makeText(RecordActivity.this, "파일이름이 중복입니다.", Toast.LENGTH_SHORT).show();
                     Log.i("444", "파일명 중복");
                 }
                 // Use :  해당 예외처리사항이 아무것도 없을시 저장
                 else {
+                    Log.i("filename",newFileName);
                     File file = new File(recordManager.getPath());
                     File renamedFile = new File(recordManager.getDirPath() + File.separator + newFileName + ".mp3");
                     file.renameTo(renamedFile);
@@ -489,7 +507,46 @@ public class RecordActivity extends AppCompatActivity {
                 mPopupWindow.dismiss();
             }
         });
+
+
+
     }
     /***** 액티비티 *****/
 
+    // Method : 뒤로버튼 이벤트 리스너
+    // Return Value : void
+    // Parameter : keycode
+    // Use : 백키버튼을 눌렀을 때 출력되는 팝업윈도우 설정(버튼 이벤트리스너 포함)
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+
+        if(uri != null) {
+            if (keyCode == event.KEYCODE_BACK && event.getRepeatCount() == 0) {
+                AlertDialog dialog;
+                dialog = new AlertDialog.Builder(this).setTitle("종료확인")
+                        .setMessage(" 지금 종료하시면 녹음파일이 삭제됩니다. 종료하시겠습니까?")
+                        .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                File files = new File(recordManager.getPath());
+                                Log.i("delete",recordManager.getPath());
+                                files.delete();
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
+                return true;
+
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

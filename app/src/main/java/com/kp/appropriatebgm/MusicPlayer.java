@@ -75,4 +75,8 @@ public class MusicPlayer {
         resetPlay();
         music.start();
     }
+
+    public void stopBgm(){
+        music.stop();
+    }
 }

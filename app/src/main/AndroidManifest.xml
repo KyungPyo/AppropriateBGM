@@ -10,20 +10,25 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".LogoActivity">
+        <activity android:name=".LogoActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".favoritebgm.FavoriteActivity"/>
-        <activity android:name=".favoritebgm.SelectBgmActivity"/>
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".favoritebgm.FavoriteActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".favoritebgm.SelectBgmActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".Category.CategoryActivity"
-            android:label="카테고리 설정" />
+            android:label="카테고리 설정"
+            android:screenOrientation="portrait" />
         <activity android:name=".record.RecordActivity"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:screenOrientation="portrait"/>
 
 
     </application>

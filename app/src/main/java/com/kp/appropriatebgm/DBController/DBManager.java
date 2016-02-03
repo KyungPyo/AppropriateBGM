@@ -106,11 +106,11 @@ public class DBManager extends SQLiteOpenHelper {
     private void insertInnerBGM(SQLiteDatabase db){
         String query;
 
-        query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('인간극장', 'innerfile#', #)";
+        query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('인간극장', '#', #)";
         query = query.replace("#", Integer.toString(R.raw.human_cinema));
         db.execSQL(query);
 
-        query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('함정카드', 'innerfile#', #)";
+        query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('함정카드', '#', #)";
         query = query.replace("#", Integer.toString(R.raw.trapcard));
         db.execSQL(query);
     }
@@ -195,16 +195,43 @@ public class DBManager extends SQLiteOpenHelper {
     private void checkBGMRecordExist(ArrayList<String[]> fileList){
         int fileCount = fileList.size();
         StringBuffer query;
+        String[] bannedExtend = {"3gp", "avi", "mp4", "mpg", "mpeg", "mpe", "wmv", "asf", "asx", "flv", "mov"};
+        boolean isVideoFile;
 
         for (int i = 0; i < fileCount; i++) {
-            try{
-                query = new StringBuffer();
-                query.append("INSERT INTO BGMList(bgm_path, bgm_name) VALUES(");
-                query.append("'"+fileList.get(i)[0]+"',");
-                query.append("'"+fileList.get(i)[1]+"')");
-                mDataBase.execSQL(query.toString());
-            } catch (SQLiteConstraintException e){
-                Log.i("SQLite Error", "이미 존재하는 값 입력 : "+e.toString());
+            isVideoFile = false;
+            String filepath = fileList.get(i)[0];
+            String filename = fileList.get(i)[1];
+            String[] splitFileName = filename.split("\\.");
+            Log.d("파일확장자 추출중", "나뉜길이:"+splitFileName.length+", 파일이름:"+filename);
+            String fileExtend = splitFileName[splitFileName.length-1];     // 파일 확장자
+
+            for (int j = 0; j < bannedExtend.length; j++) {
+                // 금지된 동영상 확장자들과 현재 파일의 확장자를 소문자로 변환한것을 비교하여 해당되는지 확인
+                if(bannedExtend[j].equals(fileExtend.toLowerCase())) {
+                    isVideoFile = true;
+                    break;
+                }
+            }
+
+            if (isVideoFile) {  // 파일이 동영상이면 다음파일로
+                continue;
+            } else {            // 동영상파일이 아니면 DB에 추가
+                // 파일명에서 확장자 빼고 저장. 파일명 문자열의 처음부터(0) ~ 파일명 문자열 길이 - [파일확장자 길이+1(.때문에 1더)]
+                try {
+                    filename = filename.substring(0, filename.length() - (fileExtend.length()+1) );
+                    query = new StringBuffer();
+                    query.append("INSERT INTO BGMList(bgm_path, bgm_name) VALUES(");
+                    query.append("'" + filepath + "',");
+                    query.append("'" + filename + "')");
+                    mDataBase.execSQL(query.toString());
+                } catch (SQLiteConstraintException e) {
+                    Log.i("SQLite Error", "이미 존재하는 값 입력 : " + e.toString());
+                } catch (SQLiteException e) {
+                    Log.e("checkBGMRecordExist", e.toString());
+                } catch (ArrayIndexOutOfBoundsException e){
+                    Log.e("checkBGMRecordExist", e.toString());
+                }
             }
         }
     }
@@ -332,6 +359,31 @@ public class DBManager extends SQLiteOpenHelper {
         } catch (SQLiteException e){
             // 오류가 난 경우는 일단 중복값이 있다고 반환한다.
             Log.e("isExistCategoryName", e.toString());
+            return true;
+        }
+    }
+
+    // Method : 파일명이 중복되는지 확인
+    // Return Value : boolean(중복되면 true, 중복안되면 false)
+    // Parameter : fileName(중복여부 확인하려는 파일명)
+    // Use : RecordActivity에서 파일명 중복체크 요청을 하면 해당 파일명으로 DB에서 검색하여 중복되는 값이 있는지 개수를 확인한다.
+    public boolean isExistFileName(String fileName){
+        String query;
+        Cursor cursor;
+
+        query = "SELECT COUNT(*) FROM BGMList WHERE bgm_name = '"+fileName+"'";
+        try {
+            cursor = mDataBase.rawQuery(query, null);
+
+            cursor.moveToNext();
+            if (cursor.getInt(0) == 0) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (SQLiteException e){
+            // 오류가 난 경우는 일단 중복값이 있다고 반환한다.
+            Log.e("isExistFileName", e.toString());
             return true;
         }
     }
