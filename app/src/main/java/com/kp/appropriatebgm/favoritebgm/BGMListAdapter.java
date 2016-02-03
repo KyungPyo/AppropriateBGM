@@ -1,7 +1,6 @@
 package com.kp.appropriatebgm.favoritebgm;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,10 +62,10 @@ public class BGMListAdapter extends BaseAdapter {
         ViewHolder viewHolder=null;
 
         if(itemLayout==null){
-            itemLayout=layoutInflater.inflate(R.layout.list_item,null);
+            itemLayout=layoutInflater.inflate(R.layout.bgmadapter_layout_item,null);
             viewHolder=new ViewHolder();
-            viewHolder.name=(TextView)itemLayout.findViewById(R.id.tv_name);
-            viewHolder.checkBox=(CheckBox)itemLayout.findViewById(R.id.tv_chk);
+            viewHolder.name=(TextView)itemLayout.findViewById(R.id.bgmListAdapter_textView_name);
+            viewHolder.checkBox=(CheckBox)itemLayout.findViewById(R.id.bgmListAdapter_checkBox_musicCheck);
             itemLayout.setTag(viewHolder);
         }else{
             viewHolder=(ViewHolder)itemLayout.getTag();

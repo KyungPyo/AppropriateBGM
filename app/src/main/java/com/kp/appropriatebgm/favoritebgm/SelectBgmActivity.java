@@ -68,7 +68,7 @@ public class SelectBgmActivity extends AppCompatActivity {
     private void addHeaderToList() {
 
         View headerView = getLayoutInflater().inflate(R.layout.favorite_listview_header_layout, null);
-        clear_favorite = (Button) headerView.findViewById(R.id.clearItem);
+        clear_favorite = (Button) headerView.findViewById(R.id.favorite_btn_clearItem);
         //비워두기 버튼 클릭 리스너
         clear_favorite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +98,7 @@ public class SelectBgmActivity extends AppCompatActivity {
         categoryList=dbManager.getCategoryList();//DB
 
         categoryAdapter = new CategoryListAdapter(this, categoryList);
-        cateSpinner = (Spinner) findViewById(R.id.select_category);
+        cateSpinner = (Spinner) findViewById(R.id.favorite_spinner_category);
 
         //스피너에서 item을 선택했을 때
         cateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -221,16 +221,15 @@ public class SelectBgmActivity extends AppCompatActivity {
     // Parameter : void
     // Use : View를 객체와 연결, listView 설정
     private void init() {
-        searchButton = (ImageView) findViewById(R.id.search_button);
-        editSearch = (EditText) findViewById(R.id.search);
+        searchButton = (ImageView) findViewById(R.id.favorite_btn_search);
+        editSearch = (EditText) findViewById(R.id.favorite_editText_search);
         toolbar = (Toolbar) findViewById(R.id.favorite_toolbar);
         list = (ListView) findViewById(R.id.musicList);
-        editSearch = (EditText) findViewById(R.id.search);
         bgms = dbManager.getBGMList(1);
 
         adapter = new BGMListAdapter(this, bgms);
-        save = (Button) findViewById(R.id.save_favorite);
-        cancel = (Button) findViewById(R.id.cancel);
+        save = (Button) findViewById(R.id.favorite_btn_save);
+        cancel = (Button) findViewById(R.id.favorite_btn_cancel);
 
     }
 }

@@ -50,7 +50,7 @@ public class FavoriteActivity extends AppCompatActivity {
     private void init(){
 
         toolbar=(Toolbar)findViewById(R.id.favorite_toolbar);
-        onOffSwitch=(Switch)findViewById(R.id.onOffSwitch);
+        onOffSwitch=(Switch)findViewById(R.id.favorite_switch_onOffSwitch);
         onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -63,7 +63,7 @@ public class FavoriteActivity extends AppCompatActivity {
         //listView 설정
         favoriteArrayList=dbManager.getFavoriteList();//DB
         Log.d("널이니ㅣㅣㅣㅣㅣ",(favoriteArrayList==null)+"");
-        favoriteList=(ListView)findViewById(R.id.favorite_list);
+        favoriteList=(ListView)findViewById(R.id.favorite_listView_favoriteList);
         adapter=new FavoriteListAdapter(this, favoriteArrayList);
         favoriteList.setAdapter(adapter);
         //즐겨찾기 List중 아이템클릭시 Method

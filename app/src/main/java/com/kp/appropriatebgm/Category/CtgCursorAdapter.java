@@ -40,8 +40,8 @@ public class CtgCursorAdapter extends CursorAdapter
     // Use : 리스트의 아이템의 초기값 및 속성을 설정해주는 기능입니다. 객체가 있는 경우에 호출
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView tvName = (TextView) view.findViewById( R.id.tv_name );
-        tvchk = (CheckBox) view.findViewById( R.id.tv_chk );
+        TextView tvName = (TextView) view.findViewById( R.id.bgmListAdapter_textView_name );
+        tvchk = (CheckBox) view.findViewById( R.id.bgmListAdapter_checkBox_musicCheck );
 
         String name = cursor.getString(cursor.getColumnIndex(KEY_NAME));
         tvchk.setVisibility(View.INVISIBLE);
@@ -57,7 +57,7 @@ public class CtgCursorAdapter extends CursorAdapter
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from( context );
-        View v = inflater.inflate( R.layout.list_item, parent, false );
+        View v = inflater.inflate( R.layout.bgmadapter_layout_item, parent, false );
         return v;
     }
 
