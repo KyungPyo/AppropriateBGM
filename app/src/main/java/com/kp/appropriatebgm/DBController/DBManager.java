@@ -106,11 +106,11 @@ public class DBManager extends SQLiteOpenHelper {
     private void insertInnerBGM(SQLiteDatabase db){
         String query;
 
-        query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('인간극장', 'innerfile#', #)";
+        query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('인간극장', '#', #)";
         query = query.replace("#", Integer.toString(R.raw.human_cinema));
         db.execSQL(query);
 
-        query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('함정카드', 'innerfile#', #)";
+        query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('함정카드', '#', #)";
         query = query.replace("#", Integer.toString(R.raw.trapcard));
         db.execSQL(query);
     }

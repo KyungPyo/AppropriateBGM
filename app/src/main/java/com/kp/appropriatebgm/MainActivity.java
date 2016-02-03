@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,12 +32,12 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     /**** 멤버 선언 ****/
-    DisplayMetrics metrics;
-    int leftMenuWidth;
+    private DisplayMetrics metrics;
+    private int leftMenuWidth;
+    private boolean isFilemanageOpen = false;
+    private MusicPlayer musicPlayer;
 
-    //안녕
     // View 선언
-    private ImageView actionbarMenuBtn;
     private ImageView actionbarSearchBtn;
     private ImageView actionbarLogo;
     private EditText actionbarSearchTxt;
@@ -64,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Category> categoryList;
     private Spinner categorySpinner;
     private BGMListAdapter bgmAdapter;
-
-    private CheckBox bgmCheckBox;
     /**** 멤버 선언 ****/
 
     /**** 화면 설정 ****/
@@ -108,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);           // Toolbar를 액션바로 사용한다
         getSupportActionBar().setTitle(null);   // 액션바에 타이틀 제거
+
+        isFilemanageOpen = false;   // 파일관리가 열려있는지 여부
     }
 
     // Method : 메뉴 레이아웃 설정
@@ -131,11 +130,10 @@ public class MainActivity extends AppCompatActivity {
     private void initDrawerToggle(){
         drawerToggle = new ActionBarDrawerToggle(this, mainDrawer, toolbar, R.string.open_menu, R.string.close_menu){
             @Override
-            public void onDrawerOpened(View drawerView) {   super.onDrawerOpened(drawerView);  }
+            public void onDrawerOpened(View drawerView) {   super.onDrawerOpened(drawerView);   }
 
             @Override
-            public void onDrawerClosed(View drawerView) {   super.onDrawerClosed(drawerView);
-            }
+            public void onDrawerClosed(View drawerView) {   super.onDrawerClosed(drawerView);   }
         };
         mainDrawer.setDrawerListener(drawerToggle);
     }
@@ -181,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         bgmListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                bgmAdapter.notifyDataSetChanged();
+                onClickMusicListItem(position);
             }
         });
     }
@@ -248,11 +246,12 @@ public class MainActivity extends AppCompatActivity {
         switch (v.getId()){
             case R.id.main_group_filemanage:
             case R.id.main_group_editcomplete: {
-                if(groupFileManage.getVisibility() == View.INVISIBLE) {
+                if(groupFileManage.getVisibility() == View.INVISIBLE && !isFilemanageOpen) {
                     groupFileManage.setVisibility(View.VISIBLE);
                     btnFileManage.setVisibility(View.INVISIBLE);
                     setCheckBoxVisibility(true);
                     bgmListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+                    isFilemanageOpen = true;
                 } else {
                     groupFileManage.setVisibility(View.INVISIBLE);
                     btnFileManage.setVisibility(View.VISIBLE);
@@ -261,9 +260,24 @@ public class MainActivity extends AppCompatActivity {
                     bgmListView.setAdapter(null);
                     bgmListView.setAdapter(bgmAdapter);
                     bgmListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
+                    isFilemanageOpen = false;
                 }
                 break;
             }
+        }
+    }
+
+    private void onClickMusicListItem(int position){
+        if (isFilemanageOpen){  // 파일관리가 열려있으면 선택모드
+            bgmAdapter.notifyDataSetChanged();
+        } else {        // 파일관리가 닫혀있으면 재생모드
+            BGMInfo bgm = bgmAdapter.getItem(position);
+            if(bgm.isInnerfile()) {
+                musicPlayer = new MusicPlayer(this, bgm.getInnerfileCode());
+            } else {
+                musicPlayer = new MusicPlayer(this, bgm.getBgmPath());
+            }
+            musicPlayer.playBgm();
         }
     }
     /**** 기타 이벤트 부분 ****/

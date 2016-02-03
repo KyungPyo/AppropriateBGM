@@ -11,21 +11,24 @@ public class BGMInfo implements Serializable{
 
     private String bgmName;
     private String bgmPath;
-    private boolean innerfile;
+    private int innerfile;
     private int categoryId;
 
     public BGMInfo(String bgmName, String bgmPath, int innerfile, int categoryId){
         this.bgmName = bgmName;
         this.bgmPath = bgmPath;
         this.categoryId = categoryId;
-        if(innerfile == 1)
-            this.innerfile = true;
-        else
-            this.innerfile = false;
+        this.innerfile = innerfile;
     }
 
     public String getBgmName(){ return bgmName; }
     public String getBgmPath(){ return bgmPath; }
-    public boolean isInnerfile(){   return innerfile; }
+    public int getInnerfileCode(){ return innerfile; }
+    public boolean isInnerfile(){
+        if(innerfile != 0)
+            return true;
+        else
+            return false;
+    }
     public int getCategoryId(){ return categoryId;  }
 }
