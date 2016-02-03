@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private Spinner categorySpinner;
     private BGMListAdapter bgmAdapter;
 
-    private CheckBox bgmCkeckBox;
+    private CheckBox bgmCheckBox;
     /**** 멤버 선언 ****/
 
     /**** 화면 설정 ****/
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         initDrawerToggle();     // 네비게이션 드로워 리스너설정
         initBgmList();          // BGMList 초기 구성
         initCategory();         // 카테고리 목록 초기 구성 및 이벤트 정의
+        setListeners();
 
 
     }
@@ -133,7 +135,8 @@ public class MainActivity extends AppCompatActivity {
             public void onDrawerOpened(View drawerView) {   super.onDrawerOpened(drawerView);  }
 
             @Override
-            public void onDrawerClosed(View drawerView) {   super.onDrawerClosed(drawerView);   }
+            public void onDrawerClosed(View drawerView) {   super.onDrawerClosed(drawerView);
+            }
         };
         mainDrawer.setDrawerListener(drawerToggle);
     }
@@ -197,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
     // Parameter : View(클릭한 뷰 정보)
     // Use : 파일관리를 클릭했을 때 이벤트 (파일관리의 펼쳐진 세부항목의 클릭 이벤트도 여기에 포함된다)
     public void onClickFilemanage(View v){
+        //
         switch (v.getId()){
             case R.id.main_group_filemanage:
             case R.id.main_group_editcomplete: {
@@ -204,10 +208,15 @@ public class MainActivity extends AppCompatActivity {
                     groupFileManage.setVisibility(View.VISIBLE);
                     btnFileManage.setVisibility(View.INVISIBLE);
                     checkBoxVisibility(true);
+                    bgmListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
                 } else {
                     groupFileManage.setVisibility(View.INVISIBLE);
                     btnFileManage.setVisibility(View.VISIBLE);
+                    listItemCheckFree();
                     checkBoxVisibility(false);
+                    bgmListView.setAdapter(null);
+                    bgmListView.setAdapter(bgmAdapter);
+                    bgmListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
                 }
                 break;
             }
@@ -215,13 +224,21 @@ public class MainActivity extends AppCompatActivity {
     }
     /**** 기타 이벤트 부분 ****/
 
+    void setListeners(){
+        bgmListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                bgmAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
     // Method : CheckBox controller
     // Return Value : void
     // Parameter : ckecked: check박스를 보여줄지 숨길지를 결정하는 boolean형 변수
     // Use :  호출부에서 ckeck박스 컨트롤을 요청하면 화면에 반영시켜줌.
-
     void checkBoxVisibility(boolean checked){
-        bgmAdapter.isChecked(checked);
+        bgmAdapter.setCheckBoxVisible(checked);
         bgmAdapter.notifyDataSetChanged();
     }
 
@@ -250,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
                 //지금 보여지고 있는 ArrayList를 클리어
                 bgmList.clear();
                 bgmList.addAll(dbManager.getBGMList(categoryList.get(position).getCateId()));
+                listItemCheckFree();
                 bgmAdapter.notifyDataSetChanged();
             }
 
@@ -261,4 +279,9 @@ public class MainActivity extends AppCompatActivity {
         categorySpinner.setAdapter(categoryAdapter);
     }
 
+    private void listItemCheckFree(){
+        for(int i=0;i<bgmListView.getCount();i++){
+            bgmListView.setItemChecked(i,false);
+        }
+    }
 }
