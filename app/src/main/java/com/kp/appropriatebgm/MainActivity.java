@@ -8,7 +8,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
-
 import com.kp.appropriatebgm.Category.CategoryActivity;
 import com.kp.appropriatebgm.DBController.BGMInfo;
 import com.kp.appropriatebgm.DBController.Category;
@@ -31,7 +29,6 @@ import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 import com.kp.appropriatebgm.favoritebgm.FavoriteActivity;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -172,13 +169,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent();
         ComponentName componentName = null;
         switch (v.getId()){
-            case R.id.main_to_record:{
+            case R.id.main_menubtn_to_record:{
                 componentName = new ComponentName("com.kp.appropriatebgm", "com.kp.appropriatebgm.record.RecordActivity");
                 intent.setComponent(componentName);
                 startActivity(intent);
                 break;
             }
-            case R.id.main_to_favorite:{
+            case R.id.main_menubtn_to_favorite:{
 
                /* componentName = new ComponentName("com.kp.appropriatebgm", "com.kp.appropriatebgm.favoritebgm.FavoriteActivity");
                 intent.setComponent(componentName);*/
@@ -186,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             }
-            case R.id.main_to_category:{
+            case R.id.main_menubtn_to_category:{
 
                 intent.setClass(getApplicationContext(), CategoryActivity.class);
                 startActivity(intent);
