@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private CategoryListAdapter categoryAdapter;
     private DBManager dbManager;
     private ArrayList<BGMInfo> bgmList;
+    private ArrayList<BGMInfo> checkedBgmList;
     private ArrayList<Category> categoryList;
     private Spinner categorySpinner;
     private BGMListAdapter bgmAdapter;
@@ -111,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
         bgmListView=(ListView)findViewById(R.id.main_list_soundlist);
         categorySpinner=(Spinner)findViewById(R.id.main_spinner_category);
+        checkedBgmList=new ArrayList<BGMInfo>();
 
         dbManager=DBManager.getInstance(this);
 
@@ -267,12 +270,21 @@ public class MainActivity extends AppCompatActivity {
                     groupFileManage.setVisibility(View.INVISIBLE);
                     btnFileManage.setVisibility(View.VISIBLE);
                     listItemCheckFree();
+                    checkedBgmList.clear();
                     setCheckBoxVisibility(false);
                     bgmListView.setAdapter(null);
                     bgmListView.setAdapter(bgmAdapter);
                     bgmListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
                     isFilemanageOpen = false;
                 }
+                break;
+            }
+            case R.id.main_group_deletefile: {
+                loadCheckedListItem();
+                checkedBgmList.clear();
+                break;
+            }
+            case R.id.main_group_changecategory: {
                 break;
             }
         }
@@ -305,9 +317,25 @@ public class MainActivity extends AppCompatActivity {
         bgmAdapter.notifyDataSetChanged();
     }
 
+    // Method : list상에 check되어있는 item 모두 원래대로 돌아옴
+    // Return Value : void
+    // Parameter : void
+    // Use : list의 모든 아이템을 탐색하여 check 상태를 false로 바꿔줌
     private void listItemCheckFree(){
         for(int i=0;i<bgmListView.getCount();i++){
             bgmListView.setItemChecked(i,false);
+        }
+    }
+
+    // Method : list상에 check가 되어있는 item을 저장한다.
+    // Return Value : void
+    // Parameter : void
+    // Use : list의 모든 아이템을 탐색하여 check가 true인 item만 checkedBgmList에 추가.
+    private void loadCheckedListItem(){
+        for(int i=0;i<bgmListView.getCount();i++){
+            if(bgmListView.isItemChecked(i)){
+                checkedBgmList.add(bgmAdapter.getItem(i));
+            }
         }
     }
 }
