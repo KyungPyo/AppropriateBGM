@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kp.appropriatebgm.DBController.BGMInfo;
@@ -29,6 +30,7 @@ public class BGMListAdapter extends BaseAdapter {
     //*띄워질 뷰를 infate시켜줄 LayoutInflater
     LayoutInflater layoutInflater=null;
     boolean isCheckBoxVisible=false;
+    boolean isChecked=false;
 
 
     //**생성자**
@@ -71,11 +73,18 @@ public class BGMListAdapter extends BaseAdapter {
         }
 
         viewHolder.name.setText(aMusicList.get(position).getBgmName());
+
         if(this.isCheckBoxVisible){
             viewHolder.checkBox.setVisibility(CheckBox.VISIBLE);
         }else{
             viewHolder.checkBox.setVisibility(CheckBox.GONE);
         }
+
+
+        viewHolder.checkBox.setChecked(false);
+        viewHolder.checkBox.setChecked(((ListView) parent).isItemChecked(position));
+        viewHolder.checkBox.setFocusable(false);
+        viewHolder.checkBox.setClickable(false);
 
         return itemLayout;
     }
@@ -110,5 +119,4 @@ public class BGMListAdapter extends BaseAdapter {
     public void setCheckBoxVisible(boolean checked){
         isCheckBoxVisible=checked;
     }
-
 }
