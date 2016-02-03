@@ -45,7 +45,7 @@ public class CancelRecordDlg extends Dialog{
 		lpWindow.dimAmount = 0.8f;
 		getWindow().setAttributes(lpWindow);
 		
-		setContentView(R.layout.re_record_dialog);
+		setContentView(R.layout.dialog_cencalrecord);
 		
 		setLayout();
 		setTitle(mTitle);

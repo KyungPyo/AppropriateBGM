@@ -366,7 +366,7 @@ public class RecordActivity extends AppCompatActivity {
     public void onClick_save(View v) {
         if (v.getId() == R.id.recordActivity_btn_saveAtvrecord) {
             // 팝업윈도우 출력
-            mPopupWindow.showAtLocation(mPopupLayout, Gravity.CENTER, 0, 0);
+            mPopupWindow.showAtLocation(mPopupLayout, Gravity.CENTER, 0, -120);
         }
     }
 
@@ -407,7 +407,6 @@ public class RecordActivity extends AppCompatActivity {
         mPopupWindow = new PopupWindow(mPopupLayout,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT, true);
-
         categoryList = dbManager.getCategoryList();
         categoryList.remove(0);
         categoryAdapter = new CategoryListAdapter(this, categoryList);
@@ -468,7 +467,6 @@ public class RecordActivity extends AppCompatActivity {
                 filenameEt.setHint("파일명을 입력해주세요");
                 filenameEt.setSingleLine(true);//한줄입력
                 filenameEt.setSelectAllOnFocus(false);
-                File f = new File(filenameEt.getText().toString());
                 // Use : 파일명이 입력안됬을때.
                 if (filenameEt.length() == 0) {     // 파일명 입력확인
                     Toast.makeText(RecordActivity.this, "파일명을 입력해주세요", Toast.LENGTH_SHORT).show();
