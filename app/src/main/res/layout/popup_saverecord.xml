@@ -3,7 +3,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/abc_popup_background_mtrl_mult">
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,7 +20,7 @@
             />
 
         <EditText
-            android:id="@+id/et_save_filename"
+            android:id="@+id/popupRecordActivity_editText_saveFilename"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -48,7 +47,7 @@
             />
 
         <Spinner
-            android:id="@+id/sel_save_category"
+            android:id="@+id/popupRecordActivity_spinner_selectSaveCategory"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:prompt="@string/sel_category"
@@ -66,14 +65,14 @@
         android:paddingTop="30dp">
 
         <Button
-            android:id="@+id/btn_save_ok"
+            android:id="@+id/popupRecordActivity_btn_AcceptSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="저 장"
             android:layout_weight="5"/>
 
         <Button
-            android:id="@+id/btn_save_cancel"
+            android:id="@+id/popupRecordActivity_btn_saveCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="취 소"

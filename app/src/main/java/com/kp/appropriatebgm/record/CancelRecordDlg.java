@@ -30,10 +30,10 @@ public class CancelRecordDlg extends Dialog{
 	 * Layout
 	 */
 	private void setLayout(){
-		mTitleView = (TextView) findViewById(R.id.tv_title);
-		mContentView = (TextView) findViewById(R.id.tv_content);
-		mLeftButton = (Button) findViewById(R.id.bt_left);
-		mRightButton = (Button) findViewById(R.id.bt_right);
+		mTitleView = (TextView) findViewById(R.id.cancelRecordDlg_textview_title);
+		mContentView = (TextView) findViewById(R.id.concelRecordDlg_textview_content);
+		mLeftButton = (Button) findViewById(R.id.cancelRecordDlg_btn_left);
+		mRightButton = (Button) findViewById(R.id.cancelRecordDlg_btn_right);
 	}
 
 	@Override
