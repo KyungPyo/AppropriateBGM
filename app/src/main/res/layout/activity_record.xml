@@ -4,11 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/background_material_dark"
     android:orientation="vertical">
-
-
-
-
-    <LinearLayout
+     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="9"
@@ -16,7 +12,7 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/btn_startRecord1"
+            android:id="@+id/recardActivity_btn_startRecordImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_startrecord_selector1"
@@ -49,20 +45,20 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/text_playtime_atvrecord"
+                android:id="@+id/recordActivity_textview_playtimeAtvrecord"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/list_press"
                 android:text="00:00"/>
 
             <SeekBar
-                android:id="@+id/seekbar_record"
+                android:id="@+id/recordActivity_seekbar_recordSeekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="8"/>
 
             <TextView
-                android:id="@+id/text_maxtime_atvrecord"
+                android:id="@+id/recordActivity_textview_maxtimeAtvrecord"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/list_press"
@@ -77,7 +73,7 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/btn_play_atvrecord"
+                android:id="@+id/recordActivity_btn_playAtvrecord"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/btn_play"
@@ -85,14 +81,14 @@
                 android:onClick="onClick_playRecord"/>
 
             <ImageButton
-                android:id="@+id/btn_startRecord"
+                android:id="@+id/recordActivity_btn_startRecord"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:background="@drawable/btn_startrecord_selector"
                 android:onClick="onClick_startRecord"/>
 
             <ImageView
-                android:id="@+id/btn_save_atvrecord"
+                android:id="@+id/recordActivity_btn_saveAtvrecord"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/btn_save"

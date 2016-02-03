@@ -13,7 +13,7 @@
         >
 
         <TextView
-            android:id="@+id/tv_title"
+            android:id="@+id/cancelRecordDlg_textview_title"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -22,7 +22,7 @@
             />
 
         <TextView
-            android:id="@+id/tv_content"
+            android:id="@+id/concelRecordDlg_textview_content"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" 
             android:gravity="center"
@@ -47,14 +47,14 @@
             >
 
             <Button
-                android:id="@+id/bt_left"
+                android:id="@+id/cancelRecordDlg_btn_left"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:text="네"
                 />
 
             <Button
-                android:id="@+id/bt_right"
+                android:id="@+id/cancelRecordDlg_btn_right"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:text="아니오"
