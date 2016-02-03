@@ -195,16 +195,43 @@ public class DBManager extends SQLiteOpenHelper {
     private void checkBGMRecordExist(ArrayList<String[]> fileList){
         int fileCount = fileList.size();
         StringBuffer query;
+        String[] bannedExtend = {"3gp", "avi", "mp4", "mpg", "mpeg", "mpe", "wmv", "asf", "asx", "flv", "mov"};
+        boolean isVideoFile;
 
         for (int i = 0; i < fileCount; i++) {
-            try{
-                query = new StringBuffer();
-                query.append("INSERT INTO BGMList(bgm_path, bgm_name) VALUES(");
-                query.append("'"+fileList.get(i)[0]+"',");
-                query.append("'"+fileList.get(i)[1]+"')");
-                mDataBase.execSQL(query.toString());
-            } catch (SQLiteConstraintException e){
-                Log.i("SQLite Error", "이미 존재하는 값 입력 : "+e.toString());
+            isVideoFile = false;
+            String filepath = fileList.get(i)[0];
+            String filename = fileList.get(i)[1];
+            String[] splitFileName = filename.split("\\.");
+            Log.d("파일확장자 추출중", "나뉜길이:"+splitFileName.length+", 파일이름:"+filename);
+            String fileExtend = splitFileName[splitFileName.length-1];     // 파일 확장자
+
+            for (int j = 0; j < bannedExtend.length; j++) {
+                // 금지된 동영상 확장자들과 현재 파일의 확장자를 소문자로 변환한것을 비교하여 해당되는지 확인
+                if(bannedExtend[j].equals(fileExtend.toLowerCase())) {
+                    isVideoFile = true;
+                    break;
+                }
+            }
+
+            if (isVideoFile) {  // 파일이 동영상이면 다음파일로
+                continue;
+            } else {            // 동영상파일이 아니면 DB에 추가
+                // 파일명에서 확장자 빼고 저장. 파일명 문자열의 처음부터(0) ~ 파일명 문자열 길이 - [파일확장자 길이+1(.때문에 1더)]
+                try {
+                    filename = filename.substring(0, filename.length() - (fileExtend.length()+1) );
+                    query = new StringBuffer();
+                    query.append("INSERT INTO BGMList(bgm_path, bgm_name) VALUES(");
+                    query.append("'" + filepath + "',");
+                    query.append("'" + filename + "')");
+                    mDataBase.execSQL(query.toString());
+                } catch (SQLiteConstraintException e) {
+                    Log.i("SQLite Error", "이미 존재하는 값 입력 : " + e.toString());
+                } catch (SQLiteException e) {
+                    Log.e("checkBGMRecordExist", e.toString());
+                } catch (ArrayIndexOutOfBoundsException e){
+                    Log.e("checkBGMRecordExist", e.toString());
+                }
             }
         }
     }
