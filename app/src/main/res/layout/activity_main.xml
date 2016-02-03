@@ -169,20 +169,20 @@
                     >
 
                     <TextView
-                        android:id="@+id/text_playtime"
+                        android:id="@+id/main_text_playtime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="00:00"/>
 
                     <SeekBar
-                        android:id="@+id/seekbar_main"
+                        android:id="@+id/main_seekbar_playtime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="2dp"
                         android:layout_weight="8"/>
 
                     <TextView
-                        android:id="@+id/text_maxtime"
+                        android:id="@+id/main_text_maxtime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="00:00"/>
@@ -248,19 +248,19 @@
             android:background="#FFFFFF">
 
             <Button
-                android:id="@+id/main_to_record"
+                android:id="@+id/main_menubtn_to_record"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="녹음"
                 android:onClick="onClickMenuSelection"/>
             <Button
-                android:id="@+id/main_to_favorite"
+                android:id="@+id/main_menubtn_to_favorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="즐겨찾기"
                 android:onClick="onClickMenuSelection"/>
             <Button
-                android:id="@+id/main_to_category"
+                android:id="@+id/main_menubtn_to_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="카테고리설정"

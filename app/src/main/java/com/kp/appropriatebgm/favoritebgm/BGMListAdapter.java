@@ -1,12 +1,12 @@
 package com.kp.appropriatebgm.favoritebgm;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kp.appropriatebgm.DBController.BGMInfo;
@@ -29,6 +29,7 @@ public class BGMListAdapter extends BaseAdapter {
     //*띄워질 뷰를 infate시켜줄 LayoutInflater
     LayoutInflater layoutInflater=null;
     boolean isCheckBoxVisible=false;
+    boolean isChecked=false;
 
 
     //**생성자**
@@ -61,21 +62,28 @@ public class BGMListAdapter extends BaseAdapter {
         ViewHolder viewHolder=null;
 
         if(itemLayout==null){
-            itemLayout=layoutInflater.inflate(R.layout.list_item,null);
+            itemLayout=layoutInflater.inflate(R.layout.bgmadapter_layout_item,null);
             viewHolder=new ViewHolder();
-            viewHolder.name=(TextView)itemLayout.findViewById(R.id.tv_name);
-            viewHolder.checkBox=(CheckBox)itemLayout.findViewById(R.id.tv_chk);
+            viewHolder.name=(TextView)itemLayout.findViewById(R.id.bgmListAdapter_textView_name);
+            viewHolder.checkBox=(CheckBox)itemLayout.findViewById(R.id.bgmListAdapter_checkBox_musicCheck);
             itemLayout.setTag(viewHolder);
         }else{
             viewHolder=(ViewHolder)itemLayout.getTag();
         }
 
         viewHolder.name.setText(aMusicList.get(position).getBgmName());
+
         if(this.isCheckBoxVisible){
             viewHolder.checkBox.setVisibility(CheckBox.VISIBLE);
         }else{
             viewHolder.checkBox.setVisibility(CheckBox.GONE);
         }
+
+
+        viewHolder.checkBox.setChecked(false);
+        viewHolder.checkBox.setChecked(((ListView) parent).isItemChecked(position));
+        viewHolder.checkBox.setFocusable(false);
+        viewHolder.checkBox.setClickable(false);
 
         return itemLayout;
     }
@@ -107,8 +115,7 @@ public class BGMListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void isChecked(boolean checked){
+    public void setCheckBoxVisible(boolean checked){
         isCheckBoxVisible=checked;
     }
-
 }

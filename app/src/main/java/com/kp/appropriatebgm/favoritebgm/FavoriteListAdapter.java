@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.kp.appropriatebgm.DBController.BGMInfo;
 import com.kp.appropriatebgm.DBController.Favorite;
 import com.kp.appropriatebgm.R;
 
@@ -50,9 +49,9 @@ public class FavoriteListAdapter extends BaseAdapter {
         ViewHolder viewHolder=null;
 
         if(itemLayout==null){
-            itemLayout=layoutInflater.inflate(R.layout.music_list_layout,null);
+            itemLayout=layoutInflater.inflate(R.layout.favoriteadapter_layout_item,null);
             viewHolder=new ViewHolder();
-            viewHolder.name=(TextView)itemLayout.findViewById(R.id.musicName);
+            viewHolder.name=(TextView)itemLayout.findViewById(R.id.favoriteAdapter_textView_bgmName);
             itemLayout.setTag(viewHolder);
         }else{
             viewHolder=(ViewHolder)itemLayout.getTag();

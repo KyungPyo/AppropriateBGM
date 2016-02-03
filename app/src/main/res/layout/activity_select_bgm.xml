@@ -16,13 +16,13 @@
         android:layout_alignParentTop="true">
 
         <ImageView
-            android:id="@+id/search_button"
+            android:id="@+id/favorite_btn_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_search_black_24dp"
             android:layout_gravity="right"/>
         <EditText
-            android:id="@+id/search"
+            android:id="@+id/favorite_editText_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="invisible"
@@ -33,24 +33,24 @@
 
 
     <Button
-        android:id="@+id/save_favorite"
+        android:id="@+id/favorite_btn_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:text="확인" />
 
     <Button
-        android:id="@+id/cancel"
+        android:id="@+id/favorite_btn_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_toRightOf="@id/save_favorite"
+        android:layout_toRightOf="@id/favorite_btn_save"
         android:text="취소"
         />
 
     <Spinner
-        android:id="@+id/select_category"
+        android:id="@+id/favorite_spinner_category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:spinnerMode="dialog"
@@ -60,8 +60,8 @@
         android:id="@+id/musicList"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@id/save_favorite"
-        android:layout_below="@id/select_category"
+        android:layout_above="@id/favorite_btn_save"
+        android:layout_below="@id/favorite_spinner_category"
         android:choiceMode="singleChoice"/>
 
 

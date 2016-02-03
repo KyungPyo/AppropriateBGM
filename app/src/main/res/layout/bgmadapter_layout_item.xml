@@ -6,7 +6,7 @@
     android:background="@drawable/list_selector">
 
     <TextView
-        android:id="@+id/tv_name"
+        android:id="@+id/bgmListAdapter_textView_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -16,7 +16,7 @@
         android:gravity="left" />
 
     <CheckBox
-        android:id="@+id/tv_chk"
+        android:id="@+id/bgmListAdapter_checkBox_musicCheck"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:padding="8dp"

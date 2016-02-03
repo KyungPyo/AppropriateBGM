@@ -10,7 +10,7 @@
     android:background="@drawable/list_selector">
 
 <TextView
-    android:id="@+id/musicName"
+    android:id="@+id/favoriteAdapter_textView_bgmName"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />
 

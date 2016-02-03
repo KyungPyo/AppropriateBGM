@@ -53,7 +53,7 @@ public class CategoryListAdapter extends BaseAdapter {
             itemLayout=layoutInflater.inflate(R.layout.spinner_item_layout,null);
             viewHolder=new ViewHolder();
             viewHolder.name=(TextView)itemLayout.findViewById(R.id.category_item);
-            viewHolder.chkbox=(CheckBox)itemLayout.findViewById(R.id.ctglist_check);
+            viewHolder.chkbox=(CheckBox)itemLayout.findViewById(R.id.category_checkBox_categoryCheck);
             itemLayout.setTag(viewHolder);
         }else{
             viewHolder=(ViewHolder)itemLayout.getTag();

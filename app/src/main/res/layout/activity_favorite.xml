@@ -17,14 +17,14 @@
         android:layout_alignParentTop="true">\
 
         <TextView
-            android:id="@+id/favorite_text"
+            android:id="@+id/favorite_textView_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="즐겨찾기 목록"
             android:layout_gravity="left"/>
 
         <Switch
-            android:id="@+id/onOffSwitch"
+            android:id="@+id/favorite_switch_onOffSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textOn="On"
@@ -37,7 +37,7 @@
 
 
     <ListView
-        android:id="@+id/favorite_list"
+        android:id="@+id/favorite_listView_favoriteList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/favorite_toolbar"
