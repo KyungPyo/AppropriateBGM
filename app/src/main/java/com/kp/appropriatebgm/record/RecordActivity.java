@@ -485,12 +485,13 @@ public class RecordActivity extends AppCompatActivity {
                     Log.i("333", "카테고리명 안들어옴");
                 }
                 // Use : 파일명이 중복일때
-                else if (f.isFile()) {
+                else if (dbManager.isExistFileName(newFileName)) {
                     Toast.makeText(RecordActivity.this, "파일이름이 중복입니다.", Toast.LENGTH_SHORT).show();
                     Log.i("444", "파일명 중복");
                 }
                 // Use :  해당 예외처리사항이 아무것도 없을시 저장
                 else {
+                    Log.i("filename",newFileName);
                     File file = new File(recordManager.getPath());
                     File renamedFile = new File(recordManager.getDirPath() + File.separator + newFileName + ".mp3");
                     file.renameTo(renamedFile);
