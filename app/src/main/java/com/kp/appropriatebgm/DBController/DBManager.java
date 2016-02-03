@@ -336,6 +336,31 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
+    // Method : 파일명이 중복되는지 확인
+    // Return Value : boolean(중복되면 true, 중복안되면 false)
+    // Parameter : fileName(중복여부 확인하려는 파일명)
+    // Use : RecordActivity에서 파일명 중복체크 요청을 하면 해당 파일명으로 DB에서 검색하여 중복되는 값이 있는지 개수를 확인한다.
+    public boolean isExistFileName(String fileName){
+        String query;
+        Cursor cursor;
+
+        query = "SELECT COUNT(*) FROM BGMList WHERE bgm_name = '"+fileName+"'";
+        try {
+            cursor = mDataBase.rawQuery(query, null);
+
+            cursor.moveToNext();
+            if (cursor.getInt(0) == 0) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (SQLiteException e){
+            // 오류가 난 경우는 일단 중복값이 있다고 반환한다.
+            Log.e("isExistFileName", e.toString());
+            return true;
+        }
+    }
+
     /*****  DB 결과 요청(select)  *****/
 
 
