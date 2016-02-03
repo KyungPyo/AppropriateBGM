@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
     private CategoryListAdapter categoryAdapter;
     private DBManager dbManager;
     private ArrayList<BGMInfo> bgmList;
-    private ArrayList<BGMInfo> checkedBgmList;
     private ArrayList<Category> categoryList;
     private Spinner categorySpinner;
     private BGMListAdapter bgmAdapter;
@@ -113,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
 
         bgmListView=(ListView)findViewById(R.id.main_list_soundlist);
         categorySpinner=(Spinner)findViewById(R.id.main_spinner_category);
-        checkedBgmList=new ArrayList<BGMInfo>();
 
         dbManager=DBManager.getInstance(this);
 
@@ -270,7 +268,6 @@ public class MainActivity extends AppCompatActivity {
                     groupFileManage.setVisibility(View.INVISIBLE);
                     btnFileManage.setVisibility(View.VISIBLE);
                     listItemCheckFree();
-                    checkedBgmList.clear();
                     setCheckBoxVisibility(false);
                     bgmListView.setAdapter(null);
                     bgmListView.setAdapter(bgmAdapter);
@@ -280,11 +277,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case R.id.main_group_deletefile: {
-                loadCheckedListItem();
-                checkedBgmList.clear();
+                ArrayList<BGMInfo> checkedBgmList=loadCheckedListItem();
+                for(BGMInfo b:checkedBgmList){
+                    Log.d("받아오니~",b.getBgmName());
+                }
                 break;
             }
             case R.id.main_group_changecategory: {
+                ArrayList<BGMInfo> checkedBgmList=loadCheckedListItem();
                 break;
             }
         }
@@ -328,14 +328,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Method : list상에 check가 되어있는 item을 저장한다.
-    // Return Value : void
+    // Return Value : ArrayList<BGMInfo>
     // Parameter : void
-    // Use : list의 모든 아이템을 탐색하여 check가 true인 item만 checkedBgmList에 추가.
-    private void loadCheckedListItem(){
+    // Use : list의 모든 아이템을 탐색하여 check가 true인 item만 checkedBgmList에 추가해 리턴해줌
+    private ArrayList<BGMInfo> loadCheckedListItem(){
+        ArrayList<BGMInfo> checkedBgmList=new ArrayList<BGMInfo>();
         for(int i=0;i<bgmListView.getCount();i++){
             if(bgmListView.isItemChecked(i)){
                 checkedBgmList.add(bgmAdapter.getItem(i));
             }
         }
+        return checkedBgmList;
     }
 }
