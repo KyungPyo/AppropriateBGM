@@ -156,75 +156,13 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                                  try {
                                      // Use : EditText의 길이가 8 이상인 경우 다이얼로그 띄움
                                      String c_title = inputtxt.getText().toString();
-                                     Log.e("inputtxt", c_title);
-                                     Log.e("check", Boolean.toString(CtgcheckRepetition(c_title)));
-                                     if (CtgcheckRepetition(c_title) == true) {
-                                         AlertDialog.Builder repeat_Dig = new AlertDialog.Builder(CategoryActivity.this);
-                                         repeat_Dig.setTitle("카테고리 이름이 중복됩니다.")
-                                                 .setNegativeButton("확인", new DialogInterface.OnClickListener() {
-                                                     @Override
-                                                     public void onClick(DialogInterface indialog, int which) {
-                                                         indialog.cancel();
-                                                     }
-                                                 });
-                                         repeat_Dig.show();
-                                     } else if (inputtxt.length() > 8) {
-                                         AlertDialog.Builder eight_Dig = new AlertDialog.Builder(CategoryActivity.this);
-                                         eight_Dig.setTitle("카테고리 글자 수를 8자 이하로 해주십시오.")
-                                                 .setNegativeButton("확인", new DialogInterface.OnClickListener() {
-                                                     @Override
-                                                     public void onClick(DialogInterface indialog, int which) {
-                                                         indialog.cancel();
-                                                     }
-                                                 });
-                                         eight_Dig.show();
-                                     }
-                                     // Use : EditText에 아무 것도 입력되지 않은 경우
-                                     else if (inputtxt.length() == 0) {
-                                         AlertDialog.Builder null_Dig = new AlertDialog.Builder(CategoryActivity.this);
-                                         null_Dig.setTitle("카테고리 명을 입력해주세요!")
-                                                 .setNegativeButton("확인", new DialogInterface.OnClickListener() {
-                                                     @Override
-                                                     public void onClick(DialogInterface indialog, int which) {
-                                                         indialog.cancel();
-                                                     }
-                                                 });
-                                         null_Dig.show();
-                                     }
-
-
-                                     // 첫번째 공백 및 마지막 공백 예외 처리 넣을 부분 ************************************************** (완료) 주석만 넣자!
-                                     else if(c_title.charAt(0) == ' ')
-                                     {
-                                         AlertDialog.Builder firstblank_Dig = new AlertDialog.Builder(CategoryActivity.this);
-                                         firstblank_Dig.setTitle("카테고리명은 공백문자로 시작할 수 없습니다!")
-                                                 .setNegativeButton("확인", new DialogInterface.OnClickListener() {
-                                                     @Override
-                                                     public void onClick(DialogInterface indialog, int which) {
-                                                         indialog.cancel();
-                                                     }
-                                                 });
-                                         firstblank_Dig.show();
-                                     }
-                                     else if(c_title.charAt(inputtxt.length()-1) == ' ')
-                                     {
-                                         AlertDialog.Builder lastblank_Dig = new AlertDialog.Builder(CategoryActivity.this);
-                                         lastblank_Dig.setTitle("카테고리명은 공백문자로 끝날 수 없습니다!")
-                                                 .setNegativeButton("확인", new DialogInterface.OnClickListener() {
-                                                     @Override
-                                                     public void onClick(DialogInterface indialog, int which) {
-                                                         indialog.cancel();
-                                                     }
-                                                 });
-                                         lastblank_Dig.show();
-                                     }
-
 
                                      // Use : 위의 예외들을 통과한 경우 DB INSERT 연산 수행
-                                     else {
+                                     if(CtgTitleCheckable(inputtxt)){
                                          CtgInsert(c_title);
                                          ctgAdapter.notifyDataSetChanged();
-                                         add_Dig.dismiss();                                     }
+                                         add_Dig.dismiss();
+                                     }
 
                                  } catch (Exception e) {
                                      e.printStackTrace();
@@ -312,18 +250,9 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                                         public void onClick(DialogInterface dialog, int which) {
                                             try {
                                                 String modifyTitleStr = nametxt.getText().toString();
-                                                if (CtgcheckRepetition(modifyTitleStr) == true) {
-                                                    AlertDialog.Builder repeat_Dig = new AlertDialog.Builder(CategoryActivity.this);
-                                                    repeat_Dig.setTitle("카테고리 이름이 중복됩니다.")
-                                                            .setNegativeButton("확인", new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface indialog, int which) {
-                                                                    indialog.cancel();
-                                                                }
-                                                            });
-                                                    repeat_Dig.show();
-                                                } else {
+                                                if(CtgTitleCheckable(nametxt)){
                                                     CtgUpdate(modifyTitleStr, itemId);
+                                                    ctgAdapter.notifyDataSetChanged();
                                                 }
                                                 //UPDATE 메소드
                                             } catch (Exception e) {
@@ -447,12 +376,91 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
 
     }
     // Method : 카테고리 이름 중복 처리
-    // Return value : boolean
-    // paremeter : 리스트(카테고리)의 아이템 이름
-    // Use : select문을 통해 카텥고리 이름을 검색한 후 해당 카테고리가 존재할 시 true, 아닐 시 false 반환
-    public boolean CtgcheckRepetition(String s_title)
+    // Return value : void
+    // paremeter : 리스트(카테고리)의 아이템 이름, 아이템 아이디
+    // Use : db를 통해 카테고리 이름을 검색한 후 해당 카테고리가 존재할 시 다이얼로그로 알려주는 메소드
+    public void CtgcheckRepetition(String title)
     {
-        return dbManager.isExistCategoryName(s_title);
+            AlertDialog.Builder repeat_Dig = new AlertDialog.Builder(CategoryActivity.this);
+            repeat_Dig.setTitle("카테고리 이름이 중복됩니다.")
+                    .setNegativeButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface indialog, int which) {
+                            indialog.cancel();
+                        }
+                    });
+            repeat_Dig.show();
+    }
+
+    // Method : 카테고리 추가/갱신 조건 검사
+    // Return value : void
+    // paremeter : EditText
+    // Use : 카테고리를 추가하거나 갱신 시 제목의 추가하지 못하는 조건들을 설정
+    public boolean CtgTitleCheckable(EditText editText)
+    {
+            String t_title = editText.getText().toString();
+            if (dbManager.isExistCategoryName(t_title)) {
+                CtgcheckRepetition(t_title);
+                return false;
+            }
+            else if (editText.length() > 8) {
+                AlertDialog.Builder eight_Dig = new AlertDialog.Builder(CategoryActivity.this);
+                eight_Dig.setTitle("카테고리 글자 수를 8자 이하로 해주십시오.")
+                        .setNegativeButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface indialog, int which) {
+                                indialog.cancel();
+                            }
+                        });
+                eight_Dig.show();
+                return false;
+            }
+            // Use : EditText에 아무 것도 입력되지 않은 경우
+            else if (editText.length() == 0) {
+                AlertDialog.Builder null_Dig = new AlertDialog.Builder(CategoryActivity.this);
+                null_Dig.setTitle("카테고리 명을 입력해주세요!")
+                        .setNegativeButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface indialog, int which) {
+                                indialog.cancel();
+                            }
+                        });
+                null_Dig.show();
+                return false;
+            }
+
+
+            // 첫번째 공백 및 마지막 공백 예외 처리 넣을 부분 ************************************************** (완료) 주석만 넣자!
+            else if(t_title.charAt(0) == ' ')
+            {
+                AlertDialog.Builder firstblank_Dig = new AlertDialog.Builder(CategoryActivity.this);
+                firstblank_Dig.setTitle("카테고리명은 공백문자로 시작할 수 없습니다!")
+                        .setNegativeButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface indialog, int which) {
+                                indialog.cancel();
+                            }
+                        });
+                firstblank_Dig.show();
+                return false;
+            }
+            else if(t_title.charAt(editText.length()-1) == ' ')
+            {
+                AlertDialog.Builder lastblank_Dig = new AlertDialog.Builder(CategoryActivity.this);
+                lastblank_Dig.setTitle("카테고리명은 공백문자로 끝날 수 없습니다!")
+                        .setNegativeButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface indialog, int which) {
+                                indialog.cancel();
+                            }
+                        });
+                lastblank_Dig.show();
+                return false;
+            }
+            else
+            {
+                return true;
+            }
     }
 
     // Method : DB 다시 받아오기
