@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -98,9 +97,9 @@ public class MainActivity extends AppCompatActivity {
         mainLayout = (RelativeLayout)findViewById(R.id.main_layout_main);
         menuLayout = (LinearLayout)findViewById(R.id.main_layout_menu);
 
-        btnMoveToRecord = findViewById(R.id.main_to_record);
-        btnMoveToFavorite = findViewById(R.id.main_to_favorite);
-        btnMoveToCategory = findViewById(R.id.main_to_category);
+        btnMoveToRecord = findViewById(R.id.main_menubtn_to_record);
+        btnMoveToFavorite = findViewById(R.id.main_menubtn_to_favorite);
+        btnMoveToCategory = findViewById(R.id.main_menubtn_to_category);
 
         bgmListView=(ListView)findViewById(R.id.main_list_soundlist);
         categorySpinner=(Spinner)findViewById(R.id.main_spinner_category);
@@ -139,6 +138,52 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         mainDrawer.setDrawerListener(drawerToggle);
+    }
+
+    // Method : Main의 BGMList 초기 설정
+    // Return Value : void
+    // Parameter : void
+    // Use :  DB에서 전체리스트를 가져오고 list뷰의 어댑터 설정을 담당. onCreate에서 호출
+    private void initBgmList(){
+        bgmList=dbManager.getBGMList(1);
+        bgmAdapter=new BGMListAdapter(this,bgmList);
+        bgmListView.setAdapter(bgmAdapter);
+    }
+
+    // Method : DB 에서 카테고리 받아오기
+    // Return Value : void
+    // Parameter : void
+    // Use :  카테고리를 DB 에서 가져와서 Spinner 에서 보여주는 Method
+    private void initCategory() {
+        categoryList=dbManager.getCategoryList();//DB
+        categoryAdapter = new CategoryListAdapter(this, categoryList);
+
+        //스피너에서 item을 선택했을 때
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //지금 보여지고 있는 ArrayList를 클리어
+                bgmList.clear();
+                bgmList.addAll(dbManager.getBGMList(categoryList.get(position).getCateId()));
+                listItemCheckFree();
+                bgmAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        categorySpinner.setAdapter(categoryAdapter);
+    }
+
+    private void setListeners(){
+        bgmListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                bgmAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -200,20 +245,19 @@ public class MainActivity extends AppCompatActivity {
     // Parameter : View(클릭한 뷰 정보)
     // Use : 파일관리를 클릭했을 때 이벤트 (파일관리의 펼쳐진 세부항목의 클릭 이벤트도 여기에 포함된다)
     public void onClickFilemanage(View v){
-        //
         switch (v.getId()){
             case R.id.main_group_filemanage:
             case R.id.main_group_editcomplete: {
                 if(groupFileManage.getVisibility() == View.INVISIBLE) {
                     groupFileManage.setVisibility(View.VISIBLE);
                     btnFileManage.setVisibility(View.INVISIBLE);
-                    checkBoxVisibility(true);
+                    setCheckBoxVisibility(true);
                     bgmListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
                 } else {
                     groupFileManage.setVisibility(View.INVISIBLE);
                     btnFileManage.setVisibility(View.VISIBLE);
                     listItemCheckFree();
-                    checkBoxVisibility(false);
+                    setCheckBoxVisibility(false);
                     bgmListView.setAdapter(null);
                     bgmListView.setAdapter(bgmAdapter);
                     bgmListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
@@ -224,59 +268,13 @@ public class MainActivity extends AppCompatActivity {
     }
     /**** 기타 이벤트 부분 ****/
 
-    void setListeners(){
-        bgmListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                bgmAdapter.notifyDataSetChanged();
-            }
-        });
-    }
-
     // Method : CheckBox controller
     // Return Value : void
     // Parameter : ckecked: check박스를 보여줄지 숨길지를 결정하는 boolean형 변수
     // Use :  호출부에서 ckeck박스 컨트롤을 요청하면 화면에 반영시켜줌.
-    void checkBoxVisibility(boolean checked){
+    private void setCheckBoxVisibility(boolean checked){
         bgmAdapter.setCheckBoxVisible(checked);
         bgmAdapter.notifyDataSetChanged();
-    }
-
-    // Method : Main의 BGMList 초기 설정
-    // Return Value : void
-    // Parameter : void
-    // Use :  DB에서 전체리스트를 가져오고 list뷰의 어댑터 설정을 담당. onCreate에서 호출
-    private void initBgmList(){
-        bgmList=dbManager.getBGMList(1);
-        bgmAdapter=new BGMListAdapter(this,bgmList);
-        bgmListView.setAdapter(bgmAdapter);
-    }
-
-    // Method : DB 에서 카테고리 받아오기
-    // Return Value : void
-    // Parameter : void
-    // Use :  카테고리를 DB 에서 가져와서 Spinner 에서 보여주는 Method
-    private void initCategory() {
-        categoryList=dbManager.getCategoryList();//DB
-        categoryAdapter = new CategoryListAdapter(this, categoryList);
-
-        //스피너에서 item을 선택했을 때
-        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //지금 보여지고 있는 ArrayList를 클리어
-                bgmList.clear();
-                bgmList.addAll(dbManager.getBGMList(categoryList.get(position).getCateId()));
-                listItemCheckFree();
-                bgmAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        categorySpinner.setAdapter(categoryAdapter);
     }
 
     private void listItemCheckFree(){
