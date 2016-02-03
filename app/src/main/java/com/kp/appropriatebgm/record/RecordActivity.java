@@ -1,5 +1,9 @@
 package com.kp.appropriatebgm.record;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Window;
 import android.content.Intent;
 import android.graphics.Color;
@@ -27,6 +31,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.DBController.DBManager;
@@ -420,26 +425,38 @@ public class RecordActivity extends AppCompatActivity {
             }
         });
         categorySel.setAdapter(categoryAdapter);
-        // Method : filenameEt 엔터 및 특수문자 입력 안되기
+
+        // Method : Edittext 엔터 및 특수문자 입력 안되기
         // Return Value : void
-        // Parameter : OnKeyListener()
-        // Use :  안됨.
-        filenameEt.setOnKeyListener(new View.OnKeyListener() {
+        // Parameter : void
+        // Use :  한글 영어 숫자말고는 아에 입력이 안됨.
+        TextWatcher watcher = new TextWatcher() {
+            String text;
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == event.KEYCODE_ENTER) {
-                    Toast.makeText(RecordActivity.this, "특수문자 안됨(단호)", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (keyCode == event.KEYCODE_TAB) {
-                    Toast.makeText(RecordActivity.this, "특수문자 안됨(단호)", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (keyCode == event.KEYCODE_SPACE) {
-                    Toast.makeText(RecordActivity.this, "특수문자 안됨(단호)", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                return false;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                text = s.toString();
             }
-        });
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                int length = s.toString().length();
+                if (length > 0) {
+                    Pattern ps = Pattern.compile("^[a-zA-Z0-9ㄱ-ㅎ가-흐]+$");//영문, 숫자, 한글만 허용
+                    if (!ps.matcher(s).matches()) {
+                        filenameEt.setText(text);
+                        filenameEt.setSelection(filenameEt.length());
+                    }
+                }
+            }
+
+        };
+        filenameEt.addTextChangedListener(watcher);
+
         // Method : 팝업윈도우내 저장버튼 클릭
         // Return Value : void
         // Parameter : View
@@ -492,4 +509,40 @@ public class RecordActivity extends AppCompatActivity {
     }
     /***** 액티비티 *****/
 
+    // Method : 뒤로버튼 이벤트 리스너
+    // Return Value : void
+    // Parameter : keycode
+    // Use : 백키버튼을 눌렀을 때 출력되는 팝업윈도우 설정(버튼 이벤트리스너 포함)
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+
+        if(uri != null) {
+            if (keyCode == event.KEYCODE_BACK && event.getRepeatCount() == 0) {
+                AlertDialog dialog;
+                dialog = new AlertDialog.Builder(this).setTitle("종료확인")
+                        .setMessage(" 지금 종료하시면 녹음파일이 삭제됩니다. 종료하시겠습니까?")
+                        .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                File files = new File(recordManager.getPath());
+                                Log.i("delete",recordManager.getPath());
+                                files.delete();
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
+                return true;
+
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }
