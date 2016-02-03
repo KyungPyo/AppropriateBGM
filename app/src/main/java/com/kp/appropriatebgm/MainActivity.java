@@ -81,6 +81,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // 액티비티에서 벗어나면 재생중인 브금 정지
+        if (musicPlayer != null){
+            musicPlayer.stopBgm();
+            musicPlayer = null;
+        }
+    }
+
     // Method : 초기설정
     // Return Value : void
     // Parameter : void
@@ -272,6 +283,9 @@ public class MainActivity extends AppCompatActivity {
             bgmAdapter.notifyDataSetChanged();
         } else {        // 파일관리가 닫혀있으면 재생모드
             BGMInfo bgm = bgmAdapter.getItem(position);
+            if (musicPlayer != null){
+                musicPlayer.stopBgm();
+            }
             if(bgm.isInnerfile()) {
                 musicPlayer = new MusicPlayer(this, bgm.getInnerfileCode());
             } else {
