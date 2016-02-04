@@ -535,10 +535,19 @@ public class DBManager extends SQLiteOpenHelper {
         try {
             mDataBase.execSQL(query.toString());
         } catch (SQLiteException e) {
-            Log.e("deleteBGMFile", e.toString());
+            Log.e("deleteBGMFile 레코드삭제", e.toString());
         }
 
-
+        // 파일 삭제
+        File file;
+        for(int i=0; i<bgmPath.length; i++){
+            try {
+                file = new File(bgmPath[i]);
+                file.delete();
+            } catch (Exception e){
+                Log.e("deleteBGMFile 파일삭제", e.toString());
+            }
+        }
     }
     /*****  DB 레코드 삭제(delete)  *****/
 }
