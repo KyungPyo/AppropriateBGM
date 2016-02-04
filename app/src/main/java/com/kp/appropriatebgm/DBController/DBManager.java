@@ -477,11 +477,11 @@ public class DBManager extends SQLiteOpenHelper {
         query.append(categoryId);
         query.append(" WHERE bgm_path in(");
         for(int i=0; i<bgmPath.length; i++) {
-            query.append("'"+bgmPath+"'");
+            query.append("'"+bgmPath[i]+"'");
             if(i+1 < bgmPath.length)   // 마지막이 아니면
                 query.append(",");
         }
-
+        query.append(");");
         try {
             mDataBase.execSQL(query.toString());
         } catch (SQLiteException e){

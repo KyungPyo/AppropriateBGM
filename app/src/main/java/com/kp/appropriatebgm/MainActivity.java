@@ -72,8 +72,9 @@ public class MainActivity extends AppCompatActivity {
     private BGMListAdapter bgmAdapter;
 
     private String checkedBgmPath[];
-    AlertDialog deleteFile_dialog;
-    int selectedCategoryPosition;
+    private AlertDialog deleteFile_dialog;
+    private AlertDialog updateCategory_dialog;
+    private int selectedCategoryPosition;
 
     /**** 멤버 선언 ****/
 
@@ -85,13 +86,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initMember();           // 멤버변수 초기화
-        initMenuLayoutSize();   // 메뉴 레이아웃 크기설정
-        initDrawerToggle();     // 네비게이션 드로워 리스너설정
-        initBgmList();          // BGMList 초기 구성
-        initCategory();         // 카테고리 목록 초기 구성 및 이벤트 정의
-        settingDeleteDialg();   // 삭제 시 뜨는 다이얼로그 초기 구성
-
+        initMember();                   // 멤버변수 초기화
+        initMenuLayoutSize();           // 메뉴 레이아웃 크기설정
+        initDrawerToggle();             // 네비게이션 드로워 리스너설정
+        initBgmList();                  // BGMList 초기 구성
+        initCategory();                 // 카테고리 목록 초기 구성 및 이벤트 정의
+        settingDeleteDialog();          // 삭제 시 뜨는 다이얼로그 초기 구성
+        settingUpdateCategoryDialog();  // 카테고리 변경 시 뜨는 다이얼로그 초기 구성
     }
 
     @Override
@@ -294,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
             }
             case R.id.main_group_deletefile: {
                 ArrayList<BGMInfo> checkedBgmList = loadCheckedListItem();
+
                 if (checkedBgmList.size() == 0) {
                     Toast.makeText(this, "삭제하실 파일을 선택해주세요.", Toast.LENGTH_SHORT).show();
                 } else {
@@ -309,17 +311,65 @@ public class MainActivity extends AppCompatActivity {
             }
             case R.id.main_group_changecategory: {
                 ArrayList<BGMInfo> checkedBgmList = loadCheckedListItem();
-                checkedBgmPath = new String[checkedBgmList.size()];
 
-                for (int i = 0; i < checkedBgmPath.length; i++) {
-                    checkedBgmPath[i] = checkedBgmList.get(i).getBgmPath();
+                if(checkedBgmList.size()==0){
+                    Toast.makeText(this, "카테고리를 이동하실 파일을 선택해주세요.", Toast.LENGTH_SHORT).show();
+                }else {
+                    checkedBgmPath = new String[checkedBgmList.size()];
+
+                    for (int i = 0; i < checkedBgmPath.length; i++) {
+                        checkedBgmPath[i] = checkedBgmList.get(i).getBgmPath();
+                    }
+
+                    updateCategory_dialog.show();
                 }
                 break;
             }
         }
     }
 
-    private void settingDeleteDialg() {
+
+    // Method : 카테고리 이동시 뜨는 다이얼로그 세팅
+    // Return Value : void
+    // Parameter : void
+    // Use : 다이얼로그 레이아웃을 구성하고 레이아웃 안에있는 버튼과 리스트뷰의 이벤트 리스너를 정의한다.
+    //       리스트 item 을 클릭하면 카테고리를 이동하고 리스트 갱신을 위해 Database 에서 BGM 목록을 다시 받아온다.
+    private void settingUpdateCategoryDialog(){
+        View updateCategory_dialog_view = getLayoutInflater().inflate(R.layout.dialog_category_update, null);
+        AlertDialog.Builder updateDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        updateDialogBuilder.setTitle("변경하실 카테고리를 선택하세요.");
+        updateDialogBuilder.setView(updateCategory_dialog_view);
+
+        Button ctg_cancel_btn = (Button) updateCategory_dialog_view.findViewById(R.id.main_dialog_btn_cancel);
+        ListView updateCategoryListView=(ListView)updateCategory_dialog_view.findViewById(R.id.main_dialog_list_category);
+        ctg_cancel_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateCategory_dialog.dismiss();
+            }
+        });
+        updateCategoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                dbManager.updateBgmCategory(categoryList.get(position).getCateId(),checkedBgmPath);
+                updateCategory_dialog.dismiss();
+                bgmList.clear();
+                bgmList.addAll(dbManager.getBGMList(categoryList.get(selectedCategoryPosition).getCateId()));
+                bgmAdapter.notifyDataSetChanged();
+                listItemCheckFree();
+            }
+        });
+        updateCategoryListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        updateCategoryListView.setAdapter(categoryAdapter);
+        updateCategory_dialog=updateDialogBuilder.create();
+    }
+
+    // Method : 파일 삭제 시 뜨는 다이얼로그 세팅
+    // Return Value : void
+    // Parameter : void
+    // Use : 다이얼로그 레이아웃을 구성하고 레이아웃 안에있는 버튼의 이벤트 리스너를 정의한다.
+    //       확인 버튼을 누르면 삭제되고 리스트 갱신을 위해 Database 에서 BGM 목록을 다시 받아온다.
+    private void settingDeleteDialog() {
 
         View delete_dialog_view = getLayoutInflater().inflate(R.layout.dialog_category_deletecheck, null);
         AlertDialog.Builder deleteDialogBuilder = new AlertDialog.Builder(MainActivity.this);
@@ -327,10 +377,10 @@ public class MainActivity extends AppCompatActivity {
         deleteDialogBuilder.setView(delete_dialog_view);
         deleteDialogBuilder.setMessage("선택하신 파일은 영구 삭제됩니다. 계속 진행하시겠습니까?");
 
-        Button ctg_delete_btn = (Button) delete_dialog_view.findViewById(R.id.category_delete_btn);
-        Button ctg_deleteCancel_btn = (Button) delete_dialog_view.findViewById(R.id.category_delete_cancel_btn);
+        Button file_delete_btn = (Button) delete_dialog_view.findViewById(R.id.category_delete_btn);
+        Button file_deleteCancel_btn = (Button) delete_dialog_view.findViewById(R.id.category_delete_cancel_btn);
 
-        ctg_delete_btn.setOnClickListener(new View.OnClickListener() {
+        file_delete_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dbManager.deleteBGMFile(checkedBgmPath);
@@ -342,15 +392,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ctg_deleteCancel_btn.setOnClickListener(new View.OnClickListener() {
+        file_deleteCancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 deleteFile_dialog.dismiss();
             }
         });
 
-        ctg_delete_btn.setText(R.string.ctg_check_btn);
-        ctg_deleteCancel_btn.setText(R.string.ctg_ctl_btn);
+        file_delete_btn.setText(R.string.ctg_check_btn);
+        file_deleteCancel_btn.setText(R.string.ctg_ctl_btn);
         deleteFile_dialog = deleteDialogBuilder.create();
     }
 
