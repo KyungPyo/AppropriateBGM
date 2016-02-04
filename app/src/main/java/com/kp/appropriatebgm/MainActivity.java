@@ -278,13 +278,23 @@ public class MainActivity extends AppCompatActivity {
             }
             case R.id.main_group_deletefile: {
                 ArrayList<BGMInfo> checkedBgmList=loadCheckedListItem();
-                for(BGMInfo b:checkedBgmList){
-                    Log.d("받아오니~",b.getBgmName());
+                String deleteBgmId[]=new String[checkedBgmList.size()];
+
+                for(int i=0;i<deleteBgmId.length;i++){
+                    deleteBgmId[i]=checkedBgmList.get(i).getBgmPath();
                 }
+
+                dbManager.deleteBGMFile(deleteBgmId);
                 break;
             }
             case R.id.main_group_changecategory: {
                 ArrayList<BGMInfo> checkedBgmList=loadCheckedListItem();
+                int deleteCategoryId[]=new int[checkedBgmList.size()];
+
+                for(int i=0;i<deleteCategoryId.length;i++){
+                    deleteCategoryId[i]=checkedBgmList.get(i).getCategoryId();
+                }
+
                 break;
             }
         }
