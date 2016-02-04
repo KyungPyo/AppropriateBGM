@@ -153,16 +153,20 @@ public class DBManager extends SQLiteOpenHelper {
             StringBuffer deleteList = new StringBuffer();
             File existCheck;
             while (notExistList.moveToNext()) {
-                // 삭제 리스트에 추가
-                deleteList.append("'"+notExistList.getString(0)+"'");
-                if (!notExistList.isLast()) {
-                    deleteList.append(",");
+                existCheck = new File(notExistList.getString(0));
+                // 해당 파일이 정말 존재하지 않으면(미디어풀 DB에 아직 등록되지 않았을 수도 있기 때문에 한번 더 체크)
+                if ( !existCheck.isFile() ) {
+                    // 삭제 리스트에 추가
+                    deleteList.append("'"+notExistList.getString(0)+"'");
+                    if (!notExistList.isLast()) {
+                        deleteList.append(",");
+                    }
                 }
             }
             Log.d("지워질 파일", deleteList.toString()+"");
 
             if (deleteList.length() > 1) {
-                // 카테고리 테이블에서 먼저 해당 bgm_path를 참조하고 있는 레코드 값을 null로 만들어준다.
+                // 즐겨찾기 테이블에서 먼저 해당 bgm_path를 참조하고 있는 레코드 값을 null로 만들어준다.
                 query = new StringBuffer();
                 query.append("UPDATE Favorite SET bgm_path = null WHERE bgm_path in(");
                 query.append(deleteList.toString());
