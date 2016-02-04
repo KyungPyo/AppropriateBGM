@@ -202,8 +202,8 @@ public class MainActivity extends AppCompatActivity {
                 bgmList.clear();
                 bgmList.addAll(dbManager.getBGMList(categoryList.get(position).getCateId()));
                 selectedCategoryPosition = position;
-                listItemCheckFree();
                 bgmAdapter.notifyDataSetChanged();
+                listItemCheckFree();
             }
 
             @Override
