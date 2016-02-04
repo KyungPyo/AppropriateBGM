@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog deleteFile_dialog;
     private AlertDialog updateCategory_dialog;
     private int selectedCategoryPosition;
+    private ArrayList<Category> categoryListForDialog;
+    private CategoryListAdapter categoryAdapterForDialog;
 
     /**** 멤버 선언 ****/
 
@@ -342,6 +344,12 @@ public class MainActivity extends AppCompatActivity {
 
         Button ctg_cancel_btn = (Button) updateCategory_dialog_view.findViewById(R.id.main_dialog_btn_cancel);
         ListView updateCategoryListView=(ListView)updateCategory_dialog_view.findViewById(R.id.main_dialog_list_category);
+
+        categoryListForDialog=new ArrayList<Category>();
+        categoryListForDialog.addAll(categoryList);
+        categoryListForDialog.remove(0);
+        categoryAdapterForDialog=new CategoryListAdapter(this,categoryListForDialog);
+
         ctg_cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -351,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
         updateCategoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                dbManager.updateBgmCategory(categoryList.get(position).getCateId(),checkedBgmPath);
+                dbManager.updateBgmCategory(categoryList.get(position+1).getCateId(),checkedBgmPath);
                 updateCategory_dialog.dismiss();
                 bgmList.clear();
                 bgmList.addAll(dbManager.getBGMList(categoryList.get(selectedCategoryPosition).getCateId()));
@@ -360,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         updateCategoryListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        updateCategoryListView.setAdapter(categoryAdapter);
+        updateCategoryListView.setAdapter(categoryAdapterForDialog);
         updateCategory_dialog=updateDialogBuilder.create();
     }
 
