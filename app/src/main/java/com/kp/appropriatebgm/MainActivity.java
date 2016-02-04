@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.kp.appropriatebgm.Category.CategoryActivity;
 import com.kp.appropriatebgm.DBController.BGMInfo;
@@ -293,13 +294,17 @@ public class MainActivity extends AppCompatActivity {
             }
             case R.id.main_group_deletefile: {
                 ArrayList<BGMInfo> checkedBgmList = loadCheckedListItem();
-                checkedBgmPath = new String[checkedBgmList.size()];
+                if (checkedBgmList.size() == 0) {
+                    Toast.makeText(this, "삭제하실 파일을 선택해주세요.", Toast.LENGTH_SHORT).show();
+                } else {
+                    checkedBgmPath = new String[checkedBgmList.size()];
 
-                for (int i = 0; i < checkedBgmPath.length; i++) {
-                    checkedBgmPath[i] = checkedBgmList.get(i).getBgmPath();
+                    for (int i = 0; i < checkedBgmPath.length; i++) {
+                        checkedBgmPath[i] = checkedBgmList.get(i).getBgmPath();
+                    }
+
+                    deleteFile_dialog.show();
                 }
-
-                deleteFile_dialog.show();
                 break;
             }
             case R.id.main_group_changecategory: {
@@ -333,6 +338,7 @@ public class MainActivity extends AppCompatActivity {
                 bgmList.clear();
                 bgmList.addAll(dbManager.getBGMList(categoryList.get(selectedCategoryPosition).getCateId()));
                 bgmAdapter.notifyDataSetChanged();
+                listItemCheckFree();
             }
         });
 
