@@ -225,6 +225,7 @@ public class DBManager extends SQLiteOpenHelper {
                     query.append("'" + filepath + "',");
                     query.append("'" + filename + "')");
                     mDataBase.execSQL(query.toString());
+                    Log.d("???", query.toString());
                 } catch (SQLiteConstraintException e) {
                     Log.i("SQLite Error", "이미 존재하는 값 입력 : " + e.toString());
                 } catch (SQLiteException e) {

@@ -1,4 +1,5 @@
 package com.kp.appropriatebgm;
+
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -34,7 +35,9 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    /**** 멤버 선언 ****/
+    /****
+     * 멤버 선언
+     ****/
     private DisplayMetrics metrics;
     private int leftMenuWidth;
     private boolean isFilemanageOpen = false;
@@ -73,7 +76,9 @@ public class MainActivity extends AppCompatActivity {
 
     /**** 멤버 선언 ****/
 
-    /**** 화면 설정 ****/
+    /****
+     * 화면 설정
+     ****/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
 
         // 액티비티에서 벗어나면 재생중인 브금 정지
-        if (musicPlayer != null){
+        if (musicPlayer != null) {
             musicPlayer.stopBgm();
             musicPlayer = null;
         }
@@ -103,23 +108,23 @@ public class MainActivity extends AppCompatActivity {
     // Return Value : void
     // Parameter : void
     // Use : 초기에 현재 액티비티에서 뷰나 뷰그룹들의 인스턴스들을 실제 객체들과 연결시키고, 초기 설정값을 입력한다. onCreate에서 호출.
-    private void initMember(){
-        toolbar = (Toolbar)findViewById(R.id.main_toolbar);
-        btnFileManage = (ViewGroup)findViewById(R.id.main_group_filemanage);
-        groupFileManage = (ViewGroup)findViewById(R.id.main_group_filemanagegroup);
-        btnEditComplete = (ViewGroup)findViewById(R.id.main_group_editcomplete);
-        mainDrawer = (DrawerLayout)findViewById(R.id.main_layout_drawer);
-        mainLayout = (RelativeLayout)findViewById(R.id.main_layout_main);
-        menuLayout = (LinearLayout)findViewById(R.id.main_layout_menu);
+    private void initMember() {
+        toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        btnFileManage = (ViewGroup) findViewById(R.id.main_group_filemanage);
+        groupFileManage = (ViewGroup) findViewById(R.id.main_group_filemanagegroup);
+        btnEditComplete = (ViewGroup) findViewById(R.id.main_group_editcomplete);
+        mainDrawer = (DrawerLayout) findViewById(R.id.main_layout_drawer);
+        mainLayout = (RelativeLayout) findViewById(R.id.main_layout_main);
+        menuLayout = (LinearLayout) findViewById(R.id.main_layout_menu);
 
         btnMoveToRecord = findViewById(R.id.main_menubtn_to_record);
         btnMoveToFavorite = findViewById(R.id.main_menubtn_to_favorite);
         btnMoveToCategory = findViewById(R.id.main_menubtn_to_category);
 
-        bgmListView=(ListView)findViewById(R.id.main_list_soundlist);
-        categorySpinner=(Spinner)findViewById(R.id.main_spinner_category);
+        bgmListView = (ListView) findViewById(R.id.main_list_soundlist);
+        categorySpinner = (Spinner) findViewById(R.id.main_spinner_category);
 
-        dbManager=DBManager.getInstance(this);
+        dbManager = DBManager.getInstance(this);
 
         bgmListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -138,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
     // Return Value : void
     // Parameter : void
     // Use : 메뉴 버튼을 눌렀을 때 열리는 메뉴 크기를 설정한다. onCreate에서 호출
-    private void initMenuLayoutSize(){
+    private void initMenuLayoutSize() {
         // menuLayout의 너비를 화면의 75%로 설정하기위해 값을 받아온다
         metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -152,13 +157,17 @@ public class MainActivity extends AppCompatActivity {
     // Return Value : void
     // Parameter : void
     // Use : 네비게이션 메뉴의 DrawerListener를 설정한다. 액션방 onCreate에서 호출
-    private void initDrawerToggle(){
-        drawerToggle = new ActionBarDrawerToggle(this, mainDrawer, toolbar, R.string.open_menu, R.string.close_menu){
+    private void initDrawerToggle() {
+        drawerToggle = new ActionBarDrawerToggle(this, mainDrawer, toolbar, R.string.open_menu, R.string.close_menu) {
             @Override
-            public void onDrawerOpened(View drawerView) {   super.onDrawerOpened(drawerView);   }
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
 
             @Override
-            public void onDrawerClosed(View drawerView) {   super.onDrawerClosed(drawerView);   }
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
         };
         mainDrawer.setDrawerListener(drawerToggle);
     }
@@ -167,9 +176,9 @@ public class MainActivity extends AppCompatActivity {
     // Return Value : void
     // Parameter : void
     // Use :  DB에서 전체리스트를 가져오고 list뷰의 어댑터 설정을 담당. onCreate에서 호출
-    private void initBgmList(){
-        bgmList=dbManager.getBGMList(1);
-        bgmAdapter=new BGMListAdapter(this,bgmList);
+    private void initBgmList() {
+        bgmList = dbManager.getBGMList(1);
+        bgmAdapter = new BGMListAdapter(this, bgmList);
         bgmListView.setAdapter(bgmAdapter);
     }
 
@@ -178,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
     // Parameter : void
     // Use :  카테고리를 DB 에서 가져와서 Spinner 에서 보여주는 Method
     private void initCategory() {
-        categoryList=dbManager.getCategoryList();//DB
+        categoryList = dbManager.getCategoryList();//DB
         categoryAdapter = new CategoryListAdapter(this, categoryList);
 
         //스피너에서 item을 선택했을 때
@@ -188,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                 //지금 보여지고 있는 ArrayList를 클리어
                 bgmList.clear();
                 bgmList.addAll(dbManager.getBGMList(categoryList.get(position).getCateId()));
-                selectedCategoryPosition=position;
+                selectedCategoryPosition = position;
                 listItemCheckFree();
                 bgmAdapter.notifyDataSetChanged();
             }
@@ -215,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(drawerToggle.onOptionsItemSelected(item)){   // drawer menu 여닫는걸 선택했을 때 이벤트 선점
+        if (drawerToggle.onOptionsItemSelected(item)) {   // drawer menu 여닫는걸 선택했을 때 이벤트 선점
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -223,22 +232,24 @@ public class MainActivity extends AppCompatActivity {
 
     /**** 화면 설정 ****/
 
-    /**** 기타 이벤트 부분 ****/
+    /****
+     * 기타 이벤트 부분
+     ****/
     // Method : 메뉴버튼 클릭 이벤트
     // Return Value : void
     // Parameter : View(클릭한 뷰 정보)
     // Use : 메뉴안에 선택할 수 있는 버튼을 눌렀을 때 발생하는 이벤트 처리. 다른 액티비티로 이동하는데 사용된다.
-    public void onClickMenuSelection(View v){
+    public void onClickMenuSelection(View v) {
         Intent intent = new Intent();
         ComponentName componentName = null;
-        switch (v.getId()){
-            case R.id.main_menubtn_to_record:{
+        switch (v.getId()) {
+            case R.id.main_menubtn_to_record: {
                 componentName = new ComponentName("com.kp.appropriatebgm", "com.kp.appropriatebgm.record.RecordActivity");
                 intent.setComponent(componentName);
                 startActivity(intent);
                 break;
             }
-            case R.id.main_menubtn_to_favorite:{
+            case R.id.main_menubtn_to_favorite: {
 
                /* componentName = new ComponentName("com.kp.appropriatebgm", "com.kp.appropriatebgm.favoritebgm.FavoriteActivity");
                 intent.setComponent(componentName);*/
@@ -246,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             }
-            case R.id.main_menubtn_to_category:{
+            case R.id.main_menubtn_to_category: {
 
                 intent.setClass(getApplicationContext(), CategoryActivity.class);
                 startActivity(intent);
@@ -259,11 +270,11 @@ public class MainActivity extends AppCompatActivity {
     // Return Value : void
     // Parameter : View(클릭한 뷰 정보)
     // Use : 파일관리를 클릭했을 때 이벤트 (파일관리의 펼쳐진 세부항목의 클릭 이벤트도 여기에 포함된다)
-    public void onClickFilemanage(View v){
-        switch (v.getId()){
+    public void onClickFilemanage(View v) {
+        switch (v.getId()) {
             case R.id.main_group_filemanage:
             case R.id.main_group_editcomplete: {
-                if(groupFileManage.getVisibility() == View.INVISIBLE && !isFilemanageOpen) {
+                if (groupFileManage.getVisibility() == View.INVISIBLE && !isFilemanageOpen) {
                     groupFileManage.setVisibility(View.VISIBLE);
                     btnFileManage.setVisibility(View.INVISIBLE);
                     setCheckBoxVisibility(true);
@@ -282,29 +293,29 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case R.id.main_group_deletefile: {
-                ArrayList<BGMInfo> checkedBgmList=loadCheckedListItem();
-                checkedBgmPath=new String[checkedBgmList.size()];
+                ArrayList<BGMInfo> checkedBgmList = loadCheckedListItem();
+                checkedBgmPath = new String[checkedBgmList.size()];
 
-                for(int i=0;i<checkedBgmPath.length;i++){
-                    checkedBgmPath[i]=checkedBgmList.get(i).getBgmPath();
+                for (int i = 0; i < checkedBgmPath.length; i++) {
+                    checkedBgmPath[i] = checkedBgmList.get(i).getBgmPath();
                 }
 
                 deleteFile_dialog.show();
                 break;
             }
             case R.id.main_group_changecategory: {
-                ArrayList<BGMInfo> checkedBgmList=loadCheckedListItem();
-                checkedBgmPath=new String[checkedBgmList.size()];
+                ArrayList<BGMInfo> checkedBgmList = loadCheckedListItem();
+                checkedBgmPath = new String[checkedBgmList.size()];
 
-                for(int i=0;i<checkedBgmPath.length;i++){
-                    checkedBgmPath[i]=checkedBgmList.get(i).getBgmPath();
+                for (int i = 0; i < checkedBgmPath.length; i++) {
+                    checkedBgmPath[i] = checkedBgmList.get(i).getBgmPath();
                 }
                 break;
             }
         }
     }
 
-    private void settingDeleteDialg(){
+    private void settingDeleteDialg() {
 
         View delete_dialog_view = getLayoutInflater().inflate(R.layout.dialog_category_deletecheck, null);
         AlertDialog.Builder deleteDialogBuilder = new AlertDialog.Builder(MainActivity.this);
@@ -318,7 +329,6 @@ public class MainActivity extends AppCompatActivity {
         ctg_delete_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("들어가니~","응!!!");
                 dbManager.deleteBGMFile(checkedBgmPath);
                 deleteFile_dialog.dismiss();
                 categorySpinner.setSelection(selectedCategoryPosition);
@@ -339,15 +349,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void onClickMusicListItem(int position){
-        if (isFilemanageOpen){  // 파일관리가 열려있으면 선택모드
+    private void onClickMusicListItem(int position) {
+        if (isFilemanageOpen) {  // 파일관리가 열려있으면 선택모드
             bgmAdapter.notifyDataSetChanged();
         } else {        // 파일관리가 닫혀있으면 재생모드
             BGMInfo bgm = bgmAdapter.getItem(position);
-            if (musicPlayer != null){
+            if (musicPlayer != null) {
                 musicPlayer.stopBgm();
             }
-            if(bgm.isInnerfile()) {
+            if (bgm.isInnerfile()) {
                 musicPlayer = new MusicPlayer(this, bgm.getInnerfileCode());
             } else {
                 musicPlayer = new MusicPlayer(this, bgm.getBgmPath());
@@ -355,13 +365,16 @@ public class MainActivity extends AppCompatActivity {
             musicPlayer.playBgm();
         }
     }
-    /**** 기타 이벤트 부분 ****/
+
+    /****
+     * 기타 이벤트 부분
+     ****/
 
     // Method : CheckBox controller
     // Return Value : void
     // Parameter : ckecked: check박스를 보여줄지 숨길지를 결정하는 boolean형 변수
     // Use :  호출부에서 ckeck박스 컨트롤을 요청하면 화면에 반영시켜줌.
-    private void setCheckBoxVisibility(boolean checked){
+    private void setCheckBoxVisibility(boolean checked) {
         bgmAdapter.setCheckBoxVisible(checked);
         bgmAdapter.notifyDataSetChanged();
     }
@@ -370,9 +383,9 @@ public class MainActivity extends AppCompatActivity {
     // Return Value : void
     // Parameter : void
     // Use : list의 모든 아이템을 탐색하여 check 상태를 false로 바꿔줌
-    private void listItemCheckFree(){
-        for(int i=0;i<bgmListView.getCount();i++){
-            bgmListView.setItemChecked(i,false);
+    private void listItemCheckFree() {
+        for (int i = 0; i < bgmListView.getCount(); i++) {
+            bgmListView.setItemChecked(i, false);
         }
     }
 
@@ -380,10 +393,10 @@ public class MainActivity extends AppCompatActivity {
     // Return Value : ArrayList<BGMInfo>
     // Parameter : void
     // Use : list의 모든 아이템을 탐색하여 check가 true인 item만 checkedBgmList에 추가해 리턴해줌
-    private ArrayList<BGMInfo> loadCheckedListItem(){
-        ArrayList<BGMInfo> checkedBgmList=new ArrayList<BGMInfo>();
-        for(int i=0;i<bgmListView.getCount();i++){
-            if(bgmListView.isItemChecked(i)){
+    private ArrayList<BGMInfo> loadCheckedListItem() {
+        ArrayList<BGMInfo> checkedBgmList = new ArrayList<BGMInfo>();
+        for (int i = 0; i < bgmListView.getCount(); i++) {
+            if (bgmListView.isItemChecked(i)) {
                 checkedBgmList.add(bgmAdapter.getItem(i));
             }
         }
