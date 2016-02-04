@@ -162,7 +162,6 @@ public class DBManager extends SQLiteOpenHelper {
                     }
                 }
             }
-            Log.d("지워질 파일", deleteList.toString()+"");
 
             if (deleteList.length() > 1) {
                 // 즐겨찾기 테이블에서 먼저 해당 bgm_path를 참조하고 있는 레코드 값을 null로 만들어준다.
@@ -202,7 +201,6 @@ public class DBManager extends SQLiteOpenHelper {
             String filepath = fileList.get(i)[0];
             String filename = fileList.get(i)[1];
             String[] splitFileName = filename.split("\\.");
-            Log.d("파일확장자 추출중", "나뉜길이:"+splitFileName.length+", 파일이름:"+filename);
             String fileExtend = splitFileName[splitFileName.length-1];     // 파일 확장자
 
             for (int j = 0; j < bannedExtend.length; j++) {
@@ -224,7 +222,6 @@ public class DBManager extends SQLiteOpenHelper {
                     query.append("'" + filepath + "',");
                     query.append("'" + filename + "')");
                     mDataBase.execSQL(query.toString());
-                    Log.d("???", query.toString());
                 } catch (SQLiteConstraintException e) {
                     Log.i("SQLite Error", "이미 존재하는 값 입력 : " + e.toString());
                 } catch (SQLiteException e) {
@@ -327,9 +324,6 @@ public class DBManager extends SQLiteOpenHelper {
                 favorite = new Favorite(cursor.getInt(0), cursor.getString(1), cursor.getString(2));
                 result.add(favorite);
             }
-
-            for(int i=0; i<result.size(); i++)
-                Log.i("favoriteList test", result.get(i).getFavoriteId() + result.get(i).getBgmName());
 
             return result;
         } catch (SQLiteException e) {
@@ -481,7 +475,8 @@ public class DBManager extends SQLiteOpenHelper {
             if(i+1 < bgmPath.length)   // 마지막이 아니면
                 query.append(",");
         }
-        query.append(");");
+        query.append(")");
+
         try {
             mDataBase.execSQL(query.toString());
         } catch (SQLiteException e){
@@ -489,7 +484,7 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
-    /*****  DB 등록 요청(insert)  *****/
+    /*****  DB 등록 요청(insert/update)  *****/
 
 
     /*****  DB 레코드 삭제(delete)  *****/

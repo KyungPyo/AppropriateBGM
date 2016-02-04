@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -345,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
         Button ctg_cancel_btn = (Button) updateCategory_dialog_view.findViewById(R.id.main_dialog_btn_cancel);
         ListView updateCategoryListView=(ListView)updateCategory_dialog_view.findViewById(R.id.main_dialog_list_category);
 
-        categoryListForDialog=new ArrayList<Category>();
+        categoryListForDialog=new ArrayList<>();
         categoryListForDialog.addAll(categoryList);
         categoryListForDialog.remove(0);
         categoryAdapterForDialog=new CategoryListAdapter(this,categoryListForDialog);
@@ -458,7 +457,7 @@ public class MainActivity extends AppCompatActivity {
     // Parameter : void
     // Use : list의 모든 아이템을 탐색하여 check가 true인 item만 checkedBgmList에 추가해 리턴해줌
     private ArrayList<BGMInfo> loadCheckedListItem() {
-        ArrayList<BGMInfo> checkedBgmList = new ArrayList<BGMInfo>();
+        ArrayList<BGMInfo> checkedBgmList = new ArrayList<>();
         for (int i = 0; i < bgmListView.getCount(); i++) {
             if (bgmListView.isItemChecked(i)) {
                 checkedBgmList.add(bgmAdapter.getItem(i));
