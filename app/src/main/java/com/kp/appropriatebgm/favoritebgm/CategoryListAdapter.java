@@ -1,7 +1,6 @@
 package com.kp.appropriatebgm.favoritebgm;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,11 +8,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ListView;
 
 import android.widget.TextView;
 
-import com.kp.appropriatebgm.Category.CategoryActivity;
 import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.R;
 
@@ -24,17 +21,16 @@ import java.util.HashMap;
 public class CategoryListAdapter extends BaseAdapter {
 
     Context mContex=null;
-    CategoryActivity ctgActivity=null;
     ArrayList<Category> categoryArrayList=null;
     LayoutInflater layoutInflater=null;
     boolean isCheckBoxVisible=false;
-    HashMap<String, Integer> ctgcheckList;
+    HashMap<String, Integer> ctgcheckHashList;
 
     public CategoryListAdapter(Context mContex, ArrayList<Category> categoryArrayList) {
         this.mContex = mContex;
         this.categoryArrayList = categoryArrayList;
         layoutInflater= LayoutInflater.from(mContex);
-        ctgcheckList = new HashMap<>();
+        ctgcheckHashList = new HashMap<>();
     }
 
     @Override
@@ -61,6 +57,7 @@ public class CategoryListAdapter extends BaseAdapter {
         final int pos = position;
         View itemLayout=convertView;
         ViewHolder viewHolder=null;
+        String categoryListCheckName;
 
         if(itemLayout==null){
             itemLayout=layoutInflater.inflate(R.layout.categoryadapter_layout_item,null);
@@ -73,22 +70,26 @@ public class CategoryListAdapter extends BaseAdapter {
             viewHolder=(ViewHolder)itemLayout.getTag();
         }
         viewHolder.name.setText(categoryArrayList.get(position).getCateName());
+        categoryListCheckName = categoryArrayList.get(position).getCateName();
 
         if(isCheckBoxVisible){
             if(categoryArrayList.get(position).getCateId() != 1 && categoryArrayList.get(position).getCateId() != 2) {
                 viewHolder.chkbox.setVisibility(CheckBox.VISIBLE);
                 viewHolder.chkbox.setEnabled(true);
+                viewHolder.chkbox.setChecked(ctgcheckHashList.containsKey(categoryListCheckName));
             } else {
                 viewHolder.chkbox.setVisibility(View.INVISIBLE);
                 viewHolder.chkbox.setEnabled(false);
+                viewHolder.chkbox.setChecked(ctgcheckHashList.containsKey(categoryListCheckName));
             }
         }else{
             viewHolder.chkbox.setVisibility(CheckBox.INVISIBLE);
             viewHolder.chkbox.setEnabled(false);
             viewHolder.chkbox.setChecked(false);
-            ctgcheckList.clear();
+            ctgcheckHashList.clear();
         }
         viewHolder.chkbox.setFocusable(false);
+        viewHolder.chkbox.setClickable(false);
         Log.e("visibility", viewHolder.chkbox.isEnabled() + "");
 
         viewHolder.chkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -98,10 +99,9 @@ public class CategoryListAdapter extends BaseAdapter {
                 Log.e("isChecked", isChecked + "");
                 Log.e("name", categoryArrayList.get(pos).getCateName());
                 if (isChecked) {
-                    ctgcheckList.put(categoryArrayList.get(pos).getCateName(), pos);
-
+                    ctgcheckHashList.put(categoryArrayList.get(pos).getCateName(), pos);
                 } else if (!isChecked) {
-                    ctgcheckList.remove(categoryArrayList.get(pos).getCateName());
+                    ctgcheckHashList.remove(categoryArrayList.get(pos).getCateName());
                 }
             }
         });
@@ -121,15 +121,27 @@ public class CategoryListAdapter extends BaseAdapter {
     {
         isCheckBoxVisible=checking;
     }
-
     public HashMap<String, Integer> addCheckData()
     {
-        return ctgcheckList;
+        return ctgcheckHashList;
     }
 
     public boolean getCheckBoxVisibility()
     {
         return isCheckBoxVisible;
+    }
+
+    public void setCheckBoxChecked(int position)
+    {
+        String category_name = categoryArrayList.get(position).getCateName();
+        if(ctgcheckHashList.containsKey(category_name))
+        {
+            ctgcheckHashList.remove(category_name);
+        }
+        else
+        {
+            ctgcheckHashList.put(category_name, position);
+        }
     }
 
 }

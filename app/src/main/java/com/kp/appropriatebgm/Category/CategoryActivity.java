@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -88,7 +89,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                     AlertDialog.Builder delete_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
                     delete_Digbuild.setTitle("카테고리 삭제");
                     delete_Digbuild.setView(delete_dialog_view);
-                    delete_Digbuild.setMessage(R.string.ctgdialog_delete_message);
+                    delete_Digbuild.setMessage(ctgAdapter.addCheckData().size() + "개 카테고리를 삭제하시겠습니까?");
 
                     Button ctg_delete_btn = (Button) delete_dialog_view.findViewById(R.id.category_btn_delete);
                     Button ctg_deleteCancel_btn = (Button) delete_dialog_view.findViewById(R.id.category_btn_deletecancel);
@@ -234,6 +235,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     // Use : 아이템 클릭 시 세부 속성을 선택하는 다이얼로그를 띄우도록 한다. (이름 변경, 삭제, 취소)
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long lid) {
+        final int pos = position;
         final int itemId = ctgAdapter.getlistId(position);
 
         if(position>=2 && ctgAdapter.getCheckBoxVisibility() == false) {
@@ -303,7 +305,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                             final AlertDialog.Builder delete_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
                             delete_Digbuild.setTitle("카테고리 삭제");
                             delete_Digbuild.setView(delete_dialog_view);
-                            delete_Digbuild.setMessage(R.string.ctgdialog_delete_message);
+                            delete_Digbuild.setMessage("'"+ctgAdapter.getlistName(pos)+"' 를(을) 삭제하시겠습니까?");
 
                             Button ctg_delete_btn = (Button) delete_dialog_view.findViewById(R.id.category_btn_delete);
                             Button ctg_deleteCancel_btn = (Button) delete_dialog_view.findViewById(R.id.category_btn_deletecancel);
@@ -337,6 +339,12 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                 }
             });
             alertDig.show();
+        }
+        else if(position>=2 && ctgAdapter.getCheckBoxVisibility() == true)
+        {
+            Log.e("listitem click ",position+"");
+            ctgAdapter.setCheckBoxChecked(position);
+            ctgAdapter.notifyDataSetChanged();
         }
     }
     @Override

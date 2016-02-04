@@ -433,7 +433,7 @@ public class DBManager extends SQLiteOpenHelper {
 
         try {
             mDataBase.execSQL(query.toString());
-            Log.d("category_insertQuery",query.toString());
+            Log.d("category_insertQuery", query.toString());
         } catch (SQLiteException e) {
             Log.e("insertBGM", e.toString());
         }
@@ -467,6 +467,28 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
+    // Method : DB에서 BGMList의 레코드들 카테고리 변경
+    // Return Value : void
+    // Parameter : categoryId(바꾸려는 카테고리ID), bgmPath(변경할 BGM의 Path. 여러개 가능)
+    // Use : MainActivity에서 카테고리ID와 BGM Path를 받아서 해당 카테고리 번호로 카테고리를 변경한다.
+    public void updateBgmCategory(int categoryId, String[] bgmPath){
+        StringBuffer query = new StringBuffer();
+        query.append("UPDATE BGMList SET category_id = ");
+        query.append(categoryId);
+        query.append(" WHERE bgm_path in(");
+        for(int i=0; i<bgmPath.length; i++) {
+            query.append("'"+bgmPath+"'");
+            if(i+1 < bgmPath.length)   // 마지막이 아니면
+                query.append(",");
+        }
+
+        try {
+            mDataBase.execSQL(query.toString());
+        } catch (SQLiteException e){
+            Log.e("updateBgmCategory", e.toString());
+        }
+    }
+
     /*****  DB 등록 요청(insert)  *****/
 
 
@@ -482,13 +504,50 @@ public class DBManager extends SQLiteOpenHelper {
         query.append("DELETE FROM Category WHERE category_id in(");
         for(int i=0; i<categoryIdList.length; i++){
             query.append(categoryIdList[i]);
-            if(i < categoryIdList.length-1)
+            if(i+1 < categoryIdList.length)
                 query.append(",");
         }
         query.append(")");
 
-        mDataBase.execSQL(query.toString());
+        try {
+            mDataBase.execSQL(query.toString());
+        } catch (SQLiteException e) {
+            Log.e("deleteCategory", e.toString());
+        }
     }
 
+    // Method : BGM파일 및 DB 삭제
+    // Return Value : void
+    // Parameter : bgmPath(삭제할 음악파일 경로. 여러개 가능)
+    // Use : MainActivity에서 삭제할 음악파일을 여러개 선택해서 삭제할 때 사용한다. 한개도 삭제 가능하다.
+    public void deleteBGMFile(String[] bgmPath){
+        // DB 레코드 삭제
+        StringBuffer query = new StringBuffer();
+
+        query.append("DELETE FROM BGMList WHERE bgm_path in(");
+        for(int i=0; i<bgmPath.length; i++){
+            query.append("'"+bgmPath[i]+"'");
+            if(i+1 < bgmPath.length)
+                query.append(",");
+        }
+        query.append(")");
+
+        try {
+            mDataBase.execSQL(query.toString());
+        } catch (SQLiteException e) {
+            Log.e("deleteBGMFile 레코드삭제", e.toString());
+        }
+
+        // 파일 삭제
+        File file;
+        for(int i=0; i<bgmPath.length; i++){
+            try {
+                file = new File(bgmPath[i]);
+                file.delete();
+            } catch (Exception e){
+                Log.e("deleteBGMFile 파일삭제", e.toString());
+            }
+        }
+    }
     /*****  DB 레코드 삭제(delete)  *****/
 }
