@@ -2,6 +2,7 @@ package com.kp.appropriatebgm.record;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.BitmapDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Window;
@@ -407,6 +408,7 @@ public class RecordActivity extends AppCompatActivity {
         mPopupWindow = new PopupWindow(mPopupLayout,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT, true);
+        mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
         categoryList = dbManager.getCategoryList();
         categoryList.remove(0);
         categoryAdapter = new CategoryListAdapter(this, categoryList);
@@ -505,6 +507,9 @@ public class RecordActivity extends AppCompatActivity {
                 mPopupWindow.dismiss();
             }
         });
+
+
+
     }
     /***** 액티비티 *****/
 
