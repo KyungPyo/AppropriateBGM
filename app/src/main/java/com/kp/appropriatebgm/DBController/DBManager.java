@@ -145,7 +145,6 @@ public class DBManager extends SQLiteOpenHelper {
             }
             query.append(");");
             String completedQuery = query.toString();
-            Log.i("checkBGMFileExist", completedQuery);
 
             Cursor notExistList = mDataBase.rawQuery(completedQuery, null);
 
