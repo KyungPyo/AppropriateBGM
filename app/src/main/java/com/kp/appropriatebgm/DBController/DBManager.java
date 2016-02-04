@@ -498,19 +498,27 @@ public class DBManager extends SQLiteOpenHelper {
     // Return Value : void
     // Parameter : categoryIdList(삭제할 카테고리 번호 목록을 가지고 있는 배열)
     // Use : CategoryActivity에서 삭제할 카테고리를 여러개 선택해서 삭제할 때 사용한다. 한개도 삭제 가능하다.
+    //       카테고리 삭제 시 해당 카테고리에 포함되는 BGM들은 분류안됨인 2번 카테고리로 바꿔준다.
     public void deleteCategory(int[] categoryIdList){
-        StringBuffer query = new StringBuffer();
+        StringBuffer updateQuery = new StringBuffer();
+        StringBuffer deleteQuery = new StringBuffer();
 
-        query.append("DELETE FROM Category WHERE category_id in(");
+        updateQuery.append("UPDATE BGMList SET category_id=2 WHERE category_id in(");
+        deleteQuery.append("DELETE FROM Category WHERE category_id in(");
         for(int i=0; i<categoryIdList.length; i++){
-            query.append(categoryIdList[i]);
-            if(i+1 < categoryIdList.length)
-                query.append(",");
+            updateQuery.append(categoryIdList[i]);
+            deleteQuery.append(categoryIdList[i]);
+            if(i+1 < categoryIdList.length) {
+                updateQuery.append(",");
+                deleteQuery.append(",");
+            }
         }
-        query.append(")");
+        updateQuery.append(")");
+        deleteQuery.append(")");
 
         try {
-            mDataBase.execSQL(query.toString());
+            mDataBase.execSQL(updateQuery.toString());
+            mDataBase.execSQL(deleteQuery.toString());
         } catch (SQLiteException e) {
             Log.e("deleteCategory", e.toString());
         }
