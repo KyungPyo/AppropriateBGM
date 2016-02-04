@@ -7,5 +7,6 @@
     <color name="release">#dadaea</color>
     <color name="list_press">#dadaea</color>
     <color name="list_select">#dadada</color>
+    <color name="ctg_Actionbar_Primary">#2F2F4F</color>
 
 </resources>

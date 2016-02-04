@@ -19,7 +19,6 @@ import com.kp.appropriatebgm.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 //카테고리 목록을 받아오는 Adapter
 public class CategoryListAdapter extends BaseAdapter {
@@ -35,7 +34,7 @@ public class CategoryListAdapter extends BaseAdapter {
         this.mContex = mContex;
         this.categoryArrayList = categoryArrayList;
         layoutInflater= LayoutInflater.from(mContex);
-        ctgcheckList = new HashMap<String, Integer>();
+        ctgcheckList = new HashMap<>();
     }
 
     @Override
@@ -63,7 +62,6 @@ public class CategoryListAdapter extends BaseAdapter {
         View itemLayout=convertView;
         ViewHolder viewHolder=null;
 
-
         if(itemLayout==null){
             itemLayout=layoutInflater.inflate(R.layout.categoryadapter_layout_item,null);
             viewHolder=new ViewHolder();
@@ -87,9 +85,11 @@ public class CategoryListAdapter extends BaseAdapter {
         }else{
             viewHolder.chkbox.setVisibility(CheckBox.INVISIBLE);
             viewHolder.chkbox.setEnabled(false);
+            viewHolder.chkbox.setChecked(false);
+            ctgcheckList.clear();
         }
-        //viewHolder.chkbox.setChecked(false);
         viewHolder.chkbox.setFocusable(false);
+        Log.e("visibility", viewHolder.chkbox.isEnabled() + "");
 
         viewHolder.chkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -101,7 +101,7 @@ public class CategoryListAdapter extends BaseAdapter {
                     ctgcheckList.put(categoryArrayList.get(pos).getCateName(), pos);
 
                 } else if (!isChecked) {
-                    ctgcheckList.remove(pos);
+                    ctgcheckList.remove(categoryArrayList.get(pos).getCateName());
                 }
             }
         });
@@ -121,9 +121,16 @@ public class CategoryListAdapter extends BaseAdapter {
     {
         isCheckBoxVisible=checking;
     }
+
     public HashMap<String, Integer> addCheckData()
     {
         return ctgcheckList;
     }
+
+    public boolean getCheckBoxVisibility()
+    {
+        return isCheckBoxVisible;
+    }
+
 }
 

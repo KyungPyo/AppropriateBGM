@@ -2,23 +2,25 @@ package com.kp.appropriatebgm.Category;
 
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.DBController.DBManager;
@@ -41,6 +43,8 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     CategoryListAdapter ctgAdapter;
     ListView ctg_Listview;
     HashMap<String, Integer> ctgcheckList;
+
+    ActionMenuItemView ctg_actionbar_add_button;
 
     // Use : Select 쿼리 (LIST를 계속 갱신해주는 데 필요한 쿼리)
     //final static String querySelectAll = String.format( " SELECT * FROM %s ", TABLE_NAME );
@@ -79,10 +83,49 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
             //      체크된 아이템 항목을 삭제하는 용도로 사용한다.
             @Override
             public void onClick(View view) {
-                CtgcheckDelete(ctg_Listview);
-                //fab 버튼이 사라지지 않는 경우를 고려하여 invisible, enable(false) 설정
-                view.setVisibility(View.INVISIBLE);
-                view.setEnabled(false);
+
+                if(ctgAdapter.addCheckData().size() > 0) {
+                    final View mView = view;
+                    LayoutInflater inflater = getLayoutInflater();
+                    final View delete_dialog_view = inflater.inflate(R.layout.dialog_category_deletecheck, null);
+                    final AlertDialog.Builder delete_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
+                    delete_Digbuild.setTitle("카테고리 삭제");
+                    delete_Digbuild.setView(delete_dialog_view);
+                    delete_Digbuild.setMessage(R.string.ctg_delete_message);
+
+                    Button ctg_delete_btn = (Button) delete_dialog_view.findViewById(R.id.category_delete_btn);
+                    Button ctg_deleteCancel_btn = (Button) delete_dialog_view.findViewById(R.id.category_delete_cancel_btn);
+
+                    ctg_delete_btn.setText(R.string.ctg_check_btn);
+                    ctg_deleteCancel_btn.setText(R.string.ctg_ctl_btn);
+                    final AlertDialog deleteCategory_dialog = delete_Digbuild.create();
+
+                    ctg_delete_btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            CtgcheckDelete(ctg_Listview);
+                            //fab 버튼이 사라지지 않는 경우를 고려하여 invisible, enable(false) 설정
+                            mView.setVisibility(View.INVISIBLE);
+                            mView.setEnabled(false);
+                            ctg_actionbar_add_button.setEnabled(true);
+                            deleteCategory_dialog.dismiss();
+                        }
+                    });
+                    ctg_deleteCancel_btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            deleteCategory_dialog.dismiss();
+                        }
+                    });
+                    deleteCategory_dialog.show();
+                }
+                else
+                {
+                    AlertDialog.Builder nodelete_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
+                    nodelete_Digbuild.setMessage(R.string.ctg_nodelete_message);
+                    final AlertDialog notDeleteCategory_dialog = nodelete_Digbuild.create();
+                    notDeleteCategory_dialog.show();
+                }
             }
         });
 
@@ -110,59 +153,56 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
+        ctg_actionbar_add_button = (ActionMenuItemView) findViewById(R.id.category_actionbar_add);
 
         switch(id)
         {
             // Use : 추가(category_actionbar_add) 버튼 클릭하는 경우
             // 다이얼로그를 띄워서 추가 시 다이얼로그의 EditText의 값을 DB에 넣는 INSERT 연산 수행 및 취소 버튼
             case R.id.category_actionbar_add:
+                LayoutInflater inflater = getLayoutInflater();
+                final View add_dialog_view = inflater.inflate(R.layout.dialog_category_add, null);
                 final AlertDialog.Builder add_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
                 add_Digbuild.setTitle("카테고리 추가");
-                final EditText inputtxt = new EditText(this);
-                inputtxt.setHint("8자 이하로 입력해주시오.");
-                inputtxt.setSingleLine(true);       // 한줄로 입력이 되게끔 설정
-                inputtxt.setSelectAllOnFocus(true);
-                add_Digbuild.setView(inputtxt);
-                // Use : 취소 버튼을 누른 경우
-                add_Digbuild.setNegativeButton(R.string.ctg_addctl_btn, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                        // Use : 카테고리 추가 기능에서 글자가 8자 이상이거나 아무것도 입력되지 않은 경우
-                        //      Edittext의 길이를 확인하여 예외 발생시 다이얼로그를 띄우도록 한다.
-
-                .setPositiveButton(R.string.ctg_add_btn, null);
-
+                add_Digbuild.setView(add_dialog_view);
                 add_Digbuild.setMessage(R.string.ctg_add_message);
-                final AlertDialog add_Dig = add_Digbuild.create();
-                add_Dig.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                final EditText inputtxt = (EditText)add_dialog_view.findViewById(R.id.category_name_input);
+                Button ctg_add_btn = (Button)add_dialog_view.findViewById(R.id.category_input_modify_btn);
+                Button ctg_cancel_btn = (Button)add_dialog_view.findViewById(R.id.category_input_cancel_btn);
+
+                ctg_add_btn.setText(R.string.ctg_add_btn);
+                ctg_cancel_btn.setText(R.string.ctg_ctl_btn);
+                inputtxt.setHint("8자 이하로 입력해주시오.");
+
+                final AlertDialog addCategory_dialog = add_Digbuild.create();
+
+                ctg_add_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onShow(DialogInterface dialog) {
-                        Button btnPositive = add_Dig.getButton(AlertDialog.BUTTON_POSITIVE);
-                         btnPositive.setOnClickListener(new View.OnClickListener()
-                         {
-                             @Override
-                             public void onClick(View v) {
-                                 try {
-                                     // Use : EditText의 길이가 8 이상인 경우 다이얼로그 띄움
-                                     String c_title = inputtxt.getText().toString();
+                    public void onClick(View v) {
+                        try {
+                            // Use : EditText의 길이가 8 이상인 경우 다이얼로그 띄움
+                            String c_title = inputtxt.getText().toString();
 
-                                     // Use : 위의 예외들을 통과한 경우 DB INSERT 연산 수행
-                                     if(CtgTitleCheckable(inputtxt)){
-                                         CtgInsert(c_title);
-                                         add_Dig.dismiss();
-                                     }
+                            // Use : 위의 예외들을 통과한 경우 DB INSERT 연산 수행
+                            if(CtgTitleCheckable(inputtxt)){
+                                CtgInsert(c_title);
+                                addCategory_dialog.dismiss();
+                            }
 
-                                 } catch (Exception e) {
-                                     e.printStackTrace();
-                                 }
-                             }
-                         });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
-                add_Dig.show();
+
+                ctg_cancel_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        addCategory_dialog.dismiss();
+                    }
+                });
+                addCategory_dialog.show();
                 inputtxt.setText("");
                 break;
 
@@ -176,6 +216,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                     fab.setVisibility(View.VISIBLE);
                     fab.setEnabled(true);
                     setCheckBoxVisibility(true);
+                    ctg_actionbar_add_button.setEnabled(false);
                 }
 
                 // Use ; 삭제 버튼이 보이는 경우 원래 리스트 상태로 돌아가려고 할 때 숨기도록 한다.
@@ -184,6 +225,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                     fab.setVisibility(View.INVISIBLE);
                     fab.setEnabled(false);
                     setCheckBoxVisibility(false);
+                    ctg_actionbar_add_button.setEnabled(true);
                 }
                 break;
         }
@@ -197,57 +239,96 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     public void onItemClick(AdapterView<?> parent, View view, int position, long lid) {
         final int itemId = ctgAdapter.getlistId(position);
 
-        if(position>=2) {
+        if(position>=2 && ctgAdapter.getCheckBoxVisibility() == false) {
             final CharSequence[] property_items = {"이름 변경", "삭 제", "취 소"};
-            AlertDialog.Builder alertDig = new AlertDialog.Builder(view.getContext());
+            final AlertDialog.Builder alertDig = new AlertDialog.Builder(view.getContext());
             alertDig.setTitle(R.string.ctg_long_property);
             alertDig.setItems(property_items, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     //Log.e("id --------", Long.toString(itemid));
                     //Log.e("item --------", Integer.toString(which));
+                    final DialogInterface item_Dialog = dialog;
+                    LayoutInflater inflater = getLayoutInflater();
                     switch (which) {
                         case 0:
                             // Use : 이름 변경의 경우
                             // 이름 변경을 하는 다이얼로그를 띄우며 변경 시 해당 아이템의 아이디를 받아 다이얼로그의 EditText의 값을 DB에 갱신하는 UPDATE 연산 수행
-                            final EditText nametxt = new EditText(CategoryActivity.this);
-                            nametxt.setSingleLine(true);
-                            AlertDialog.Builder name_Dig = new AlertDialog.Builder(CategoryActivity.this)
-                                    .setTitle("이름 변경");
-                            name_Dig.setView(nametxt);
+                            final View add_dialog_view = inflater.inflate(R.layout.dialog_category_add, null);
+                            final AlertDialog.Builder add_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
+                            add_Digbuild.setTitle("카테고리 이름 변경");
+                            add_Digbuild.setView(add_dialog_view);
+                            add_Digbuild.setMessage(R.string.ctg_add_message);
 
-                            name_Dig.setNegativeButton(R.string.ctg_addctl_btn, new DialogInterface.OnClickListener() {
+                            final EditText up_inputtxt = (EditText)add_dialog_view.findViewById(R.id.category_name_input);
+                            Button ctg_up_btn = (Button)add_dialog_view.findViewById(R.id.category_input_modify_btn);
+                            Button ctg_cancel_btn = (Button)add_dialog_view.findViewById(R.id.category_input_cancel_btn);
+
+                            ctg_up_btn.setText(R.string.ctg_check_btn);
+                            ctg_cancel_btn.setText(R.string.ctg_ctl_btn);
+                            up_inputtxt.setHint("8자 이하로 입력해주시오.");
+
+                            final AlertDialog updateCategory_dialog = add_Digbuild.create();
+
+                            ctg_up_btn.setOnClickListener(new View.OnClickListener() {
                                 @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            })
-                                    //변경 버튼
-                                    .setPositiveButton(R.string.ctg_add_btn, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            try {
-                                                String modifyTitleStr = nametxt.getText().toString();
-                                                if(CtgTitleCheckable(nametxt)){
-                                                    CtgUpdate(modifyTitleStr, itemId);
-                                                }
-                                                //UPDATE 메소드
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    });      //취소 버튼
+                                public void onClick(View v) {
+                                    try {
+                                        // Use : EditText의 길이가 8 이상인 경우 다이얼로그 띄움
+                                        String modify_title = up_inputtxt.getText().toString();
 
-                            name_Dig.setMessage(R.string.ctg_modify_message);
-                            name_Dig.show();
-                            nametxt.setText("");
+                                        // Use : 위의 예외들을 통과한 경우 DB INSERT 연산 수행
+                                        if(CtgTitleCheckable(up_inputtxt)){
+                                            CtgUpdate(modify_title, itemId);
+                                            updateCategory_dialog.dismiss();
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+
+                            ctg_cancel_btn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    updateCategory_dialog.dismiss();
+                                }
+                            });
+                            updateCategory_dialog.show();
+                            up_inputtxt.setText("");
                             break;
                         case 1:
                             // Use : 카테고리 삭제의 경우
-                            //      해당 아이템의 id를 가져와 DELETE 연산을 수행
+                            //      해당 아이템의 id를 가져와 DELETE 연산을 수행하며 다이얼로그로 삭제를 한번 더 확인한다.
+                            // 삭제 확인 다이얼로그 부분
+                            final View delete_dialog_view = inflater.inflate(R.layout.dialog_category_deletecheck, null);
+                            final AlertDialog.Builder delete_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
+                            delete_Digbuild.setTitle("카테고리 삭제");
+                            delete_Digbuild.setView(delete_dialog_view);
+                            delete_Digbuild.setMessage(R.string.ctg_delete_message);
 
-                            CtgDelete(itemId);
-                            dialog.dismiss();
+                            Button ctg_delete_btn = (Button) delete_dialog_view.findViewById(R.id.category_delete_btn);
+                            Button ctg_deleteCancel_btn = (Button) delete_dialog_view.findViewById(R.id.category_delete_cancel_btn);
+
+                            ctg_delete_btn.setText(R.string.ctg_check_btn);
+                            ctg_deleteCancel_btn.setText(R.string.ctg_ctl_btn);
+                            final AlertDialog deleteCategory_dialog = delete_Digbuild.create();
+
+                            ctg_delete_btn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    CtgDelete(itemId);      // DB 삭제 부분
+                                    deleteCategory_dialog.dismiss();
+                                }
+                            });
+                            ctg_deleteCancel_btn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    deleteCategory_dialog.dismiss();
+                                }
+                            });
+                            deleteCategory_dialog.show();
                             break;
                         case 2:
                             //취소의 경우 다이얼로그를 닫는다.
@@ -269,6 +350,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                 fab.setVisibility(View.INVISIBLE);
                 fab.setEnabled(false);
                 setCheckBoxVisibility(false);
+                ctg_actionbar_add_button.setEnabled(true);
                 return true;
             }
             /*if (keyCode == android.view.KeyEvent.KEYCODE_BACK) {
@@ -323,7 +405,6 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
         ArrayList<Integer> check_arr = new ArrayList<Integer>();
         ctgcheckList = ctgAdapter.addCheckData();
         int check_list[];
-        Log.e("checklist",ctgcheckList.values()+"");
         for(int i=0 ; i < listview.getCount() ; i++)
         {
             Log.e("checklistname", ctgcheckList.containsKey(ctgAdapter.getlistName(i)) + "");
@@ -448,12 +529,4 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
         ctgAdapter.notifyDataSetChanged();
     }
 
-    public void addCheckData(String title, int number)
-    {
-        ctgcheckList.put(title, number);
-    }
-    public void removeCheckData(String title)
-    {
-        ctgcheckList.remove(title);
-    }
 }
