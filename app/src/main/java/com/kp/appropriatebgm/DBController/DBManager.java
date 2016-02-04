@@ -153,14 +153,10 @@ public class DBManager extends SQLiteOpenHelper {
             StringBuffer deleteList = new StringBuffer();
             File existCheck;
             while (notExistList.moveToNext()) {
-                existCheck = new File(notExistList.getString(0));
-                // 해당 파일이 정말 존재하지 않으면(미디어풀 DB에 아직 등록되지 않았을 수도 있기 때문에 한번 더 체크)
-                if ( !existCheck.isFile() ) {
-                    // 삭제 리스트에 추가
-                    deleteList.append("'"+notExistList.getString(0)+"'");
-                    if (!notExistList.isLast()) {
-                        deleteList.append(",");
-                    }
+                // 삭제 리스트에 추가
+                deleteList.append("'"+notExistList.getString(0)+"'");
+                if (!notExistList.isLast()) {
+                    deleteList.append(",");
                 }
             }
             Log.d("지워질 파일", deleteList.toString()+"");
