@@ -1,4 +1,5 @@
 package com.kp.appropriatebgm;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -64,6 +66,11 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Category> categoryList;
     private Spinner categorySpinner;
     private BGMListAdapter bgmAdapter;
+
+    private String checkedBgmPath[];
+    AlertDialog deleteFile_dialog;
+    int selectedCategoryPosition;
+
     /**** 멤버 선언 ****/
 
     /**** 화면 설정 ****/
@@ -77,8 +84,7 @@ public class MainActivity extends AppCompatActivity {
         initDrawerToggle();     // 네비게이션 드로워 리스너설정
         initBgmList();          // BGMList 초기 구성
         initCategory();         // 카테고리 목록 초기 구성 및 이벤트 정의
-        setListeners();
-
+        settingDeleteDialg();   // 삭제 시 뜨는 다이얼로그 초기 구성
 
     }
 
@@ -114,6 +120,13 @@ public class MainActivity extends AppCompatActivity {
         categorySpinner=(Spinner)findViewById(R.id.main_spinner_category);
 
         dbManager=DBManager.getInstance(this);
+
+        bgmListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                onClickMusicListItem(position);
+            }
+        });
 
         setSupportActionBar(toolbar);           // Toolbar를 액션바로 사용한다
         getSupportActionBar().setTitle(null);   // 액션바에 타이틀 제거
@@ -175,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
                 //지금 보여지고 있는 ArrayList를 클리어
                 bgmList.clear();
                 bgmList.addAll(dbManager.getBGMList(categoryList.get(position).getCateId()));
+                selectedCategoryPosition=position;
                 listItemCheckFree();
                 bgmAdapter.notifyDataSetChanged();
             }
@@ -185,15 +199,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         categorySpinner.setAdapter(categoryAdapter);
-    }
-
-    private void setListeners(){
-        bgmListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onClickMusicListItem(position);
-            }
-        });
     }
 
     @Override
@@ -278,27 +283,61 @@ public class MainActivity extends AppCompatActivity {
             }
             case R.id.main_group_deletefile: {
                 ArrayList<BGMInfo> checkedBgmList=loadCheckedListItem();
-                String deleteBgmId[]=new String[checkedBgmList.size()];
+                checkedBgmPath=new String[checkedBgmList.size()];
 
-                for(int i=0;i<deleteBgmId.length;i++){
-                    deleteBgmId[i]=checkedBgmList.get(i).getBgmPath();
+                for(int i=0;i<checkedBgmPath.length;i++){
+                    checkedBgmPath[i]=checkedBgmList.get(i).getBgmPath();
                 }
 
-                dbManager.deleteBGMFile(deleteBgmId);
+                deleteFile_dialog.show();
                 break;
             }
             case R.id.main_group_changecategory: {
                 ArrayList<BGMInfo> checkedBgmList=loadCheckedListItem();
-                int deleteCategoryId[]=new int[checkedBgmList.size()];
+                checkedBgmPath=new String[checkedBgmList.size()];
 
-                for(int i=0;i<deleteCategoryId.length;i++){
-                    deleteCategoryId[i]=checkedBgmList.get(i).getCategoryId();
+                for(int i=0;i<checkedBgmPath.length;i++){
+                    checkedBgmPath[i]=checkedBgmList.get(i).getBgmPath();
                 }
-
                 break;
             }
         }
     }
+
+    private void settingDeleteDialg(){
+
+        View delete_dialog_view = getLayoutInflater().inflate(R.layout.dialog_category_deletecheck, null);
+        AlertDialog.Builder deleteDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        deleteDialogBuilder.setTitle("파일 삭제");
+        deleteDialogBuilder.setView(delete_dialog_view);
+        deleteDialogBuilder.setMessage("선택하신 파일은 영구 삭제됩니다. 계속 진행하시겠습니까?");
+
+        Button ctg_delete_btn = (Button) delete_dialog_view.findViewById(R.id.category_delete_btn);
+        Button ctg_deleteCancel_btn = (Button) delete_dialog_view.findViewById(R.id.category_delete_cancel_btn);
+
+        ctg_delete_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("들어가니~","응!!!");
+                dbManager.deleteBGMFile(checkedBgmPath);
+                deleteFile_dialog.dismiss();
+                categorySpinner.setSelection(selectedCategoryPosition);
+                bgmAdapter.notifyDataSetChanged();
+            }
+        });
+
+        ctg_deleteCancel_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteFile_dialog.dismiss();
+            }
+        });
+
+        ctg_delete_btn.setText(R.string.ctg_check_btn);
+        ctg_deleteCancel_btn.setText(R.string.ctg_ctl_btn);
+        deleteFile_dialog = deleteDialogBuilder.create();
+    }
+
 
     private void onClickMusicListItem(int position){
         if (isFilemanageOpen){  // 파일관리가 열려있으면 선택모드
