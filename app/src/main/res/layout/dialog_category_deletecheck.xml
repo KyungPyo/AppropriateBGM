@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/category_delete_btn"
+        android:id="@+id/category_btn_delete"
         android:layout_margin="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -13,7 +13,7 @@
 
     <Button
         android:layout_margin="4dp"
-        android:id="@+id/category_delete_cancel_btn"
+        android:id="@+id/category_btn_deletecancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
