@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.record.RecordManager;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -78,12 +79,17 @@ public class LogoActivity extends AppCompatActivity {
 
         String[] file;
         ArrayList<String[]> fileList = new ArrayList<>();
+        File existCheck;
         while (cursor.moveToNext()){
-            file = new String[2];
-            file[0] = cursor.getString(0);
-            file[1] = cursor.getString(1);
-            fileList.add(file);
-            Log.i("저장된 파일들", cursor.getString(0)+" : "+cursor.getString(1));
+            // 미디어풀 DB에 등록이 아직 안되어있을 수 있기 때문에 정말 존재하는 파일인지 확실히 확인한다.
+            existCheck = new File(cursor.getString(0));
+            if (existCheck.isFile()) {
+                file = new String[2];
+                file[0] = cursor.getString(0);
+                file[1] = cursor.getString(1);
+                fileList.add(file);
+                Log.i("저장된 파일들", cursor.getString(0) + " : " + cursor.getString(1));
+            }
         }
 
         dbManager.checkBGMList(fileList);

@@ -145,7 +145,6 @@ public class DBManager extends SQLiteOpenHelper {
             }
             query.append(");");
             String completedQuery = query.toString();
-            Log.i("checkBGMFileExist", completedQuery);
 
             Cursor notExistList = mDataBase.rawQuery(completedQuery, null);
 
@@ -163,10 +162,9 @@ public class DBManager extends SQLiteOpenHelper {
                     }
                 }
             }
-            Log.d("지워질 파일", deleteList.toString()+"");
 
             if (deleteList.length() > 1) {
-                // 카테고리 테이블에서 먼저 해당 bgm_path를 참조하고 있는 레코드 값을 null로 만들어준다.
+                // 즐겨찾기 테이블에서 먼저 해당 bgm_path를 참조하고 있는 레코드 값을 null로 만들어준다.
                 query = new StringBuffer();
                 query.append("UPDATE Favorite SET bgm_path = null WHERE bgm_path in(");
                 query.append(deleteList.toString());
@@ -203,7 +201,6 @@ public class DBManager extends SQLiteOpenHelper {
             String filepath = fileList.get(i)[0];
             String filename = fileList.get(i)[1];
             String[] splitFileName = filename.split("\\.");
-            Log.d("파일확장자 추출중", "나뉜길이:"+splitFileName.length+", 파일이름:"+filename);
             String fileExtend = splitFileName[splitFileName.length-1];     // 파일 확장자
 
             for (int j = 0; j < bannedExtend.length; j++) {
@@ -327,9 +324,6 @@ public class DBManager extends SQLiteOpenHelper {
                 favorite = new Favorite(cursor.getInt(0), cursor.getString(1), cursor.getString(2));
                 result.add(favorite);
             }
-
-            for(int i=0; i<result.size(); i++)
-                Log.i("favoriteList test", result.get(i).getFavoriteId() + result.get(i).getBgmName());
 
             return result;
         } catch (SQLiteException e) {
@@ -477,10 +471,11 @@ public class DBManager extends SQLiteOpenHelper {
         query.append(categoryId);
         query.append(" WHERE bgm_path in(");
         for(int i=0; i<bgmPath.length; i++) {
-            query.append("'"+bgmPath+"'");
+            query.append("'"+bgmPath[i]+"'");
             if(i+1 < bgmPath.length)   // 마지막이 아니면
                 query.append(",");
         }
+        query.append(")");
 
         try {
             mDataBase.execSQL(query.toString());
@@ -489,7 +484,7 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
-    /*****  DB 등록 요청(insert)  *****/
+    /*****  DB 등록 요청(insert/update)  *****/
 
 
     /*****  DB 레코드 삭제(delete)  *****/
@@ -498,19 +493,27 @@ public class DBManager extends SQLiteOpenHelper {
     // Return Value : void
     // Parameter : categoryIdList(삭제할 카테고리 번호 목록을 가지고 있는 배열)
     // Use : CategoryActivity에서 삭제할 카테고리를 여러개 선택해서 삭제할 때 사용한다. 한개도 삭제 가능하다.
+    //       카테고리 삭제 시 해당 카테고리에 포함되는 BGM들은 분류안됨인 2번 카테고리로 바꿔준다.
     public void deleteCategory(int[] categoryIdList){
-        StringBuffer query = new StringBuffer();
+        StringBuffer updateQuery = new StringBuffer();
+        StringBuffer deleteQuery = new StringBuffer();
 
-        query.append("DELETE FROM Category WHERE category_id in(");
+        updateQuery.append("UPDATE BGMList SET category_id=2 WHERE category_id in(");
+        deleteQuery.append("DELETE FROM Category WHERE category_id in(");
         for(int i=0; i<categoryIdList.length; i++){
-            query.append(categoryIdList[i]);
-            if(i+1 < categoryIdList.length)
-                query.append(",");
+            updateQuery.append(categoryIdList[i]);
+            deleteQuery.append(categoryIdList[i]);
+            if(i+1 < categoryIdList.length) {
+                updateQuery.append(",");
+                deleteQuery.append(",");
+            }
         }
-        query.append(")");
+        updateQuery.append(")");
+        deleteQuery.append(")");
 
         try {
-            mDataBase.execSQL(query.toString());
+            mDataBase.execSQL(updateQuery.toString());
+            mDataBase.execSQL(deleteQuery.toString());
         } catch (SQLiteException e) {
             Log.e("deleteCategory", e.toString());
         }

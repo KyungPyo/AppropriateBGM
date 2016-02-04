@@ -2,18 +2,17 @@ package com.kp.appropriatebgm.record;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.drawable.BitmapDrawable;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.Window;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -30,14 +29,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
-
 import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class RecordActivity extends AppCompatActivity {
     // 녹음 관련
@@ -193,9 +192,7 @@ public class RecordActivity extends AppCompatActivity {
     }
     /***** 재생 스레드  *****/
 
-    /*******
-     * 액티비티
-     *****/
+    /******** 액티비티  *****/
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
