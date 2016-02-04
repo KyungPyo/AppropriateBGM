@@ -258,7 +258,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case R.id.main_menubtn_to_category: {
-
                 intent.setClass(getApplicationContext(), CategoryActivity.class);
                 startActivity(intent);
                 break;
@@ -331,7 +330,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 dbManager.deleteBGMFile(checkedBgmPath);
                 deleteFile_dialog.dismiss();
-                categorySpinner.setSelection(selectedCategoryPosition);
+                bgmList.clear();
+                bgmList.addAll(dbManager.getBGMList(categoryList.get(selectedCategoryPosition).getCateId()));
                 bgmAdapter.notifyDataSetChanged();
             }
         });
