@@ -14,14 +14,12 @@ public class MusicPlayer {
     MediaPlayer music = null;
     Uri uri = null;
 
-    public MusicPlayer(){}
-
     // Method : MusicPlayer 생성자
     // Return Value : Constructor
     // Parameter : context(재생할 액티비티), path(재생할 파일경로)
     // Use : 외부 파일을 재생하고 싶을 때 사용. 넘겨받은 파일경로로 재생준비를 한다.
     public MusicPlayer(Context context, String path){
-        prepareToPlay(context,path);
+        prepareToPlay(context, path);
     }
 
     // Method : MusicPlayer 생성자
@@ -71,12 +69,50 @@ public class MusicPlayer {
     // Return Value : void
     // Parameter : void
     // Use : 현재 등록된 음악파일을 재생한다. 재생하기전에 처음으로 되감는 작업을 다시한번 한다. (누르면 처음부터 재생하는 기능을 위해)
-    public void playBgm(){     // 처음부터 재생하기
+    public void playFromStartBgm(){     // 처음부터 재생하기
         resetPlay();
         music.start();
     }
 
+
+    // Method : 재생,정지,일시정지
+    // Return Value : void
+    // Parameter : void
+    // Use : 현재 재생중인 음악파일을 재생/정지/일시정지 한다.
+    public void playBgm(){
+        music.start();
+    }
     public void stopBgm(){
-        music.stop();
+        if(!isPlaying()){
+            music.start();
+        }
+        resetPlay();
+    }
+    public void pauseBgm() {
+        music.pause();
+    }
+
+    // Method : 재생중인 음악 재생시간 조작
+    // Return Value : void
+    // Parameter : void
+    // Use : 외부에서 SeekBar를 조작하여 시간을 전달받으면 해당 시간으로 재생중인 시간을 변경한다.
+    public void seekToBgm(int seekTime) {
+        music.seekTo(seekTime);
+    }
+
+    // Method : 재생중인지 확인
+    // Return Value : boolean
+    // Parameter : void
+    // Use : 재생중이면 true, 아니면 false
+    public boolean isPlaying() {
+        return music.isPlaying();
+    }
+
+    public int getDuration() {
+        return music.getDuration();
+    }
+
+    public int getCurrentPosition(){
+        return music.getCurrentPosition();
     }
 }

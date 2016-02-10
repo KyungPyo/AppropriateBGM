@@ -20,7 +20,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kp.appropriatebgm.Category.CategoryActivity;
@@ -41,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private DisplayMetrics metrics;
     private int leftMenuWidth;
     private boolean isFilemanageOpen = false;
-    private MusicPlayer musicPlayer;
+    private MusicPlayer musicPlayer = null;
+    private PlaybackBarTask playbackBarTask;
 
     // View 선언
     private ImageView actionbarSearchBtn;
@@ -70,12 +73,21 @@ public class MainActivity extends AppCompatActivity {
     private Spinner categorySpinner;
     private BGMListAdapter bgmAdapter;
 
+    // BGM리스트 체크후 조작
     private String checkedBgmPath[];
     private AlertDialog deleteFile_dialog;
     private AlertDialog updateCategory_dialog;
     private int selectedCategoryPosition;
     private ArrayList<Category> categoryListForDialog;
     private CategoryListAdapter categoryAdapterForDialog;
+
+    // 재생툴
+    private SeekBar progressBar;
+    private ImageView btnPlayMusic;
+    private ImageView btnStopMusic;
+    private ImageView btnPauseMusic;
+    private TextView txtPlayTime;
+    private TextView txtMaxTime;
 
     /**** 멤버 선언 ****/
 
@@ -136,10 +148,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        progressBar = (SeekBar)findViewById(R.id.main_seekbar_playtime);
+        btnPlayMusic = (ImageView)findViewById(R.id.main_btn_play);
+        btnStopMusic = (ImageView)findViewById(R.id.main_btn_stop);
+        btnPauseMusic = (ImageView)findViewById(R.id.main_btn_pause);
+        txtMaxTime = (TextView)findViewById(R.id.main_text_maxtime);
+        txtPlayTime = (TextView)findViewById(R.id.main_text_playtime);
+
         setSupportActionBar(toolbar);           // Toolbar를 액션바로 사용한다
         getSupportActionBar().setTitle(null);   // 액션바에 타이틀 제거
 
         isFilemanageOpen = false;   // 파일관리가 열려있는지 여부
+
     }
 
     // Method : 메뉴 레이아웃 설정
@@ -358,7 +378,7 @@ public class MainActivity extends AppCompatActivity {
         updateCategoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                dbManager.updateBgmCategory(categoryList.get(position+1).getCateId(),checkedBgmPath);
+                dbManager.updateBgmCategory(categoryList.get(position + 1).getCateId(), checkedBgmPath);
                 updateCategory_dialog.dismiss();
                 bgmList.clear();
                 bgmList.addAll(dbManager.getBGMList(categoryList.get(selectedCategoryPosition).getCateId()));
@@ -411,13 +431,18 @@ public class MainActivity extends AppCompatActivity {
         deleteFile_dialog = deleteDialogBuilder.create();
     }
 
-
+    // Method : 음악리스트의 아이템을 클릭했을 때 이벤트
+    // Return Value : void
+    // Parameter : position(클릭한 아이템의 리스트에서의 위치)
+    // Use : 리스트의 아이템을 클릭하면 현재 모드에 따른 이벤트를 처리한다.
+    //      파일관리가 열려있으면 다중선택모드로 해당 아이템을 선택하기만 한다.
+    //      파일관리가 닫혀있으면 선택한 음악을 재생시킨다. 재생중이면 정지시키고 선택한것을 재생한다.
     private void onClickMusicListItem(int position) {
         if (isFilemanageOpen) {  // 파일관리가 열려있으면 선택모드
             bgmAdapter.notifyDataSetChanged();
         } else {        // 파일관리가 닫혀있으면 재생모드
             BGMInfo bgm = bgmAdapter.getItem(position);
-            if (musicPlayer != null) {
+            if (musicPlayer != null) {  // 전에 재생중인것이 있으면 정지
                 musicPlayer.stopBgm();
             }
             if (bgm.isInnerfile()) {
@@ -425,10 +450,47 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 musicPlayer = new MusicPlayer(this, bgm.getBgmPath());
             }
-            musicPlayer.playBgm();
+            musicPlayer.playFromStartBgm();
+            playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
+            playbackBarTask.setMusic(musicPlayer);
+            playbackBarTask.execute();
         }
     }
 
+    // Method : 재생툴 버튼(재생,일시정지,정지) 이벤트
+    // Return Value : void
+    // Parameter : view(클릭한 버튼)
+    // Use : 재생툴을 조작할 때 이벤트 동작. 전부 현재 재생파일이 등록된 경우에만 동작
+    //       재생을 누르면 등록된 음악을 재생시키고 재생바 스레드를 새로 등록해서 동작시킨다.
+    //       정지를 누르면 스레드를 cancel시켜서 화면에 표시되는 재생시간을 0으로 조작하고 정지시킨다.
+    //       일시정지를 누르면 그냥 일시정지시킨다. 일시정지가 되면 재생중이 아니기 때문에 재생바 스레드가 종료된다.
+    public void onClickPlayToolBtn(View view){
+        if (musicPlayer != null) {  // 재생할 수 있는 파일이 등록된 경우에만
+            switch (view.getId()){
+                case R.id.main_btn_play:{
+                    if(!musicPlayer.isPlaying()) {  // 재생중이 아닌 경우에만
+                        musicPlayer.playBgm();
+                        playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
+                        playbackBarTask.setMusic(musicPlayer);
+                        playbackBarTask.execute();
+                    }
+                    break;
+                }
+                case R.id.main_btn_stop:{
+                    progressBar.setProgress(0);
+                    txtPlayTime.setText("00:00");
+                    musicPlayer.stopBgm();
+                    break;
+                }
+                case R.id.main_btn_pause:{
+                    if (musicPlayer.isPlaying()) {  // 재생중인 경우에만
+                        musicPlayer.pauseBgm();
+                    }
+                    break;
+                }
+            }
+        }
+    }
     /****
      * 기타 이벤트 부분
      ****/
