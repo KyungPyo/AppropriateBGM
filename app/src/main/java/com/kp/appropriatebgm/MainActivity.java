@@ -404,8 +404,8 @@ public class MainActivity extends AppCompatActivity {
         deleteDialogBuilder.setView(delete_dialog_view);
         deleteDialogBuilder.setMessage("선택하신 파일은 영구 삭제됩니다. 계속 진행하시겠습니까?");
 
-        Button file_delete_btn = (Button) delete_dialog_view.findViewById(R.id.category_delete_btn);
-        Button file_deleteCancel_btn = (Button) delete_dialog_view.findViewById(R.id.category_delete_cancel_btn);
+        Button file_delete_btn = (Button) delete_dialog_view.findViewById(R.id.category_btn_delete);
+        Button file_deleteCancel_btn = (Button) delete_dialog_view.findViewById(R.id.category_btn_deletecancel);
 
         file_delete_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -426,8 +426,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        file_delete_btn.setText(R.string.ctg_check_btn);
-        file_deleteCancel_btn.setText(R.string.ctg_ctl_btn);
+        file_delete_btn.setText(R.string.ctgdialog_checkbtn_text);
+        file_deleteCancel_btn.setText(R.string.ctgdialog_cancelbtn_text);
         deleteFile_dialog = deleteDialogBuilder.create();
     }
 

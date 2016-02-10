@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/category_toolbar"
+            android:id="@+id/category_toolbar_menu"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/ctg_Actionbar_Primary"
@@ -36,7 +36,7 @@
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/category_check_delete_btn"
+        android:id="@+id/category_btn_checkdelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
