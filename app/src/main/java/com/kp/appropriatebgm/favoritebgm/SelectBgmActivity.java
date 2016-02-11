@@ -1,6 +1,7 @@
 package com.kp.appropriatebgm.favoritebgm;
 
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -54,6 +55,7 @@ public class SelectBgmActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_bgm);
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         init();
         addHeaderToList();
@@ -78,7 +80,7 @@ public class SelectBgmActivity extends AppCompatActivity {
                 position = intent.getIntExtra("position", 0);
 
                 //해당 position은 DB에서 Favorite_id 이므로 해당 id가 있는 row를 지운다.
-                dbManager.updateFavorite(position,null);//DB
+                dbManager.updateFavorite(position, null);//DB
 
                 intent.putExtra("position", position);
 
@@ -108,7 +110,9 @@ public class SelectBgmActivity extends AppCompatActivity {
                 //지금 보여지고 있는 ArrayList를 클리어
                 bgms.clear();
                 bgms.addAll(dbManager.getBGMList(categoryList.get(position).getCateId()));//int형
-
+                listItemCheckFree();
+                adapter.setSearchingList();
+                adapter.filter(editSearch.getText().toString());
                 adapter.notifyDataSetChanged();
             }
 
@@ -143,6 +147,7 @@ public class SelectBgmActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable arg0) {
                 // TODO Auto-generated method stub
+                listItemCheckFree();
                 String text = editSearch.getText().toString().toLowerCase(Locale.getDefault());
                 adapter.filter(text);
             }
@@ -227,6 +232,16 @@ public class SelectBgmActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    // Method : list상에 check되어있는 item 모두 원래대로 돌아옴
+    // Return Value : void
+    // Parameter : void
+    // Use : list의 모든 아이템을 탐색하여 check 상태를 false로 바꿔줌
+    private void listItemCheckFree() {
+        for (int i = 0; i < list.getCount(); i++) {
+            list.setItemChecked(i, false);
+        }
     }
 
     // Method : 초기설정

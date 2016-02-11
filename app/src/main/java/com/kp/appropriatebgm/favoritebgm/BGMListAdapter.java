@@ -115,6 +115,11 @@ public class BGMListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void setSearchingList(){
+        searchingList.clear();
+        searchingList.addAll(aMusicList);
+    }
+
     public void setCheckBoxVisible(boolean checked){
         isCheckBoxVisible=checked;
     }
