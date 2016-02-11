@@ -356,8 +356,14 @@ public class MainActivity extends AppCompatActivity {
             categoryList.clear();
             categoryList.addAll(dbManager.getCategoryList());
 
+            categoryListForDialog.clear();
+            categoryListForDialog.addAll(categoryList);
+            categoryListForDialog.remove(0);
+
             bgmAdapter.notifyDataSetChanged();
+            bgmAdapter.setSearchingList();
             categoryAdapter.notifyDataSetChanged();
+            categoryAdapterForDialog.notifyDataSetChanged();
         }
     }
 
@@ -660,6 +666,9 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                     editTextSearch.setVisibility(View.INVISIBLE);
+                    listItemCheckFree();
+                    bgmListView.setAdapter(null);
+                    bgmListView.setAdapter(bgmAdapter);
                     isVisible = false;
                     editTextSearch.setText("");
 
