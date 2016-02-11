@@ -269,7 +269,7 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
-    // Method : Category List 불러오기x
+    // Method : Category List 불러오기
     // Return Value : ArrayList<Category> (BGMList 테이블에 저장된 정보 리스트)
     // Parameter : void
     // Use : DB에 저장된 전체 Category 정보를 불러오는 메소드.

@@ -1,11 +1,5 @@
 package com.kp.appropriatebgm.favoritebgm;
-import com.kp.appropriatebgm.DBController.DBManager;
-import com.kp.appropriatebgm.DBController.Favorite;
-import com.kp.appropriatebgm.LockScreen.LockScreenService;
-import com.kp.appropriatebgm.R;
-
 import android.content.Intent;
-import android.database.Cursor;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +10,12 @@ import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
+
+import com.kp.appropriatebgm.CheckPref;
+import com.kp.appropriatebgm.DBController.DBManager;
+import com.kp.appropriatebgm.DBController.Favorite;
+import com.kp.appropriatebgm.LockScreen.LockScreenService;
+import com.kp.appropriatebgm.R;
 
 import java.util.ArrayList;
 
@@ -29,13 +29,15 @@ public class FavoriteActivity extends AppCompatActivity {
     FavoriteListAdapter adapter;
     ArrayList<Favorite> favoriteArrayList;
     DBManager dbManager=DBManager.getInstance(this);//DB
-    Cursor bgm;
+
+    private CheckPref mPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        mPref = new CheckPref(this);        // 공유 프레퍼런스 객체
 
         init();
 
@@ -43,6 +45,7 @@ public class FavoriteActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(null);   // 액션바에 타이틀 제거
 
     }
+
     // Method : 초기설정
     // Return Value : void
     // Parameter : void
@@ -51,16 +54,19 @@ public class FavoriteActivity extends AppCompatActivity {
 
         toolbar=(Toolbar)findViewById(R.id.favorite_toolbar);
         onOffSwitch=(Switch)findViewById(R.id.favorite_switch_onOffSwitch);
+        onOffSwitch.setChecked(mPref.getLockerOnOff());
         onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked)
                 {
+                    mPref.setLockerOnOff(true);
                     Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
                     startService(intent);
                 }
                 else
                 {
+                    mPref.setLockerOnOff(false);
                     Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
                     stopService(intent);
                 }
