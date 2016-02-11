@@ -622,6 +622,10 @@ public class MainActivity extends AppCompatActivity {
         backPressCloseHandler.onBackPressed();
     }
 
+    // Method : Setting Listeners
+    // Return Value : void
+    // Parameter : void
+    // Use :  리스너 정의
     private void initListener(){
 
         //검색창에서 Text 가 바뀌었을 때
