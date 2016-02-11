@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -269,22 +270,61 @@ public class MainActivity extends AppCompatActivity {
             case R.id.main_menubtn_to_record: {
                 componentName = new ComponentName("com.kp.appropriatebgm", "com.kp.appropriatebgm.record.RecordActivity");
                 intent.setComponent(componentName);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
+                setOriginalCondition();
                 break;
             }
             case R.id.main_menubtn_to_favorite: {
-
-               /* componentName = new ComponentName("com.kp.appropriatebgm", "com.kp.appropriatebgm.favoritebgm.FavoriteActivity");
-                intent.setComponent(componentName);*/
                 intent.setClass(getApplicationContext(), FavoriteActivity.class);
+                //메인액티비티에 영향을 주는 것이 없으므로 Result 를 받지 않아도 된다.
                 startActivity(intent);
+                setOriginalCondition();
                 break;
             }
             case R.id.main_menubtn_to_category: {
                 intent.setClass(getApplicationContext(), CategoryActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
+                setOriginalCondition();
                 break;
             }
+        }
+    }
+
+    // Method : 편집메뉴, 메뉴 Drawer, CheckBox 를 원래 상태로 되돌리는 기능.
+    // Return Value : void
+    // Parameter : void
+    // Use : 다른작업을 하고 메인 액티비티로 돌아왔을 때 메뉴Drawer 와 편집메뉴, CheckBox 가 계속 열려있는 것을 방지.
+    //       Drawer 메뉴에서 버튼을 클릭했을 때 호출한다. onClickMenuSelection 에서 호출.
+    private void setOriginalCondition(){
+
+        listItemCheckFree();
+        //파일 편집메뉴 닫는 부분.
+        if (groupFileManage.getVisibility() == View.VISIBLE){
+            groupFileManage.setVisibility(View.INVISIBLE);
+            isFilemanageOpen = false;
+            setCheckBoxVisibility(false);
+        }
+        mainDrawer.closeDrawers();
+    }
+
+
+    // Method : Intent Result 별 이벤트
+    // Return Value : void
+    // Parameter : void
+    // Use : 카테고리, 녹음 액티비티에서 작업을 마치면 BGM 과 Category 리스트를 갱신해 줄 필요가 있으므로
+    //       각각의 리스트를 클리어 하고 DB 에서 정보를 다시 받아온다.
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode==RESULT_OK){
+
+            bgmList.clear();
+            bgmList.addAll(dbManager.getBGMList(1));
+
+            categoryList.clear();
+            categoryList.addAll(dbManager.getCategoryList());
+
+            bgmAdapter.notifyDataSetChanged();
+            categoryAdapter.notifyDataSetChanged();
         }
     }
 

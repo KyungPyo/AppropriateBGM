@@ -358,11 +358,10 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                 ctg_actionbar_add_button.setEnabled(true);
                 return true;
             }
-            /*if (keyCode == android.view.KeyEvent.KEYCODE_BACK) {
-                Intent intent = new Intent();
-                intent.setClass(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-            }*/
+            if (keyCode == android.view.KeyEvent.KEYCODE_BACK) {
+                setResult(RESULT_OK);
+                finish();
+            }
         }
 
         return super.onKeyDown(keyCode, event);
