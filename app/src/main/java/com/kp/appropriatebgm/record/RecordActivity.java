@@ -551,7 +551,6 @@ public class RecordActivity extends AppCompatActivity {
                         })
                         .show();
                 return true;
-
             }
         }
         return super.onKeyDown(keyCode, event);
