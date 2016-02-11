@@ -331,6 +331,12 @@ public class MainActivity extends AppCompatActivity {
             bgmListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
             isFilemanageOpen = false;
         }
+
+        if(isVisible){
+            editTextSearch.setVisibility(View.INVISIBLE);
+            isVisible = false;
+            editTextSearch.setText("");
+        }
         mainDrawer.closeDrawers();
     }
 
