@@ -57,7 +57,6 @@ public class RecordActivity extends AppCompatActivity {
     private ImageView btnRecordUp = null;
     private ImageView btnSave = null;
     //다이얼로그
-    private CancelRecordDlg mRerecordDialog;
     private Category selectedCategory;
     // 저장 관련(팝업)
     private View mPopupLayout = null;
@@ -214,6 +213,8 @@ public class RecordActivity extends AppCompatActivity {
         btnPlay.setEnabled(false);  // 녹음하기전엔(녹음된 파일이 없으면) 재생버튼을 누를 수 없다.
         btnSave.setEnabled(false);  // 저장버튼도
         setPopupWindow();
+        TempDelete();
+
     }
 
     // Method : SeekbarListener
@@ -280,13 +281,29 @@ public class RecordActivity extends AppCompatActivity {
                     if (!recordManager.isRecording()) {
                         // Use : 녹음이 된 임시파일이 있다면 다이얼로그를 호출
                         if (new File(recordManager.getPath()).isFile()) {
-                            Log.i("111", "i'm inn");
-                            mRerecordDialog = new CancelRecordDlg(this,
-                                    " 경 고 ",
-                                    " 다시 만드시겠습니까? ",
-                                    dlgleftClickListener,
-                                    dlgrightClickListener);
-                            mRerecordDialog.show();
+                            AlertDialog dialog;
+                            dialog = new AlertDialog.Builder(this).setTitle("녹 음 확 인")
+                                    .setMessage("현재 녹음된 파일을 삭제하고 다시 녹음을 시작 하시겠습니까?")
+                                    .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // TODO Auto-generated method stub
+                                            recordTask = new RecordTask();
+                                            recordTask.execute();  // 녹음 시작
+                                            dialog.dismiss(); //본래의 액티비티로 복귀
+//                                            v.setBackgroundResource(R.drawable.btn_stoprecord_selector);// 녹음버튼의 이미지를 녹음중으로 변경
+                                            btnRecordUp.setImageResource(R.drawable.btn_stoprecord_selector1);
+
+                                        }
+                                    })
+                                    .setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // TODO Auto-generated method stub
+                                            dialog.cancel();
+                                        }
+                                    })
+                                    .show();
+
 
                         }
                         // Use :녹음된 파일이 없다면 녹음을 시작한다.
@@ -335,37 +352,7 @@ public class RecordActivity extends AppCompatActivity {
         }
     }
 
-    /*****
-     * 다이얼로그 클릭리스너
-     ****/
-    // Method : CancelDlg 출력
-    // Return Value : void
-    // Parameter : View
-    // Use :  왼쪽 '네' 버튼을 눌렀을 경우 본래의 액티비티로 복귀하며 녹음을 시작한다.
-    private View.OnClickListener dlgleftClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            recordTask = new RecordTask();
-            recordTask.execute();  // 녹음 시작
-            mRerecordDialog.dismiss(); //본래의 액티비티로 복귀
-            v.setBackgroundResource(R.drawable.btn_stoprecord_selector);// 녹음버튼의 이미지를 녹음중으로 변경
-            btnRecordUp.setImageResource(R.drawable.btn_stoprecord_selector1);
-        }
-    };
-    // Method : CancelDlg 출력
-    // Return Value : void
-    // Parameter : View
-    // Use :  오른쪽 아니오 버튼을 눌렀을 경우 본래의 액티비티로 복귀한다.
-    private View.OnClickListener dlgrightClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mRerecordDialog.dismiss(); // 복래의 액티비티로 복귀
-        }
-    };
 
-    /****
-     * 다이얼로그 클릭리스너
-     ****/
 
 
     // Method : 저장버튼 클릭시 Dlg 출력
@@ -399,6 +386,17 @@ public class RecordActivity extends AppCompatActivity {
         timeText = timeText + sec;
 
         targetView.setText(timeText);
+    }
+
+    public void TempDelete(){
+        boolean isTempExist = new File(recordManager.getPath()).isFile();
+        if(isTempExist = true)
+        {
+            new File(recordManager.getPath()).delete();
+            Log.i("TempDelete","Tempdel");
+
+        }
+
     }
 
     // Method : 저장버튼 이벤트 리스너
