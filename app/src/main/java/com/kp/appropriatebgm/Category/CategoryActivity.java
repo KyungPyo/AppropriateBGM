@@ -2,24 +2,21 @@ package com.kp.appropriatebgm.Category;
 
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.support.v7.view.menu.ActionMenuItemView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -27,8 +24,6 @@ import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,6 +49,8 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.category_toolbar_menu);
         setSupportActionBar(toolbar);
 

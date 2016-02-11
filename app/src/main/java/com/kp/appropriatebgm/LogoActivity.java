@@ -3,6 +3,7 @@ package com.kp.appropriatebgm;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class LogoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mPref = new CheckPref(this);    // 공유 프레퍼런스 객체
         setContentView(R.layout.activity_logo);
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         final TextView message = (TextView)findViewById(R.id.logo_text_message);   // 현재 진행상황 표시 텍스트
 
@@ -44,7 +46,7 @@ public class LogoActivity extends AppCompatActivity {
         // 싱글톤 객체를 받아오면서 상속받은 SQLiteOpenHelper 클래스를 이용하여 DB를 생성/수정/열기 한다.
         dbManager = DBManager.getInstance(this);
         // 단말기에 저장된 음악파일 검색 및 무결성 검사
-        initStorageBGMFiles();
+        final boolean isAvailable = initStorageBGMFiles();
 
 
         // 로고화면에서 잠시 대기하면서 초기설정을 하고 메인 액티비티로 전환
@@ -53,14 +55,22 @@ public class LogoActivity extends AppCompatActivity {
             public void run() {
                 super.run();
                 try {
-                    sleep(1000);
-                    Intent intent = new Intent();
-                    ComponentName componentName = new ComponentName("com.kp.appropriatebgm", "com.kp.appropriatebgm.MainActivity");
-                    intent.setComponent(componentName);
-                    startActivity(intent);
+                    if(isAvailable) {
+                        sleep(1000);
+                        Intent intent = new Intent();
+                        ComponentName componentName = new ComponentName("com.kp.appropriatebgm", "com.kp.appropriatebgm.MainActivity");
+                        intent.setComponent(componentName);
+                        startActivity(intent);
+                    } else {
+                        message.setText("파일을 불러올 수가 없습니다.\n잠시 후 다시 실행 해주세요.");
+                        sleep(3000);
+                    }
                     finish();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                } catch (Exception e) {
+                    message.setText("잠시 후 다시 실행 해주세요.");
+                    finish();
                 }
 
             }
@@ -70,28 +80,39 @@ public class LogoActivity extends AppCompatActivity {
         message.setText("시작하는 중");
     }
 
-    private void initStorageBGMFiles(){
-        // 음악파일 목록을 받아올 때 같이 요청하는 정보 목록(파일경로, 파일명)
-        String[] requestList = new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME};
+    // Method : 파일 무결성 확인
+    // Return Value : boolean(정상적으로 파일을 읽어올 수 있으면 true, 아니면 false)
+    // Parameter : void
+    // Use : 단말기에 저장된 미디어파일을 전부 받아와서 DB와 비교를 요청한다.
+    //       아직 미디어풀이 갱신되지 않았을 경우를 대비하여 실제 존재하는 파일인지 다시한번 확인하고 DBManager로 넘겨준다.
+    private boolean initStorageBGMFiles() {
+        try {
+            // 음악파일 목록을 받아올 때 같이 요청하는 정보 목록(파일경로, 파일명)
+            String[] requestList = new String[]{MediaStore.Audio.Media.DATA, MediaStore.Audio.Media.DISPLAY_NAME};
 
-        // Storage에서 음악파일 목록을 받아와서 cursor에 저장한다.
-        Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, requestList, "1=1", null, null);
+            // Storage에서 음악파일 목록을 받아와서 cursor에 저장한다.
+            Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, requestList, "1=1", null, null);
 
-        String[] file;
-        ArrayList<String[]> fileList = new ArrayList<>();
-        File existCheck;
-        while (cursor.moveToNext()){
-            // 미디어풀 DB에 등록이 아직 안되어있을 수 있기 때문에 정말 존재하는 파일인지 확실히 확인한다.
-            existCheck = new File(cursor.getString(0));
-            if (existCheck.isFile()) {
-                file = new String[2];
-                file[0] = cursor.getString(0);
-                file[1] = cursor.getString(1);
-                fileList.add(file);
-                Log.i("저장된 파일들", cursor.getString(0) + " : " + cursor.getString(1));
+            String[] file;
+            ArrayList<String[]> fileList = new ArrayList<>();
+            File existCheck;
+            while (cursor.moveToNext()) {
+                // 미디어풀 DB에 등록이 아직 안되어있을 수 있기 때문에 정말 존재하는 파일인지 확실히 확인한다.
+                existCheck = new File(cursor.getString(0));
+                if (existCheck.isFile()) {
+                    file = new String[2];
+                    file[0] = cursor.getString(0);
+                    file[1] = cursor.getString(1);
+                    fileList.add(file);
+                    Log.i("저장된 파일들", cursor.getString(0) + " : " + cursor.getString(1));
+                }
             }
-        }
 
-        dbManager.checkBGMList(fileList);
+            dbManager.checkBGMList(fileList);
+            return true;
+        } catch(Exception e) {
+            Log.e("initStorageBGMFiles", e.toString());
+            return false;
+        }
     }
 }

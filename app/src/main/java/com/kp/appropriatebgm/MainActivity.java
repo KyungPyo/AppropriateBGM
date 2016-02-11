@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,8 +13,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+<<<<<<< HEAD
 import android.util.Log;
 import android.view.KeyEvent;
+=======
+>>>>>>> cc5b1e87367ad3720113ddbf6842e651859be6fc
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -113,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         initMember();                   // 멤버변수 초기화
         initMenuLayoutSize();           // 메뉴 레이아웃 크기설정
@@ -539,12 +544,14 @@ public class MainActivity extends AppCompatActivity {
         if (musicPlayer != null) {  // 재생할 수 있는 파일이 등록된 경우에만
             switch (view.getId()){
                 case R.id.main_btn_play:{
-                    if(!musicPlayer.isPlaying()) {  // 재생중이 아닌 경우에만
+                    if(musicPlayer.isPlaying()) {
+                        musicPlayer.playFromStartBgm();
+                    } else {
                         musicPlayer.playBgm();
-                        playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
-                        playbackBarTask.setMusic(musicPlayer);
-                        playbackBarTask.execute();
                     }
+                    playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
+                    playbackBarTask.setMusic(musicPlayer);
+                    playbackBarTask.execute();
                     break;
                 }
                 case R.id.main_btn_stop:{

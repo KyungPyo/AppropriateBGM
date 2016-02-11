@@ -52,9 +52,9 @@ public class MusicPlayer {
     // Method : 처음부터 다시 재생준비
     // Return Value : void
     // Parameter : void
-    // Use : 재생하던 것을 멈추고 처음으로 되감은 다음 다시 재생준비를 한다.
+    // Use : 재생하던 것을 멈추고 다시 재생준비를 한 다음 처음으로 되감는다.
     private void resetPlay(){
-        if (music != null && music.isPlaying()) { // 재생중이면 정지/초기화 후 다시 재생준비
+        if (music != null) {
             music.stop();
             try {
                 music.prepare();
@@ -83,9 +83,6 @@ public class MusicPlayer {
         music.start();
     }
     public void stopBgm(){
-        if(!isPlaying()){
-            music.start();
-        }
         resetPlay();
     }
     public void pauseBgm() {
