@@ -2,6 +2,7 @@ package com.kp.appropriatebgm.favoritebgm;
 import com.kp.appropriatebgm.DBController.BGMInfo;
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.DBController.Favorite;
+import com.kp.appropriatebgm.LockScreen.LockScreenService;
 import com.kp.appropriatebgm.R;
 
 import android.content.Intent;
@@ -54,7 +55,16 @@ public class FavoriteActivity extends AppCompatActivity {
         onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Toast.makeText(getApplicationContext(), "룰루라라라랄 ", Toast.LENGTH_SHORT).show();
+                if(isChecked)
+                {
+                    Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
+                    startService(intent);
+                }
+                else
+                {
+                    Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
+                    stopService(intent);
+                }
             }
         });
 
