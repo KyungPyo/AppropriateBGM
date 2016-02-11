@@ -90,7 +90,6 @@ public class CategoryListAdapter extends BaseAdapter {
         }
         viewHolder.chkbox.setFocusable(false);
         viewHolder.chkbox.setClickable(false);
-        Log.e("visibility", viewHolder.chkbox.isEnabled() + "");
 
         viewHolder.chkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

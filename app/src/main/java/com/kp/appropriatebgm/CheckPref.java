@@ -3,7 +3,6 @@ package com.kp.appropriatebgm;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 public class CheckPref {
 
@@ -24,13 +23,17 @@ public class CheckPref {
         return settingPref.getBoolean("FirstExcute", true);
     }
 
-    public void setLockerOnOff(boolean isOn){
+    public void setLockerOnOff(){
         SharedPreferences.Editor prefEditor = settingPref.edit();
-        prefEditor.putBoolean("LockerOn", isOn);
+        if(settingPref.getBoolean("LockerOn", false)) {
+            prefEditor.putBoolean("LockerOn", false);
+        } else {
+            prefEditor.putBoolean("LockerOn", true);
+        }
         prefEditor.apply();
     }
 
     public boolean getLockerOnOff(){
-        return settingPref.getBoolean("LockerOn", true);
+        return settingPref.getBoolean("LockerOn", false);
     }
 }

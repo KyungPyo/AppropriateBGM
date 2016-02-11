@@ -60,16 +60,15 @@ public class FavoriteActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked)
                 {
-                    mPref.setLockerOnOff(true);
                     Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
                     startService(intent);
                 }
                 else
                 {
-                    mPref.setLockerOnOff(false);
                     Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
                     stopService(intent);
                 }
+                mPref.setLockerOnOff();
             }
         });
 
