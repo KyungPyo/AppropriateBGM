@@ -3,6 +3,7 @@ package com.kp.appropriatebgm;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class LogoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mPref = new CheckPref(this);    // 공유 프레퍼런스 객체
         setContentView(R.layout.activity_logo);
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         final TextView message = (TextView)findViewById(R.id.logo_text_message);   // 현재 진행상황 표시 텍스트
 

@@ -1,11 +1,7 @@
 package com.kp.appropriatebgm.favoritebgm;
-import com.kp.appropriatebgm.DBController.BGMInfo;
-import com.kp.appropriatebgm.DBController.DBManager;
-import com.kp.appropriatebgm.DBController.Favorite;
-import com.kp.appropriatebgm.R;
-
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +12,10 @@ import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import com.kp.appropriatebgm.DBController.DBManager;
+import com.kp.appropriatebgm.DBController.Favorite;
+import com.kp.appropriatebgm.R;
 
 import java.util.ArrayList;
 
@@ -34,8 +34,8 @@ public class FavoriteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_favorite);
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         init();
 

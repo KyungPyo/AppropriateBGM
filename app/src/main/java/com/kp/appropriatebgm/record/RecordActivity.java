@@ -5,8 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.MediaPlayer;
-import android.net.Uri;
+import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -32,7 +31,6 @@ import android.widget.Toast;
 import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.MusicPlayer;
-import com.kp.appropriatebgm.PlaybackBarTask;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 
@@ -200,8 +198,8 @@ public class RecordActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("녹음하기");
         setContentView(R.layout.activity_record);
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         Intent intent = getIntent();
         // 저장될 디렉토리명을 app_name으로 설정
         recordManager = new RecordManager(getString(R.string.app_name));

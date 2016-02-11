@@ -1,6 +1,7 @@
 package com.kp.appropriatebgm.favoritebgm;
 
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -54,6 +55,7 @@ public class SelectBgmActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_bgm);
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         init();
         addHeaderToList();

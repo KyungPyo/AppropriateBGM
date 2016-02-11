@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         initMember();                   // 멤버변수 초기화
         initMenuLayoutSize();           // 메뉴 레이아웃 크기설정
