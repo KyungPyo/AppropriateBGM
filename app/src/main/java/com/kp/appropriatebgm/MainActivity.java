@@ -301,8 +301,13 @@ public class MainActivity extends AppCompatActivity {
         //파일 편집메뉴 닫는 부분.
         if (groupFileManage.getVisibility() == View.VISIBLE){
             groupFileManage.setVisibility(View.INVISIBLE);
-            isFilemanageOpen = false;
+            btnFileManage.setVisibility(View.VISIBLE);
+            listItemCheckFree();
             setCheckBoxVisibility(false);
+            bgmListView.setAdapter(null);
+            bgmListView.setAdapter(bgmAdapter);
+            bgmListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
+            isFilemanageOpen = false;
         }
         mainDrawer.closeDrawers();
     }
