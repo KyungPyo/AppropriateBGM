@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -517,12 +516,14 @@ public class MainActivity extends AppCompatActivity {
         if (musicPlayer != null) {  // 재생할 수 있는 파일이 등록된 경우에만
             switch (view.getId()){
                 case R.id.main_btn_play:{
-                    if(!musicPlayer.isPlaying()) {  // 재생중이 아닌 경우에만
+                    if(musicPlayer.isPlaying()) {
+                        musicPlayer.playFromStartBgm();
+                    } else {
                         musicPlayer.playBgm();
-                        playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
-                        playbackBarTask.setMusic(musicPlayer);
-                        playbackBarTask.execute();
                     }
+                    playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
+                    playbackBarTask.setMusic(musicPlayer);
+                    playbackBarTask.execute();
                     break;
                 }
                 case R.id.main_btn_stop:{
