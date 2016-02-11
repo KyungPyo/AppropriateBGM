@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:widget="http://schemas.android.com/apk/com.kp.appropriatebgm"
-    android:id="@+id/lockscreen_group_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
@@ -13,7 +12,7 @@
         android:scaleType="centerCrop"/>
 
     <LinearLayout
-        android:id="@+id/lockscreen_group_dayclock"
+        android:id="@+id/lockscreen_group_clock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -30,6 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:paddingLeft="45dp"
+                android:singleLine="true"
                 android:paddingTop="90dp"
                 android:shadowColor="#FF000000"
                 android:shadowDx="2.0"
@@ -47,7 +47,8 @@
                 android:shadowDx="2.0"
                 android:shadowDy="2.0"
                 android:shadowRadius="2.0"
-                android:textSize="100dp"
+                android:textSize="80dp"
+                android:singleLine="true"
                 android:paddingTop="20dp"
                 android:paddingLeft="15dp"
                 android:layout_alignBottom="@id/lockscreen_textview_apmclock"
@@ -60,6 +61,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="20dp"
+            android:singleLine="true"
             android:textColor="#FFFFFFFF"
             android:shadowColor="#FF000000"
             android:shadowDx="2.0"
@@ -71,15 +75,21 @@
 
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/lockscreen_listview_musiclist"
-        android:layout_below="@id/lockscreen_group_dayclock"
-        android:layout_centerHorizontal="true"
-        android:divider="#30ff0000"
-        android:scrollbarSize="5dp"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        />
+    <HorizontalScrollView
+        android:id="@+id/lockscreen_group_horizontalscroll"
+        android:layout_below="@id/lockscreen_group_clock"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scrollbars="none"
+        >
+        <LinearLayout
+            android:id="@+id/lockscreen_group_btnadd"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <com.kp.appropriatebgm.LockScreen.UnlockScreenWidget
         android:id="@+id/lockscreen_widget_unlock"
