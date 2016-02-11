@@ -5,12 +5,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Layout;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -29,9 +35,8 @@ import java.util.Date;
  */
 public class LockScreenActivity extends AppCompatActivity implements UnlockScreenWidget.OnUnlockListener{
 
-    ArrayList<Favorite> favoriteArrayList;
-    DBManager dbManager=DBManager.getInstance(this);//DB
-    FavoriteListAdapter adapter;
+    ArrayList<Favorite> bgmfavoriteArrayList;
+    DBManager bgmdbManager=DBManager.getInstance(this);//DB
 
     BroadcastReceiver timeBroadcastReceiver;
     private final SimpleDateFormat apm_format = new SimpleDateFormat("aa");
@@ -41,7 +46,8 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
     TextView apm_clock;
     TextView time_clock;
     TextView day_clock;
-    ListView lock_favoriteList;
+    HorizontalScrollView bgmFavoriteScroll;
+    LockScreenBgmButton bgmListButton;
 
 
     @Override
@@ -53,6 +59,9 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
 
         ImageView background_ImageView = (ImageView) findViewById(R.id.lockscreen_image_background);
         background_ImageView.setImageDrawable(WallpaperManager.getInstance(this).getDrawable());
+        bgmFavoriteScroll = (HorizontalScrollView) findViewById(R.id.lockscreen_group_horizontalscroll);
+        LinearLayout testLinear = (LinearLayout) findViewById(R.id.lockscreen_group_btnadd);
+
 
         apm_clock = (TextView) findViewById(R.id.lockscreen_textview_apmclock);
         time_clock = (TextView) findViewById(R.id.lockscreen_textview_timeclock);
@@ -62,15 +71,20 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         slide_widget.setOnUnlockListener(this);
         timeInit();
 
-        favoriteArrayList=new ArrayList<Favorite>();
+        bgmfavoriteArrayList=new ArrayList<Favorite>();
 
         //listView 설정
-        favoriteArrayList=dbManager.getFavoriteList();//DB
-        Log.d("널이니ㅣㅣㅣㅣㅣ",(favoriteArrayList==null)+"");
-        lock_favoriteList=(ListView)findViewById(R.id.lockscreen_listview_musiclist);
-        adapter=new FavoriteListAdapter(this, favoriteArrayList);
-        lock_favoriteList.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        bgmfavoriteArrayList=bgmdbManager.getFavoriteList();//DB
+        for(int i=0; i < bgmfavoriteArrayList.size() ; i++) {
+            if (bgmfavoriteArrayList.get(i).getBgmPath() != null)
+            {
+                bgmListButton = new LockScreenBgmButton(this);
+                // .setID 지정 가능
+                bgmListButton.bgmFavoriteText.setText(bgmfavoriteArrayList.get(i).getBgmName());
+                bgmListButton.bgmFavoriteImg.setBackgroundColor(Color.parseColor("#30FF0000"));
+                testLinear.addView(bgmListButton);
+            }
+        }
     }
 
     // Method : 잠금해제 이벤트
