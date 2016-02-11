@@ -9,14 +9,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -35,6 +40,7 @@ import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 import com.kp.appropriatebgm.favoritebgm.FavoriteActivity;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -93,6 +99,11 @@ public class MainActivity extends AppCompatActivity {
     //Back 키 두번 클릭시 앱 종료
     BackPressCloseHandler backPressCloseHandler;
 
+    //검색 부분
+    private EditText editTextSearch;
+    private ImageView searchButton;
+    boolean isVisible = false;
+
     /**** 멤버 선언 ****/
 
     /****
@@ -108,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         initDrawerToggle();             // 네비게이션 드로워 리스너설정
         initBgmList();                  // BGMList 초기 구성
         initCategory();                 // 카테고리 목록 초기 구성 및 이벤트 정의
+        initListener();                 // 리스너 정의
         settingDeleteDialog();          // 삭제 시 뜨는 다이얼로그 초기 구성
         settingUpdateCategoryDialog();  // 카테고리 변경 시 뜨는 다이얼로그 초기 구성
     }
@@ -159,6 +171,10 @@ public class MainActivity extends AppCompatActivity {
         btnPauseMusic = (ImageView)findViewById(R.id.main_btn_pause);
         txtMaxTime = (TextView)findViewById(R.id.main_text_maxtime);
         txtPlayTime = (TextView)findViewById(R.id.main_text_playtime);
+
+        editTextSearch=(EditText)findViewById(R.id.main_editText_search);
+        searchButton=(ImageView)findViewById(R.id.main_btn_search);
+
 
         setSupportActionBar(toolbar);           // Toolbar를 액션바로 사용한다
         getSupportActionBar().setTitle(null);   // 액션바에 타이틀 제거
@@ -226,6 +242,8 @@ public class MainActivity extends AppCompatActivity {
                 bgmList.clear();
                 bgmList.addAll(dbManager.getBGMList(categoryList.get(position).getCateId()));
                 selectedCategoryPosition = position;
+                bgmAdapter.setSearchingList();
+                bgmAdapter.filter(editTextSearch.getText().toString());
                 bgmAdapter.notifyDataSetChanged();
                 listItemCheckFree();
             }
@@ -431,6 +449,8 @@ public class MainActivity extends AppCompatActivity {
                 updateCategory_dialog.dismiss();
                 bgmList.clear();
                 bgmList.addAll(dbManager.getBGMList(categoryList.get(selectedCategoryPosition).getCateId()));
+                bgmAdapter.setSearchingList();
+                bgmAdapter.filter(editTextSearch.getText().toString());
                 bgmAdapter.notifyDataSetChanged();
                 listItemCheckFree();
             }
@@ -463,6 +483,8 @@ public class MainActivity extends AppCompatActivity {
                 deleteFile_dialog.dismiss();
                 bgmList.clear();
                 bgmList.addAll(dbManager.getBGMList(categoryList.get(selectedCategoryPosition).getCateId()));
+                bgmAdapter.setSearchingList();
+                bgmAdapter.filter(editTextSearch.getText().toString());
                 bgmAdapter.notifyDataSetChanged();
                 listItemCheckFree();
             }
@@ -585,4 +607,59 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         backPressCloseHandler.onBackPressed();
     }
+
+    private void initListener(){
+
+        //검색창에서 Text 가 바뀌었을 때
+        editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                listItemCheckFree();
+                String text = editTextSearch.getText().toString().toLowerCase(Locale.getDefault());
+                bgmAdapter.filter(text);
+            }
+        });
+
+        //검색창 엔터키 막는 이벤트
+        editTextSearch.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == event.KEYCODE_ENTER) {
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        //검색 ImageView가 클릭되었을때
+        searchButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (!isVisible) {
+                    editTextSearch.setVisibility(View.VISIBLE);
+                    isVisible = true;
+                } else {
+                    final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    editTextSearch.setVisibility(View.INVISIBLE);
+                    isVisible = false;
+                    editTextSearch.setText("");
+
+                    //키보드 숨기기
+                    imm.hideSoftInputFromWindow(editTextSearch.getWindowToken(), 0);
+                }
+            }
+        });
+    }
+
 }
