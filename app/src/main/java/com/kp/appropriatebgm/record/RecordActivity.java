@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.MusicPlayer;
+import com.kp.appropriatebgm.PlaybackBarTask;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 
@@ -47,7 +48,10 @@ public class RecordActivity extends AppCompatActivity {
     private PlayTask playTask = null;
     private final int PROGRESS_INTERVAL = 50;     // 재생 progress바 갱신주기
     private int maxTime = 0;    // 현재 녹음된 파일 재생길이
+
     // 화면 출력 관련
+    private PlaybackBarTask playbackBar ;
+
     private int currentRecordTimeMs = 0, currentPlayTimeMs = 0;
     private SeekBar recordProgressBar = null;
     private TextView recordMaxTimeText = null;
@@ -108,7 +112,6 @@ public class RecordActivity extends AppCompatActivity {
                 }
             }
         }
-
         @Override
         protected void onCancelled() { // 녹음이 취소 된다면
             if (recordManager.isRecording())// 녹음이였다면
@@ -119,7 +122,6 @@ public class RecordActivity extends AppCompatActivity {
             prepareRecordFileToPlay();  // 녹음한 파일을 Temp로 만들어 재생할 준비.
             super.onCancelled();
         }
-
         @Override
         protected void onProgressUpdate(Integer... values) {
             int currentTime = values[0];
@@ -149,14 +151,11 @@ public class RecordActivity extends AppCompatActivity {
     private class PlayTask extends AsyncTask<Void, Integer, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-
-//            while (music.isPlaying()) {
             while (musicPlayer.isPlaying()) {
                 if (isCancelled()) {  // 작업이 취소되었으면
                     return null;
                 }
                 try {
-//                    publishProgress(music.getCurrentPosition());   // 현재 재생시간 메인스레드로 전달
                     publishProgress(musicPlayer.getCurrentPosition());   // 현재 재생시간 메인스레드로 전달
                     Thread.sleep(PROGRESS_INTERVAL);             // cancel되면 이부분에서 Exception이 발생해 catch로 넘어간다
                 } catch (InterruptedException e) {
@@ -176,17 +175,14 @@ public class RecordActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Integer... values) {
             int currentTime = values[0];
-//            if (music.isPlaying()) {     // 재생중이면 재생바 갱신
             if (musicPlayer.isPlaying()) {     // 재생중이면 재생바 갱신
                 recordProgressBar.setProgress(currentTime);
                 setTimeText(recordPlayTimeText, currentTime); //시간 계속 갱신.
             } else {    // 스레드 cancel 되지않고 재생 끝났으면(100ms 안의 오차일 경우 대비)
-                Log.e("111", "ok");
-                btnPlay.setImageResource(R.drawable.btn_play);  // 일시정지 버튼을 재생버튼으로 변경
+                playbackBar.setPlayAndPauseBtn(btnPlay);
             }
             if (currentTime >= maxTime) { // 재생시간이 최대시간을 넘기면
-                Log.e("222", "ok");
-                btnPlay.setImageResource(R.drawable.btn_play);  // 일시정지 버튼을 재생버튼으로 변경
+                playbackBar.setPlayAndPauseBtn(btnPlay);
             }
             super.onProgressUpdate(values);
         }
@@ -214,7 +210,6 @@ public class RecordActivity extends AppCompatActivity {
         btnSave.setEnabled(false);  // 저장버튼도
         setPopupWindow();
         TempDelete();
-
     }
 
     // Method : SeekbarListener
@@ -225,8 +220,6 @@ public class RecordActivity extends AppCompatActivity {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser) {
-//                musicP.seekTo(progress);
-//                music.seekTo(progress);
             }
         }
 
@@ -246,22 +239,18 @@ public class RecordActivity extends AppCompatActivity {
     // Parameter : void
     // Use : 녹음이 된 이후, Temp폴더에서 임시저장된 음원을 가지고와서 재생준비 //
     public void prepareRecordFileToPlay() {
-
-
-//        uri = Uri.fromFile(new File(recordManager.getPath())); // 파일준비
-//        music = MediaPlayer.create(this, uri);                 // 파일 재생준비
-//        music.setLooping(false);                               // 반복재생 불가설정
         musicPlayer = new MusicPlayer(this,recordManager.getPath());
         musicPlayer.prepareToPlay(this, recordManager.getPath());
-
-        maxTime = musicPlayer.getDuration() - (musicPlayer.getDuration() % PROGRESS_INTERVAL);  // 100ms 아래 값은 버린다
-//        maxTime = music.getDuration() - (music.getDuration() % PROGRESS_INTERVAL);  // 100ms 아래 값은 버린다
-        recordProgressBar.setMax(maxTime);
-        recordProgressBar.setProgress(0);
-        setTimeText(recordMaxTimeText, maxTime);
-        setTimeText(recordPlayTimeText, 0);
+        playbackBar = new PlaybackBarTask(this,recordProgressBar,recordPlayTimeText,recordMaxTimeText);
+        playbackBar.setMusic(musicPlayer);
+        playbackBar.execute();
+//        maxTime = musicPlayer.getDuration() - (musicPlayer.getDuration() % PROGRESS_INTERVAL);  // 100ms 아래 값은 버린다
+////        maxTime = music.getDuration() - (music.getDuration() % PROGRESS_INTERVAL);  // 100ms 아래 값은 버린다
+//        recordProgressBar.setMax(maxTime);
+//        recordProgressBar.setProgress(0);
+//        setTimeText(recordMaxTimeText, maxTime);
+//        setTimeText(recordPlayTimeText, 0);
     }
-
     // Method : 녹음하기 클릭
     // Return Value : void
     // Parameter : View
@@ -271,11 +260,9 @@ public class RecordActivity extends AppCompatActivity {
             case R.id.recordActivity_btn_startRecord: {
                 if (v.getId() == R.id.recordActivity_btn_startRecord) {
                     // Use : 재생중이면 재생중이던것을 정지하고 녹음
-//                    if (music != null && music.isPlaying()) {    // 재생중이면
                     if (musicPlayer != null && musicPlayer.isPlaying()) {    // 재생중이면
-//                        music.stop();           // 재생중이던거 정지하고
                         musicPlayer.stopBgm();           // 재생중이던거 정지하고
-                        btnPlay.setImageResource(R.drawable.btn_play);  // 일시정지 버튼 다시 재생버튼으로 바꾸고
+                        playbackBar.setPlayAndPauseBtn(btnPlay);
                     }
                     // Use : 녹음중이 아니면
                     if (!recordManager.isRecording()) {
@@ -290,7 +277,6 @@ public class RecordActivity extends AppCompatActivity {
                                             recordTask = new RecordTask();
                                             recordTask.execute();  // 녹음 시작
                                             dialog.dismiss(); //본래의 액티비티로 복귀
-//                                            v.setBackgroundResource(R.drawable.btn_stoprecord_selector);// 녹음버튼의 이미지를 녹음중으로 변경
                                             btnRecordUp.setImageResource(R.drawable.btn_stoprecord_selector1);
 
                                         }
@@ -336,15 +322,16 @@ public class RecordActivity extends AppCompatActivity {
             case R.id.recordActivity_btn_playAtvrecord: {
                 // Use : 재생중과 녹음중이 아니라면 재생 시작 후 seekbar&textview 처리
                 if (!musicPlayer.isPlaying() && !recordManager.isRecording()) {
-                    musicPlayer.playFromStartBgm();
-                    btnPlay.setImageResource(R.drawable.btn_pause);
-                    playTask = new PlayTask();
-                    playTask.execute();
+                    musicPlayer.playBgm();
+                    playbackBar = new PlaybackBarTask(this,recordProgressBar,recordPlayTimeText,recordMaxTimeText);
+                    playbackBar.setMusic(musicPlayer);
+                    playbackBar.setPlayAndPauseBtn(btnPlay);
+                    playbackBar.execute();
                 }
                 // Use : 재생중이거나 녹음중이라면 일시정지
                 else {
                     musicPlayer.pauseBgm();
-                    btnPlay.setImageResource(R.drawable.btn_play);
+                    playbackBar.setPlayAndPauseBtn(btnPlay);
                 }
                 break;
             }
@@ -388,6 +375,10 @@ public class RecordActivity extends AppCompatActivity {
         targetView.setText(timeText);
     }
 
+    // Method : RecordTempFile 삭제
+    // Return Value : void
+    // Parameter : Void
+    // Use : 녹음 액티비티 시작시 Temp파일이 있으면 삭제.
     public void TempDelete(){
         boolean isTempExist = new File(recordManager.getPath()).isFile();
         if(isTempExist = true)
