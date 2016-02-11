@@ -90,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtPlayTime;
     private TextView txtMaxTime;
 
+    //Back 키 두번 클릭시 앱 종료
+    BackPressCloseHandler backPressCloseHandler;
+
     /**** 멤버 선언 ****/
 
     /****
@@ -141,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
         categorySpinner = (Spinner) findViewById(R.id.main_spinner_category);
 
         dbManager = DBManager.getInstance(this);
+        backPressCloseHandler=new BackPressCloseHandler(this);
 
         bgmListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -571,5 +575,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return checkedBgmList;
+    }
+
+    // Method : 백키 두번 눌렀을 때 종료되도록
+    // Return Value : void
+    // Parameter : void
+    // Use : backPressCloseHandler 의 onBackPressed 를 호출하여 2초내로 두번이 눌렸는지 아닌지를 판단해 앱 종료 또는 알림.
+    @Override
+    public void onBackPressed() {
+        backPressCloseHandler.onBackPressed();
     }
 }
