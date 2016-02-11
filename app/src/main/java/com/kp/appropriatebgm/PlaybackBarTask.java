@@ -53,6 +53,7 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     public void setPlayAndPauseBtn(ImageView btnInstance){
         playAndPause = btnInstance;
     }
+
     /***** 멤버 선언 및 초기화 *****/
 
     /***** 스레드 동작 *****/
