@@ -31,6 +31,8 @@ import android.widget.Toast;
 
 import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.DBController.DBManager;
+import com.kp.appropriatebgm.MusicPlayer;
+import com.kp.appropriatebgm.PlaybackBarTask;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 
@@ -43,9 +45,8 @@ public class RecordActivity extends AppCompatActivity {
     private RecordManager recordManager = null;
     private RecordTask recordTask = null;
     // 재생 관련
-    private MediaPlayer music = null; // 미디어 플레이어 API
+    private MusicPlayer musicPlayer;
     private PlayTask playTask = null;
-    private Uri uri = null;
     private final int PROGRESS_INTERVAL = 50;     // 재생 progress바 갱신주기
     private int maxTime = 0;    // 현재 녹음된 파일 재생길이
     // 화면 출력 관련
@@ -152,12 +153,14 @@ public class RecordActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
 
-            while (music.isPlaying()) {
+//            while (music.isPlaying()) {
+            while (musicPlayer.isPlaying()) {
                 if (isCancelled()) {  // 작업이 취소되었으면
                     return null;
                 }
                 try {
-                    publishProgress(music.getCurrentPosition());   // 현재 재생시간 메인스레드로 전달
+//                    publishProgress(music.getCurrentPosition());   // 현재 재생시간 메인스레드로 전달
+                    publishProgress(musicPlayer.getCurrentPosition());   // 현재 재생시간 메인스레드로 전달
                     Thread.sleep(PROGRESS_INTERVAL);             // cancel되면 이부분에서 Exception이 발생해 catch로 넘어간다
                 } catch (InterruptedException e) {
                     return null;
@@ -176,7 +179,8 @@ public class RecordActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Integer... values) {
             int currentTime = values[0];
-            if (music.isPlaying()) {     // 재생중이면 재생바 갱신
+//            if (music.isPlaying()) {     // 재생중이면 재생바 갱신
+            if (musicPlayer.isPlaying()) {     // 재생중이면 재생바 갱신
                 recordProgressBar.setProgress(currentTime);
                 setTimeText(recordPlayTimeText, currentTime); //시간 계속 갱신.
             } else {    // 스레드 cancel 되지않고 재생 끝났으면(100ms 안의 오차일 경우 대비)
@@ -222,7 +226,8 @@ public class RecordActivity extends AppCompatActivity {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser) {
-                music.seekTo(progress);
+//                musicP.seekTo(progress);
+//                music.seekTo(progress);
             }
         }
 
@@ -242,10 +247,16 @@ public class RecordActivity extends AppCompatActivity {
     // Parameter : void
     // Use : 녹음이 된 이후, Temp폴더에서 임시저장된 음원을 가지고와서 재생준비 //
     public void prepareRecordFileToPlay() {
-        uri = Uri.fromFile(new File(recordManager.getPath())); // 파일준비
-        music = MediaPlayer.create(this, uri);                 // 파일 재생준비
-        music.setLooping(false);                               // 반복재생 불가설정
-        maxTime = music.getDuration() - (music.getDuration() % PROGRESS_INTERVAL);  // 100ms 아래 값은 버린다
+
+
+//        uri = Uri.fromFile(new File(recordManager.getPath())); // 파일준비
+//        music = MediaPlayer.create(this, uri);                 // 파일 재생준비
+//        music.setLooping(false);                               // 반복재생 불가설정
+        musicPlayer = new MusicPlayer(this,recordManager.getPath());
+        musicPlayer.prepareToPlay(this, recordManager.getPath());
+
+        maxTime = musicPlayer.getDuration() - (musicPlayer.getDuration() % PROGRESS_INTERVAL);  // 100ms 아래 값은 버린다
+//        maxTime = music.getDuration() - (music.getDuration() % PROGRESS_INTERVAL);  // 100ms 아래 값은 버린다
         recordProgressBar.setMax(maxTime);
         recordProgressBar.setProgress(0);
         setTimeText(recordMaxTimeText, maxTime);
@@ -261,14 +272,16 @@ public class RecordActivity extends AppCompatActivity {
             case R.id.recordActivity_btn_startRecord: {
                 if (v.getId() == R.id.recordActivity_btn_startRecord) {
                     // Use : 재생중이면 재생중이던것을 정지하고 녹음
-                    if (music != null && music.isPlaying()) {    // 재생중이면
-                        music.stop();           // 재생중이던거 정지하고
+//                    if (music != null && music.isPlaying()) {    // 재생중이면
+                    if (musicPlayer != null && musicPlayer.isPlaying()) {    // 재생중이면
+//                        music.stop();           // 재생중이던거 정지하고
+                        musicPlayer.stopBgm();           // 재생중이던거 정지하고
                         btnPlay.setImageResource(R.drawable.btn_play);  // 일시정지 버튼 다시 재생버튼으로 바꾸고
                     }
                     // Use : 녹음중이 아니면
                     if (!recordManager.isRecording()) {
                         // Use : 녹음이 된 임시파일이 있다면 다이얼로그를 호출
-                        if (uri != null) {
+                        if (new File(recordManager.getPath()).isFile()) {
                             Log.i("111", "i'm inn");
                             mRerecordDialog = new CancelRecordDlg(this,
                                     " 경 고 ",
@@ -307,15 +320,15 @@ public class RecordActivity extends AppCompatActivity {
             // 재생버튼
             case R.id.recordActivity_btn_playAtvrecord: {
                 // Use : 재생중과 녹음중이 아니라면 재생 시작 후 seekbar&textview 처리
-                if (!music.isPlaying() && !recordManager.isRecording()) {
-                    music.start();
+                if (!musicPlayer.isPlaying() && !recordManager.isRecording()) {
+                    musicPlayer.playFromStartBgm();
                     btnPlay.setImageResource(R.drawable.btn_pause);
                     playTask = new PlayTask();
                     playTask.execute();
                 }
                 // Use : 재생중이거나 녹음중이라면 일시정지
                 else {
-                    music.pause();
+                    musicPlayer.pauseBgm();
                     btnPlay.setImageResource(R.drawable.btn_play);
                 }
                 break;
@@ -493,6 +506,7 @@ public class RecordActivity extends AppCompatActivity {
                     File renamedFile = new File(recordManager.getDirPath() + File.separator + newFileName + ".mp3");
                     file.renameTo(renamedFile);
                     dbManager.insertBGM(renamedFile.getPath(), newFileName, selectedCategory.getCateId());
+                    setResult(RESULT_OK);
                     finish();
                 }
             }
@@ -518,7 +532,7 @@ public class RecordActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
 
-        if(uri != null) {
+        if(new File(recordManager.getPath()).isFile()) {
             if (keyCode == event.KEYCODE_BACK && event.getRepeatCount() == 0) {
                 AlertDialog dialog;
                 dialog = new AlertDialog.Builder(this).setTitle("종료확인")
