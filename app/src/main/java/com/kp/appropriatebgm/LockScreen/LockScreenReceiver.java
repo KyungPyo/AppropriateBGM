@@ -1,6 +1,5 @@
 package com.kp.appropriatebgm.LockScreen;
 
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,19 +22,15 @@ public class LockScreenReceiver extends BroadcastReceiver {
             Intent i = new Intent(context, LockScreenService.class);
             context.startService(i);
         }else if(intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-            Log.d("잘왔냐~", "Screen Off Ok");
-            //일단 스크린 오프까지는 되는데 Activity 의 onCreate 실행 안하고 서비스가 죽음
+            Log.d("잘왔냐~","Screen Off Ok");
             Intent in = new Intent(context, LockScreenActivity.class);
-            PendingIntent pendingIntent=PendingIntent.getActivity(context,0,in,PendingIntent.FLAG_ONE_SHOT);
+            in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //이제 Activity 하나만 쓰게 해주는 플래그 Single Top
+            in.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-            try {
-                pendingIntent.send();
-                Log.d("잘왔냐~", "Send Ok");
-                // 심지어 send 도 된다. 근데!!! 근데!!!!!!!!!! 왜 onCreate 안되냐고!!!!!!
-                // 제발 이거 해결좀 해주세여ㅠㅠㅠㅠㅠ 여기서 서비스가 종료해요 왜 종료되는지 모르겠습니다. 또륵
-            }catch (PendingIntent.CanceledException e){
-                e.printStackTrace();
-            }
+            context.startActivity(in);
+            //StartActivity 까지도 잘돼요 ㅠㅠ 근데 onCreate 를 못하고 서비스가 죽어요, 이유를 모르겠어요ㅠㅠ
+            //도와주세여ㅠㅠㅠㅠㅠ
         }
 
     }

@@ -74,7 +74,7 @@ public class UnlockScreenWidget extends RelativeLayout {
         inflater.inflate(R.layout.widget_lockscreen_unlock, this, true);
 
         label = (TextView) findViewById(R.id.widget_backlabel_text);
-        seekbar = (SeekBar) findViewById(R.id.widget_seekbar);
+        seekbar = (SeekBar) findViewById(R.id.widget_slidebar_seekbar);
         background = findViewById(R.id.widget_background);
 
         //use : TypedArray로 attrs.xml의 정의된 내용에서 lcokscreen.xml(widget)에서 설정한 각각의 설정값들을 가져와서 사용한다. (String, Drawable)
