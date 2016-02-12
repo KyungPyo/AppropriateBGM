@@ -66,6 +66,7 @@ public class LockScreenService extends Service {
                 }
             }
         }
+        //이게 음악 어플처럼 Task Killer 작동해도 살아있게 해주는 거, Foreground 에서 돌리겠다는 뜻
         startForeground(1, new Notification());
 
         //Notification 안보이게하는거 성공 , startID 때문에 onCreate 에서 못함.
