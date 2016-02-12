@@ -45,6 +45,7 @@ public class RecordActivity extends AppCompatActivity {
     private RecordTask recordTask = null;
     // 재생 관련
     private MusicPlayer musicPlayer;
+
     private PlayTask playTask = null;
     private final int PROGRESS_INTERVAL = 50;     // 재생 progress바 갱신주기
     private int maxTime = 0;    // 현재 녹음된 파일 재생길이
@@ -212,7 +213,6 @@ public class RecordActivity extends AppCompatActivity {
         setPopupWindow();
         TempDelete();
     }
-
     // Method : SeekbarListener
     private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         // Return Value : boolean
@@ -234,7 +234,6 @@ public class RecordActivity extends AppCompatActivity {
 
         }
     };
-
     // Method : 녹음이후 Temp폴더에서 임시저장된 음원을가지고와서 재생을 준비
     // Return Value : void
     // Parameter : void
@@ -245,12 +244,6 @@ public class RecordActivity extends AppCompatActivity {
         playbackBar = new PlaybackBarTask(this,recordProgressBar,recordPlayTimeText,recordMaxTimeText);
         playbackBar.setMusic(musicPlayer);
         playbackBar.execute();
-//        maxTime = musicPlayer.getDuration() - (musicPlayer.getDuration() % PROGRESS_INTERVAL);  // 100ms 아래 값은 버린다
-////        maxTime = music.getDuration() - (music.getDuration() % PROGRESS_INTERVAL);  // 100ms 아래 값은 버린다
-//        recordProgressBar.setMax(maxTime);
-//        recordProgressBar.setProgress(0);
-//        setTimeText(recordMaxTimeText, maxTime);
-//        setTimeText(recordPlayTimeText, 0);
     }
     // Method : 녹음하기 클릭
     // Return Value : void
@@ -276,6 +269,7 @@ public class RecordActivity extends AppCompatActivity {
                                         public void onClick(DialogInterface dialog, int which) {
                                             // TODO Auto-generated method stub
                                             recordTask = new RecordTask();
+                                            Log.i("RecordActivity","Accept : recordAgain");
                                             recordTask.execute();  // 녹음 시작
                                             dialog.dismiss(); //본래의 액티비티로 복귀
                                             btnRecordUp.setImageResource(R.drawable.btn_stoprecord_selector1);
@@ -286,6 +280,7 @@ public class RecordActivity extends AppCompatActivity {
 
                                         public void onClick(DialogInterface dialog, int which) {
                                             // TODO Auto-generated method stub
+                                            Log.i("RecordActivity","Cancel : Remainrecord");
                                             dialog.cancel();
                                         }
                                     })
@@ -354,6 +349,7 @@ public class RecordActivity extends AppCompatActivity {
             // 팝업윈도우 출력
             // 가운데에서 위로 120만큼 올라와서 팝업윈도우 등장.
             mPopupWindow.showAtLocation(mPopupLayout, Gravity.CENTER, 0, -120);
+            Log.i("RecordActivity","OnClickSaveBtn With PopupWindow");
         }
     }
 
