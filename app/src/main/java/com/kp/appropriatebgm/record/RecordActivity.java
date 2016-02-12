@@ -167,6 +167,7 @@ public class RecordActivity extends AppCompatActivity {
 
         @Override
         protected void onCancelled() { //중지되면
+
             recordProgressBar.setProgress(0); //프로그래스바를 0으로 놓는다
             setTimeText(recordPlayTimeText, 0); //재생시간을 0으로 돌려놓는다.
             super.onCancelled();
@@ -323,6 +324,7 @@ public class RecordActivity extends AppCompatActivity {
                 // Use : 재생중과 녹음중이 아니라면 재생 시작 후 seekbar&textview 처리
                 if (!musicPlayer.isPlaying() && !recordManager.isRecording()) {
                     musicPlayer.playBgm();
+                    Log.i("RecordAcitivity","onClickPlayBtn");
                     playbackBar = new PlaybackBarTask(this,recordProgressBar,recordPlayTimeText,recordMaxTimeText);
                     playbackBar.setMusic(musicPlayer);
                     playbackBar.setPlayAndPauseBtn(btnPlay);
@@ -331,6 +333,7 @@ public class RecordActivity extends AppCompatActivity {
                 // Use : 재생중이거나 녹음중이라면 일시정지
                 else {
                     musicPlayer.pauseBgm();
+                    Log.i("RecordAcitivity", "onClickPauseBtn");
                     playbackBar.setPlayAndPauseBtn(btnPlay);
                 }
                 break;
@@ -349,6 +352,7 @@ public class RecordActivity extends AppCompatActivity {
     public void onClick_save(View v) {
         if (v.getId() == R.id.recordActivity_btn_saveAtvrecord) {
             // 팝업윈도우 출력
+            // 가운데에서 위로 120만큼 올라와서 팝업윈도우 등장.
             mPopupWindow.showAtLocation(mPopupLayout, Gravity.CENTER, 0, -120);
         }
     }
@@ -384,8 +388,7 @@ public class RecordActivity extends AppCompatActivity {
         if(isTempExist = true)
         {
             new File(recordManager.getPath()).delete();
-            Log.i("TempDelete","Tempdel");
-
+            Log.i("RecordAcitivity", "DeletedTempFile");
         }
 
     }
@@ -415,7 +418,7 @@ public class RecordActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedCategory = categoryList.get(position);
-                Log.d("CategoryId", selectedCategory.getCateId() + "");
+                Log.d("RecordAcitivity","CategoryId : "+ selectedCategory.getCateId() + "");
             }
 
             @Override
@@ -469,26 +472,26 @@ public class RecordActivity extends AppCompatActivity {
                 // Use : 파일명이 입력안됬을때.
                 if (filenameEt.length() == 0) {     // 파일명 입력확인
                     Toast.makeText(RecordActivity.this, "파일명을 입력해주세요", Toast.LENGTH_SHORT).show();
-                    Log.i("111", "파일명 안들어옴");
+                    Log.i("RecordAcitivity", "Error : MissingFileName");
                 }
                 // Use : 파일명이 8글자 초과했을시
                 else if (filenameEt.length() > 8) {
                     Toast.makeText(RecordActivity.this, " 파일명은 8글자를 넘을수 없습니다", Toast.LENGTH_SHORT).show();
-                    Log.i("222", "파일명 글자넘어감");
+                    Log.i("RecordAcitivity", "Error : OverflowFileNameLength");
                 }
                 // Use : 카테고리를 선택안했을시
                 else if (selectedCategory == null) {   // 카테고리 선택확인
                     Toast.makeText(RecordActivity.this, "카테고리를 선택해주세요", Toast.LENGTH_SHORT).show();
-                    Log.i("333", "카테고리명 안들어옴");
+                    Log.i("RecordActivity", "Error : MissingCategoryId");
                 }
                 // Use : 파일명이 중복일때
                 else if (dbManager.isExistFileName(newFileName)) {
                     Toast.makeText(RecordActivity.this, "파일이름이 중복입니다.", Toast.LENGTH_SHORT).show();
-                    Log.i("444", "파일명 중복");
+                    Log.i("RecordActivity", "Error : DuplicationFileName");
                 }
                 // Use :  해당 예외처리사항이 아무것도 없을시 저장
                 else {
-                    Log.i("filename",newFileName);
+                    Log.i("RecordActivity","SavedFilename :" + newFileName);
                     File file = new File(recordManager.getPath());
                     File renamedFile = new File(recordManager.getDirPath() + File.separator + newFileName + ".mp3");
                     file.renameTo(renamedFile);
@@ -505,9 +508,6 @@ public class RecordActivity extends AppCompatActivity {
                 mPopupWindow.dismiss();
             }
         });
-
-
-
     }
     /***** 액티비티 *****/
 
@@ -517,8 +517,6 @@ public class RecordActivity extends AppCompatActivity {
     // Use : 백키버튼을 눌렀을 때 출력되는 팝업윈도우 설정(버튼 이벤트리스너 포함)
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-
         if(new File(recordManager.getPath()).isFile()) {
             if (keyCode == event.KEYCODE_BACK && event.getRepeatCount() == 0) {
                 AlertDialog dialog;
@@ -528,7 +526,7 @@ public class RecordActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO Auto-generated method stub
                                 File files = new File(recordManager.getPath());
-                                Log.i("delete",recordManager.getPath());
+                                Log.i("RecordAcitivity","Deleted : " + recordManager.getPath());
                                 files.delete();
                                 finish();
                             }
