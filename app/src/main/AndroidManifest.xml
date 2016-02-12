@@ -33,14 +33,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
         <service android:name=".LockScreen.LockScreenService"/>
-        <receiver android:name="com.kp.appropriatebgm.LockScreen.LockScreenReceiver"/>
-
-
         <receiver
-            android:name=".BootReceiver"
+            android:name="com.kp.appropriatebgm.LockScreen.LockScreenReceiver"
             android:enabled="true"
             android:exported="false" >
             <intent-filter>
+                <action android:name="android.intent.action.SCREEN_OFF"/>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>

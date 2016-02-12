@@ -47,6 +47,7 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("잘왔냐~", "Activity onCreate Ok");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         setContentView(R.layout.activity_lockscreen);
         Log.e("Locker", " : on");
