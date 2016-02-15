@@ -168,6 +168,11 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         return super.onKeyDown(keyCode, event);
     }
 
+    // Method : 홈버튼 이벤트
+    // Return value : void
+    // paremeter : void
+    // Use : 잠금화면에서 홈버튼을 눌렀을 때 액티비티를 종료시킨다.
+    //       이렇게 안하면 애플리케이션을 켰을 때 Lock화면이 맨 위로 온다.
     @Override
     protected void onUserLeaveHint() {
         finish();
