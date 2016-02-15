@@ -182,6 +182,11 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         day_clock.setText(day_format.format(new Date()));
     }
 
+    // Method : 잠금화면 가로 리스트에 버튼 추가
+    // Return value : void
+    // paremeter : targetGroup(추가될 버튼들이 들어가는 LinearLayout. HorizontalScrollView 안에 있는 뷰그룹이다.)
+    // Use : 가로로 스크롤 되는 버튼을 만들기 위함. 즐겨찾기에 등록되어있는 BGM들을 뽑아내서 이미지 버튼으로 만들어 넣는다.
+    //       하나하나마다 즐겨찾기 정보를 저장하고 있고, 클릭했을 때 해당 BGM이 재생되는 이벤트 리스너를 등록한다.
     public void addHorizontalListBtn(LinearLayout targetGroup){
         bgmfavoriteArrayList=dbManager.getFavoriteList();//DB
         for(int i=0; i < bgmfavoriteArrayList.size() ; i++) {
