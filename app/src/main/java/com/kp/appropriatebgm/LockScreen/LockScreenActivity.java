@@ -168,6 +168,12 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    protected void onUserLeaveHint() {
+        finish();
+        super.onUserLeaveHint();
+    }
+
     // Method : 시간 설정
     // Return value : void
     // paremeter : void
