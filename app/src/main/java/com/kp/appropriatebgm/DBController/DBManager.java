@@ -382,6 +382,31 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
+    // Method : 내장파일인지 여부 확인
+    // Return Value : boolean(내장파일이면 true, 아니면 false)
+    // Parameter : path(DB에서 내장파일 여부 확인하려는 음악의 path[PrimaryKey])
+    // Use : BGMList 테이블의 PrimaryKey인 bgm_path를 받아서 조회하여 내장파일인지 확인한다.
+    public boolean isInnerfile(String path){
+        String query;
+        Cursor cursor;
+
+        query = "SELECT innerfile FROM BGMList WHERE bgm_path = '"+path+"'";
+        try {
+            cursor = mDataBase.rawQuery(query, null);
+
+            cursor.moveToNext();
+            if (cursor.getInt(0) == 0) {    // 내장파일이 아닌 경우 0이 기본값으로 입력되어있다.
+                return false;
+            } else {
+                return true;
+            }
+        } catch (SQLiteException e){
+            // 오류가 난 경우는 일단 외장파일이라고 판단한다. 나중에 MusicPlayer에서 재생하기전에 파일확인을 한번 더 한다.
+            Log.e("isInnerfile", e.toString());
+            return false;
+        }
+    }
+
     /*****  DB 결과 요청(select)  *****/
 
 

@@ -533,7 +533,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 musicPlayer = new MusicPlayer(this, bgm.getBgmPath());
             }
-            musicPlayer.playFromStartBgm();
+            musicPlayer.playBgmFromStart();
             playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
             playbackBarTask.setMusic(musicPlayer);
             playbackBarTask.execute();
@@ -552,7 +552,7 @@ public class MainActivity extends AppCompatActivity {
             switch (view.getId()){
                 case R.id.main_btn_play:{
                     if(musicPlayer.isPlaying()) {
-                        musicPlayer.playFromStartBgm();
+                        musicPlayer.playBgmFromStart();
                     } else {
                         musicPlayer.playBgm();
                     }

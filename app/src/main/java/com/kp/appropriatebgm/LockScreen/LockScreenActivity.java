@@ -5,26 +5,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Layout;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
+import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.DBController.Favorite;
+import com.kp.appropriatebgm.MusicPlayer;
 import com.kp.appropriatebgm.R;
-import com.kp.appropriatebgm.favoritebgm.FavoriteListAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,7 +31,8 @@ import java.util.Date;
 public class LockScreenActivity extends AppCompatActivity implements UnlockScreenWidget.OnUnlockListener{
 
     ArrayList<Favorite> bgmfavoriteArrayList;
-    DBManager bgmdbManager;//DB
+    DBManager dbManager;//DB
+    Context thisContext = this;
 
     BroadcastReceiver timeBroadcastReceiver;
     private final SimpleDateFormat apm_format = new SimpleDateFormat("aa");
@@ -49,12 +45,14 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
     HorizontalScrollView bgmFavoriteScroll;
     LockScreenBgmButton bgmListButton;
 
+    MusicPlayer musicPlayer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("잘왔냐~", "Activity onCreate Ok");
-        bgmdbManager=DBManager.getInstance(this);
+        dbManager=DBManager.getInstance(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         setContentView(R.layout.activity_lockscreen);
         Log.e("Locker", " : on");
@@ -62,8 +60,7 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         ImageView background_ImageView = (ImageView) findViewById(R.id.lockscreen_image_background);
         background_ImageView.setImageDrawable(WallpaperManager.getInstance(this).getDrawable());
         bgmFavoriteScroll = (HorizontalScrollView) findViewById(R.id.lockscreen_group_horizontalscroll);
-        LinearLayout testLinear = (LinearLayout) findViewById(R.id.lockscreen_group_btnadd);
-
+        LinearLayout btnListGroup = (LinearLayout) findViewById(R.id.lockscreen_group_btnadd);
 
         apm_clock = (TextView) findViewById(R.id.lockscreen_textview_apmclock);
         time_clock = (TextView) findViewById(R.id.lockscreen_textview_timeclock);
@@ -73,20 +70,9 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         slide_widget.setOnUnlockListener(this);
         timeInit();
 
-        bgmfavoriteArrayList=new ArrayList<Favorite>();
+        // 가로 listView 설정
+        addHorizontalListBtn(btnListGroup);
 
-        //listView 설정
-        bgmfavoriteArrayList=bgmdbManager.getFavoriteList();//DB
-        for(int i=0; i < bgmfavoriteArrayList.size() ; i++) {
-            if (bgmfavoriteArrayList.get(i).getBgmPath() != null)
-            {
-                bgmListButton = new LockScreenBgmButton(this);
-                // .setID 지정 가능
-                bgmListButton.bgmFavoriteText.setText(bgmfavoriteArrayList.get(i).getBgmName());
-                bgmListButton.bgmFavoriteImg.setBackgroundColor(Color.parseColor("#30FF0000"));
-                testLinear.addView(bgmListButton);
-            }
-        }
     }
 
     // Method : 잠금해제 이벤트
@@ -132,6 +118,12 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         super.onStop();
         if (timeBroadcastReceiver!= null)
             unregisterReceiver(timeBroadcastReceiver);
+
+        // 액티비티에서 벗어나면 재생중인 브금 정지
+        if (musicPlayer != null) {
+            musicPlayer.stopBgm();
+            musicPlayer = null;
+        }
     }
 
 
@@ -188,5 +180,34 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         apm_clock.setText(apm_format.format(new Date()));
         time_clock.setText(time_format.format(new Date()));
         day_clock.setText(day_format.format(new Date()));
+    }
+
+    public void addHorizontalListBtn(LinearLayout targetGroup){
+        bgmfavoriteArrayList=dbManager.getFavoriteList();//DB
+        for(int i=0; i < bgmfavoriteArrayList.size() ; i++) {
+            if (bgmfavoriteArrayList.get(i).getBgmPath() != null)
+            {
+                bgmListButton = new LockScreenBgmButton(this);
+                // .setID 지정 가능
+                bgmListButton.setBtnInfo(bgmfavoriteArrayList.get(i));
+                bgmListButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        LockScreenBgmButton selected = (LockScreenBgmButton)v;
+                        String path = selected.getFavoriteInfo().getBgmPath();
+                        if (musicPlayer != null) {  // 전에 재생중인것이 있으면 정지
+                            musicPlayer.stopBgm();
+                        }
+                        if (dbManager.isInnerfile(path)) {
+                            musicPlayer = new MusicPlayer(thisContext, Integer.parseInt(path));
+                        } else {
+                            musicPlayer = new MusicPlayer(thisContext, path);
+                        }
+                        musicPlayer.playBgmFromStart();
+                    }
+                });
+                targetGroup.addView(bgmListButton);
+            }
+        }
     }
 }

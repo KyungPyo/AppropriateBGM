@@ -4,11 +4,14 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.kp.appropriatebgm.DBController.DBManager;
+import com.kp.appropriatebgm.DBController.Favorite;
+import com.kp.appropriatebgm.MusicPlayer;
 import com.kp.appropriatebgm.R;
 
 /**
@@ -16,10 +19,13 @@ import com.kp.appropriatebgm.R;
  */
 public class LockScreenBgmButton extends RelativeLayout {
 
-    Context context;
-    AttributeSet attr;
-    ImageView bgmFavoriteImg;
-    TextView bgmFavoriteText;
+    private Context context;
+    private AttributeSet attr;
+    private ImageView bgmFavoriteImg;
+    private TextView bgmFavoriteText;
+    private Favorite favoriteInfo;
+    private MusicPlayer musicPlayer;
+    private DBManager dbManager;
 
     public LockScreenBgmButton(Context context) {
         super(context);
@@ -54,5 +60,32 @@ public class LockScreenBgmButton extends RelativeLayout {
         bgmFavoriteImg = (ImageView) findViewById(R.id.bgmlist_imageview_img);
         bgmFavoriteText = (TextView) findViewById(R.id.bgmlist_textview_name);
 
+        dbManager = DBManager.getInstance(context);
+    }
+
+    public void setBtnInfo(Favorite favorite){
+        favoriteInfo = favorite;
+        bgmFavoriteText.setText(favorite.getBgmName());
+        bgmFavoriteImg.setBackgroundColor(Color.parseColor("#30FF0000"));
+
+        setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String path = favoriteInfo.getBgmPath();
+                if (musicPlayer != null) {  // 전에 재생중인것이 있으면 정지
+                    musicPlayer.stopBgm();
+                }
+                if (dbManager.isInnerfile(path)) {
+                    musicPlayer = new MusicPlayer(context, Integer.parseInt(path));
+                } else {
+                    musicPlayer = new MusicPlayer(context, path);
+                }
+                musicPlayer.playBgmFromStart();
+            }
+        });
+    }
+
+    public Favorite getFavoriteInfo(){
+        return favoriteInfo;
     }
 }

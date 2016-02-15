@@ -69,7 +69,7 @@ public class MusicPlayer {
     // Return Value : void
     // Parameter : void
     // Use : 현재 등록된 음악파일을 재생한다. 재생하기전에 처음으로 되감는 작업을 다시한번 한다. (누르면 처음부터 재생하는 기능을 위해)
-    public void playFromStartBgm(){     // 처음부터 재생하기
+    public void playBgmFromStart(){     // 처음부터 재생하기
         resetPlay();
         music.start();
     }
