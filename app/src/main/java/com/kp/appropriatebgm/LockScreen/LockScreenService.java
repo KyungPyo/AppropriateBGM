@@ -76,7 +76,7 @@ public class LockScreenService extends Service {
 
         // Notification 안보이게하는거 성공 , startID 때문에 onCreate 에서 못함.
         // Boot 시 적용 안된다. 될때도 있넹 뭐지...뭐지!!!!!!!!!!!!!!
-        NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        /*NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         Notification notification;
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
@@ -92,7 +92,7 @@ public class LockScreenService extends Service {
         }
 
         nm.notify(startId, notification);
-        nm.cancel(startId);
+        nm.cancel(startId);*/
         // START_REDELIVER_INTENT : 이게 서비스가 죽어도 다시 살아나게 해주는데 계속 종료될 경우는 안살린다고 함 왜쓰는건지!!!!슈ㅣ벌탱!!!!!
         return START_REDELIVER_INTENT;
     }
