@@ -76,7 +76,6 @@ public class FavoriteActivity extends AppCompatActivity {
 
         //listView 설정
         favoriteArrayList=dbManager.getFavoriteList();//DB
-        Log.d("널이니ㅣㅣㅣㅣㅣ",(favoriteArrayList==null)+"");
         favoriteList=(ListView)findViewById(R.id.favorite_listView_favoriteList);
         adapter=new FavoriteListAdapter(this, favoriteArrayList);
         favoriteList.setAdapter(adapter);

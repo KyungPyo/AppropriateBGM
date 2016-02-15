@@ -4,9 +4,12 @@ package com.kp.appropriatebgm.LockScreen;
  * Created by GD on 2016-02-11.
  */
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -41,6 +44,7 @@ public class LockScreenService extends Service {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(Intent.ACTION_BOOT_COMPLETED);
+        filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
         registerReceiver(lockReceive, filter);
 
     }
@@ -62,6 +66,7 @@ public class LockScreenService extends Service {
                     IntentFilter filter = new IntentFilter();
                     filter.addAction(Intent.ACTION_BOOT_COMPLETED);
                     filter.addAction(Intent.ACTION_SCREEN_OFF);
+                    filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
                     registerReceiver(lockReceive, filter);
                 }
             }
@@ -69,7 +74,8 @@ public class LockScreenService extends Service {
         //이게 음악 어플처럼 Task Killer 작동해도 살아있게 해주는 거, Foreground 에서 돌리겠다는 뜻
         startForeground(1, new Notification());
 
-        //Notification 안보이게하는거 성공 , startID 때문에 onCreate 에서 못함.
+        // Notification 안보이게하는거 성공 , startID 때문에 onCreate 에서 못함.
+        // Boot 시 적용 안된다. 될때도 있넹 뭐지...뭐지!!!!!!!!!!!!!!
         NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         Notification notification;
 
@@ -87,7 +93,7 @@ public class LockScreenService extends Service {
 
         nm.notify(startId, notification);
         nm.cancel(startId);
-        //이게 서비스가 죽어도 다시 살아나게 해주는데 계속 종료될 경우는 안살린다고 함 왜쓰는건지!!!!슈ㅣ벌탱!!!!!
+        // START_REDELIVER_INTENT : 이게 서비스가 죽어도 다시 살아나게 해주는데 계속 종료될 경우는 안살린다고 함 왜쓰는건지!!!!슈ㅣ벌탱!!!!!
         return START_REDELIVER_INTENT;
     }
 
@@ -105,4 +111,17 @@ public class LockScreenService extends Service {
         super.onDestroy();
 
      }
+
+    /*public boolean isMyServiceRunning(Context ctx, String s_service_name) {
+        ActivityManager manager = (ActivityManager) ctx.getSystemService(Activity.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (s_service_name.equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    // 서비스가 죽었는지 아직 돌아가는지 판별.
+    */
+
 }

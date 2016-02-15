@@ -36,7 +36,7 @@ import java.util.Date;
 public class LockScreenActivity extends AppCompatActivity implements UnlockScreenWidget.OnUnlockListener{
 
     ArrayList<Favorite> bgmfavoriteArrayList;
-    DBManager bgmdbManager=DBManager.getInstance(this);//DB
+    DBManager bgmdbManager;//DB
 
     BroadcastReceiver timeBroadcastReceiver;
     private final SimpleDateFormat apm_format = new SimpleDateFormat("aa");
@@ -54,6 +54,7 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("잘왔냐~", "Activity onCreate Ok");
+        bgmdbManager=DBManager.getInstance(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         setContentView(R.layout.activity_lockscreen);
         Log.e("Locker", " : on");
