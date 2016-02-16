@@ -418,7 +418,7 @@ public class RecordActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String newFileName = filenameEt.getText().toString();  // 입력한 파일명 받아오기
-                filenameEt.setHint("파일명을 입력해주세요");
+                filenameEt.setHint("파일명을 입력해주세요(10글자)");
                 filenameEt.setSingleLine(true);//한줄입력
                 filenameEt.setSelectAllOnFocus(false);
                 // Use : 파일명이 입력안됬을때.
@@ -427,8 +427,8 @@ public class RecordActivity extends AppCompatActivity {
                     Log.i("RecordAcitivity", "Error : MissingFileName");
                 }
                 // Use : 파일명이 8글자 초과했을시
-                else if (filenameEt.length() > 8) {
-                    Toast.makeText(RecordActivity.this, " 파일명은 8글자를 넘을수 없습니다", Toast.LENGTH_SHORT).show();
+                else if (filenameEt.length() > 10) {
+                    Toast.makeText(RecordActivity.this, " 파일명은 10글자를 넘을수 없습니다", Toast.LENGTH_SHORT).show();
                     Log.i("RecordAcitivity", "Error : OverflowFileNameLength");
                 }
                 // Use : 카테고리를 선택안했을시

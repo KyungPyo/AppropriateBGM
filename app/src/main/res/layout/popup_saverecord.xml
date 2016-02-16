@@ -26,8 +26,9 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:textColor="@color/list_press"
+            android:maxLength="10"
             android:textColorHint="@color/list_press"
-            android:hint="원하시는 파일명을 입력하세요"/>
+            android:hint="파일명을 입력해주세요(10글자)"/>
 
     </RelativeLayout>
 
