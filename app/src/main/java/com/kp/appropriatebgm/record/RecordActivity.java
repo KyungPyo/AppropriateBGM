@@ -167,11 +167,18 @@ public class RecordActivity extends AppCompatActivity {
         TempDelete();
     }
 
+    // 화면에서 벗어나면 작업을 정지한다.
+    // 재생중이면 정지, 녹음중이면 녹음중지
     @Override
     protected void onPause() {
         super.onPause();
-        if (musicPlayer != null && musicPlayer.isPlaying())
-            musicPlayer.isPaused();
+        if (musicPlayer != null && musicPlayer.isPlaying()) {
+            musicPlayer.pauseBgm();
+        }
+        if (recordManager.isRecording()) {
+            recordManager.stop();
+            recordTask.cancel(true);
+        }
     }
 
     @Override
@@ -189,8 +196,10 @@ public class RecordActivity extends AppCompatActivity {
         musicPlayer = new MusicPlayer(this,recordManager.getPath());
         playbackBar = new PlaybackBarTask(this,recordProgressBar,recordPlayTimeText,recordMaxTimeText);
         playbackBar.setMusic(musicPlayer);
+        playbackBar.setPlayAndPauseBtn(btnPlay);
         playbackBar.execute();
     }
+
     // Method : 녹음하기 클릭
     // Return Value : void
     // Parameter : View
@@ -199,14 +208,15 @@ public class RecordActivity extends AppCompatActivity {
         switch (v.getId()) {
             case R.id.recordActivity_btn_startRecord: {
                 if (v.getId() == R.id.recordActivity_btn_startRecord) {
-                    // Use : 재생중이면 재생중이던것을 정지하고 녹음
-                    if (musicPlayer != null && musicPlayer.isPlaying()) {    // 재생중이면
-                        musicPlayer.stopBgm();           // 재생중이던거 정지하고
-                        playbackBar.setPlayAndPauseBtn(btnPlay);
+                    // 재생중이면 재생중이던것을 정지하고 녹음
+                    if (musicPlayer != null && (musicPlayer.isPlaying() || musicPlayer.isPaused()) ) {   // 재생중 또는 일시정지 상태이면
+                        musicPlayer.stopBgm();  // 재생중이던거 정지하고
+                        musicPlayer = null;
                     }
-                    // Use : 녹음중이 아니면
+
+                    // 녹음중이 아니면
                     if (!recordManager.isRecording()) {
-                        // Use : 녹음이 된 임시파일이 있다면 다이얼로그를 호출
+                        // 녹음이 된 임시파일이 있다면 다이얼로그를 호출
                         if (new File(recordManager.getPath()).isFile()) {
                             AlertDialog dialog;
                             dialog = new AlertDialog.Builder(this).setTitle("녹 음 확 인")
@@ -216,8 +226,8 @@ public class RecordActivity extends AppCompatActivity {
                                             // TODO Auto-generated method stub
                                             recordTask = new RecordTask();
                                             Log.i("RecordActivity","Accept : recordAgain");
-                                            recordTask.execute();  // 녹음 시작
-                                            dialog.dismiss(); //본래의 액티비티로 복귀
+                                            recordTask.execute();   // 녹음 시작
+                                            dialog.dismiss();       //본래의 액티비티로 복귀
                                             btnRecordUp.setImageResource(R.drawable.btn_stoprecord_selector1);
 
                                         }
@@ -232,9 +242,8 @@ public class RecordActivity extends AppCompatActivity {
                                     })
                                     .show();
 
-
                         }
-                        // Use :녹음된 파일이 없다면 녹음을 시작한다.
+                        // 녹음된 파일이 없다면 녹음을 시작한다.
                         else {
                             recordTask = new RecordTask();
                             recordTask.execute();  // 녹음 시작
@@ -242,8 +251,9 @@ public class RecordActivity extends AppCompatActivity {
                             btnRecordUp.setImageResource(R.drawable.btn_stoprecord_selector1);
                         }
                     }
-                    // Use : 녹음 중이라면 녹음을 중지한다.
+                    // 녹음 중이라면 녹음을 중지한다.
                     else {
+                        recordManager.stop();
                         recordTask.cancel(true);
                         v.setBackgroundResource(R.drawable.btn_startrecord_selector);// 녹음버튼의 이미지를 녹음 준비중으로 변경
                         btnRecordUp.setImageResource(R.drawable.btn_startrecord_selector1);// 녹음버튼의 이미지를 녹음 준비중으로 변경
