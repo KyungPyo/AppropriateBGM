@@ -223,7 +223,7 @@ public class DBManager extends SQLiteOpenHelper {
                     query.append("'" + filename + "')");
                     mDataBase.execSQL(query.toString());
                 } catch (SQLiteConstraintException e) {
-                    Log.i("SQLite Error", "이미 존재하는 값 입력 : " + e.toString());
+                    Log.i("SQLite Error", "이미 DB에 존재함 : " + e.toString());
                 } catch (SQLiteException e) {
                     Log.e("checkBGMRecordExist", e.toString());
                 } catch (ArrayIndexOutOfBoundsException e){
@@ -452,7 +452,6 @@ public class DBManager extends SQLiteOpenHelper {
 
         try {
             mDataBase.execSQL(query.toString());
-            Log.d("category_insertQuery", query.toString());
         } catch (SQLiteException e) {
             Log.e("insertBGM", e.toString());
         }

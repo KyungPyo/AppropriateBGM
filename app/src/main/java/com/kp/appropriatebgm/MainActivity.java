@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        Log.d("onCreate", "Created!!");
 
         initMember();                   // 멤버변수 초기화
         initMenuLayoutSize();           // 메뉴 레이아웃 크기설정
@@ -125,13 +127,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-
+    protected void onPause() {
+        super.onPause();
         // 액티비티에서 벗어나면 재생중인 브금 정지
         if (musicPlayer != null) {
-            musicPlayer.stopBgm();
-            musicPlayer = null;
+            musicPlayer.pauseBgm();
         }
     }
 
@@ -525,6 +525,9 @@ public class MainActivity extends AppCompatActivity {
             bgmAdapter.notifyDataSetChanged();
         } else {        // 파일관리가 닫혀있으면 재생모드
             BGMInfo bgm = bgmAdapter.getItem(position);
+            if (playbackBarTask != null) {  // 진행중인 스레드가 있다면 종료
+                playbackBarTask.cancel(true);
+            }
             if (musicPlayer != null) {  // 전에 재생중인것이 있으면 정지
                 musicPlayer.stopBgm();
             }
@@ -551,10 +554,13 @@ public class MainActivity extends AppCompatActivity {
         if (musicPlayer != null) {  // 재생할 수 있는 파일이 등록된 경우에만
             switch (view.getId()){
                 case R.id.main_btn_play:{
-                    if(musicPlayer.isPlaying()) {
-                        musicPlayer.playBgmFromStart();
-                    } else {
+                    if (playbackBarTask != null) {  // 진행중인 스레드가 있다면 종료
+                        playbackBarTask.cancel(true);
+                    }
+                    if(musicPlayer.isPaused()) {    // 일시정지라면 그부분부터 다시재생
                         musicPlayer.playBgm();
+                    } else {
+                        musicPlayer.playBgmFromStart();
                     }
                     playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
                     playbackBarTask.setMusic(musicPlayer);

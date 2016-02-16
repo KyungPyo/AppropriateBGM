@@ -11,8 +11,10 @@ import java.io.IOException;
  * Created by KP on 2016-02-03.
  */
 public class MusicPlayer {
-    MediaPlayer music = null;
-    Uri uri = null;
+    private MediaPlayer music = null;
+    private Uri uri = null;
+    private boolean paused = false;
+
 
     // Method : MusicPlayer 생성자
     // Return Value : Constructor
@@ -63,6 +65,7 @@ public class MusicPlayer {
             }
             music.seekTo(0);
         }
+        paused = false;
     }
 
     // Method : 재생
@@ -80,12 +83,15 @@ public class MusicPlayer {
     // Parameter : void
     // Use : 현재 재생중인 음악파일을 재생/정지/일시정지 한다.
     public void playBgm(){
+        paused = false;
         music.start();
     }
     public void stopBgm(){
+        paused = false;
         resetPlay();
     }
     public void pauseBgm() {
+        paused = true;
         music.pause();
     }
 
@@ -103,6 +109,14 @@ public class MusicPlayer {
     // Use : 재생중이면 true, 아니면 false
     public boolean isPlaying() {
         return music.isPlaying();
+    }
+
+    // Method : 일시정지중인지 확인
+    // Return Value : boolean
+    // Parameter : void
+    // Use : 일시정지중이면 true, 아니면 false
+    public boolean isPaused() {
+        return paused;
     }
 
     public int getDuration() {

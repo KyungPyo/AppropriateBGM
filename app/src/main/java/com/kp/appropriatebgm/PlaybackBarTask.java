@@ -81,7 +81,7 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     // Use : PROGRESS_INTERVAL(50ms)마다 재생툴 갱신작업(onProgressUpdate)을 한다.
     @Override
     protected Void doInBackground(Void... params) {
-        while (music.isPlaying()) {
+        while (music.isPlaying() || music.isPaused()) {
             if (isCancelled()) {
                 return null;
             } else {
@@ -167,16 +167,23 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
         SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(fromUser && music.isPlaying()) {
+                if(fromUser) {
                     music.seekToBgm(progress);
+                    setTimeText(playTimeText, progress);
                 }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {            }
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                if (music.isPlaying())
+                    music.pauseBgm();
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {            }
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (music.isPaused())
+                    music.playBgm();
+            }
         };
 
         progressBar.setOnSeekBarChangeListener(seekBarChangeListener);
