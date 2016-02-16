@@ -130,9 +130,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         // 액티비티에서 벗어나면 재생중인 브금 정지
-        if (musicPlayer != null) {
+        if (musicPlayer != null && musicPlayer.isPlaying()) {
             musicPlayer.pauseBgm();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (playbackBarTask != null)
+            playbackBarTask.cancel(true);
     }
 
     // Method : 초기설정
@@ -254,6 +261,76 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         categorySpinner.setAdapter(categoryAdapter);
+    }
+
+    // Method : 백키 두번 눌렀을 때 종료되도록
+    // Return Value : void
+    // Parameter : void
+    // Use : backPressCloseHandler 의 onBackPressed 를 호출하여 2초내로 두번이 눌렸는지 아닌지를 판단해 앱 종료 또는 알림.
+    @Override
+    public void onBackPressed() {
+        backPressCloseHandler.onBackPressed();
+    }
+
+    // Method : Setting Listeners
+    // Return Value : void
+    // Parameter : void
+    // Use :  리스너 정의
+    private void initListener(){
+
+        //검색창에서 Text 가 바뀌었을 때
+        editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                listItemCheckFree();
+                String text = editTextSearch.getText().toString().toLowerCase(Locale.getDefault());
+                bgmAdapter.filter(text);
+            }
+        });
+
+        //검색창 엔터키 막는 이벤트
+        editTextSearch.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == event.KEYCODE_ENTER) {
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        //검색 ImageView가 클릭되었을때
+        searchButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (!isVisible) {
+                    editTextSearch.setVisibility(View.VISIBLE);
+                    isVisible = true;
+                } else {
+                    final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    editTextSearch.setVisibility(View.INVISIBLE);
+                    listItemCheckFree();
+                    bgmListView.setAdapter(null);
+                    bgmListView.setAdapter(bgmAdapter);
+                    isVisible = false;
+                    editTextSearch.setText("");
+
+                    //키보드 숨기기
+                    imm.hideSoftInputFromWindow(editTextSearch.getWindowToken(), 0);
+                }
+            }
+        });
     }
 
     @Override
@@ -618,75 +695,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return checkedBgmList;
     }
-
-    // Method : 백키 두번 눌렀을 때 종료되도록
-    // Return Value : void
-    // Parameter : void
-    // Use : backPressCloseHandler 의 onBackPressed 를 호출하여 2초내로 두번이 눌렸는지 아닌지를 판단해 앱 종료 또는 알림.
-    @Override
-    public void onBackPressed() {
-        backPressCloseHandler.onBackPressed();
-    }
-
-    // Method : Setting Listeners
-    // Return Value : void
-    // Parameter : void
-    // Use :  리스너 정의
-    private void initListener(){
-
-        //검색창에서 Text 가 바뀌었을 때
-        editTextSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                listItemCheckFree();
-                String text = editTextSearch.getText().toString().toLowerCase(Locale.getDefault());
-                bgmAdapter.filter(text);
-            }
-        });
-
-        //검색창 엔터키 막는 이벤트
-        editTextSearch.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == event.KEYCODE_ENTER) {
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        //검색 ImageView가 클릭되었을때
-        searchButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (!isVisible) {
-                    editTextSearch.setVisibility(View.VISIBLE);
-                    isVisible = true;
-                } else {
-                    final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    editTextSearch.setVisibility(View.INVISIBLE);
-                    listItemCheckFree();
-                    bgmListView.setAdapter(null);
-                    bgmListView.setAdapter(bgmAdapter);
-                    isVisible = false;
-                    editTextSearch.setText("");
-
-                    //키보드 숨기기
-                    imm.hideSoftInputFromWindow(editTextSearch.getWindowToken(), 0);
-                }
-            }
-        });
-    }
-
 }

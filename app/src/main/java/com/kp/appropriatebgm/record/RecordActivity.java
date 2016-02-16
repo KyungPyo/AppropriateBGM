@@ -2,7 +2,6 @@ package com.kp.appropriatebgm.record;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
@@ -46,7 +45,6 @@ public class RecordActivity extends AppCompatActivity {
     // 재생 관련
     private MusicPlayer musicPlayer;
 
-    private PlayTask playTask = null;
     private final int PROGRESS_INTERVAL = 50;     // 재생 progress바 갱신주기
     private int maxTime = 0;    // 현재 녹음된 파일 재생길이
 
@@ -146,50 +144,6 @@ public class RecordActivity extends AppCompatActivity {
         }
     }
     /***** 녹음 스레드  *****/
-    /******
-     * 재생 스레드
-     *****/
-    private class PlayTask extends AsyncTask<Void, Integer, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            while (musicPlayer.isPlaying()) {
-                if (isCancelled()) {  // 작업이 취소되었으면
-                    return null;
-                }
-                try {
-                    publishProgress(musicPlayer.getCurrentPosition());   // 현재 재생시간 메인스레드로 전달
-                    Thread.sleep(PROGRESS_INTERVAL);             // cancel되면 이부분에서 Exception이 발생해 catch로 넘어간다
-                } catch (InterruptedException e) {
-                    return null;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onCancelled() { //중지되면
-
-            recordProgressBar.setProgress(0); //프로그래스바를 0으로 놓는다
-            setTimeText(recordPlayTimeText, 0); //재생시간을 0으로 돌려놓는다.
-            super.onCancelled();
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            int currentTime = values[0];
-            if (musicPlayer.isPlaying()) {     // 재생중이면 재생바 갱신
-                recordProgressBar.setProgress(currentTime);
-                setTimeText(recordPlayTimeText, currentTime); //시간 계속 갱신.
-            } else {    // 스레드 cancel 되지않고 재생 끝났으면(100ms 안의 오차일 경우 대비)
-                playbackBar.setPlayAndPauseBtn(btnPlay);
-            }
-            if (currentTime >= maxTime) { // 재생시간이 최대시간을 넘기면
-                playbackBar.setPlayAndPauseBtn(btnPlay);
-            }
-            super.onProgressUpdate(values);
-        }
-    }
-    /***** 재생 스레드  *****/
 
     /******** 액티비티  *****/
     @Override
@@ -197,7 +151,7 @@ public class RecordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        Intent intent = getIntent();
+
         // 저장될 디렉토리명을 app_name으로 설정
         recordManager = new RecordManager(getString(R.string.app_name));
         btnRecordUp = (ImageView) findViewById(R.id.recardActivity_btn_startRecordImg); // 녹음상태 상단 이미지
@@ -207,40 +161,32 @@ public class RecordActivity extends AppCompatActivity {
         btnPlay = (ImageView) findViewById(R.id.recordActivity_btn_playAtvrecord);                // 재생버튼
         btnRecord = (ImageButton) findViewById(R.id.recordActivity_btn_startRecord);               // 녹음시작/중지 버튼
         btnSave = (ImageView) findViewById(R.id.recordActivity_btn_saveAtvrecord);                // 저장버튼
-        recordProgressBar.setOnSeekBarChangeListener(seekBarChangeListener);        // seekbar 이벤트 등록
         btnPlay.setEnabled(false);  // 녹음하기전엔(녹음된 파일이 없으면) 재생버튼을 누를 수 없다.
         btnSave.setEnabled(false);  // 저장버튼도
         setPopupWindow();
         TempDelete();
     }
-    // Method : SeekbarListener
-    private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
-        // Return Value : boolean
-        // Parameter : fromUser
-        // Use : 저장중인 임시파일이나 재생준비중인 음원이 바뀌었는지 확인
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if (fromUser) {
-            }
-        }
 
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (musicPlayer != null && musicPlayer.isPlaying())
+            musicPlayer.isPaused();
+    }
 
-        }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (playbackBar != null)
+            playbackBar.cancel(true);
+    }
 
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-
-        }
-    };
     // Method : 녹음이후 Temp폴더에서 임시저장된 음원을가지고와서 재생을 준비
     // Return Value : void
     // Parameter : void
     // Use : 녹음이 된 이후, Temp폴더에서 임시저장된 음원을 가지고와서 재생준비 //
     public void prepareRecordFileToPlay() {
         musicPlayer = new MusicPlayer(this,recordManager.getPath());
-        musicPlayer.prepareToPlay(this, recordManager.getPath());
         playbackBar = new PlaybackBarTask(this,recordProgressBar,recordPlayTimeText,recordMaxTimeText);
         playbackBar.setMusic(musicPlayer);
         playbackBar.execute();

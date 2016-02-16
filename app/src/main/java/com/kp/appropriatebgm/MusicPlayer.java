@@ -36,7 +36,7 @@ public class MusicPlayer {
     // Return Value : void
     // Parameter : context(재생할 액티비티), path(재생할 파일경로)
     // Use : 외부 파일을 재생하고 싶을 때 사용. path에 단말기에 저장되어있는 파일의 경로를 넘겨주면 재생준비를 해놓는다.
-    public void prepareToPlay(Context context, String path){
+    private void prepareToPlay(Context context, String path){
         uri = Uri.fromFile(new File(path));
         music = MediaPlayer.create(context, uri);
         music.setLooping(false);
@@ -46,7 +46,7 @@ public class MusicPlayer {
     // Return Value : void
     // Parameter : context(재생할 액티비티), innerFileCode
     // Use : 내장 파일을 재생하고 싶을 때 사용. innerFileCode에 내장파일의 R.raw.내장파일ID 를 넣어주면 된다.
-    public void prepareToPlay(Context context, int innerFileCode){
+    private void prepareToPlay(Context context, int innerFileCode){
         music = MediaPlayer.create(context, innerFileCode);
         music.setLooping(false);
     }
