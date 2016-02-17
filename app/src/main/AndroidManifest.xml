@@ -34,12 +34,9 @@
             android:screenOrientation="portrait"
             android:excludeFromRecents="true"
             android:theme="@style/AppTheme.NoActionBar"/>
-<<<<<<< HEAD
-        <service android:name=".LockScreen.LockScreenService"></service>
-        <receiver android:name="com.kp.appropriatebgm.LockScreen.LockScreenReceiver"/>
         <activity android:name=".Setting.SettingActivity"
             android:screenOrientation="portrait"></activity>
-=======
+
         <service android:name="com.kp.appropriatebgm.LockScreen.LockScreenService"/>
         <receiver
             android:name="com.kp.appropriatebgm.LockScreen.LockScreenReceiver"
@@ -50,7 +47,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
->>>>>>> c1233fb694ced53ddbde1f3338068ad931cecd89
 
         <receiver
             android:name="com.kp.appropriatebgm.LockScreen.PackageUpdateReceiver"
