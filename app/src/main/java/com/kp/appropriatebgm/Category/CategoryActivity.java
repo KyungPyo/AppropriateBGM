@@ -353,6 +353,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                 fab.setEnabled(false);
                 setCheckBoxVisibility(false);
                 ctg_actionbar_add_button.setEnabled(true);
+                setResult(RESULT_OK);
                 return true;
             }
             if (keyCode == android.view.KeyEvent.KEYCODE_BACK) {
