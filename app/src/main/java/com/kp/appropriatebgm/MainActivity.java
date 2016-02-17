@@ -614,9 +614,9 @@ public class MainActivity extends AppCompatActivity {
             if (playbackBarTask != null) {  // 진행중인 스레드가 있다면 종료
                 playbackBarTask.cancel(true);
             }
-            if (musicPlayer != null) {  // 전에 재생중인것이 있으면 정지
+            if (musicPlayer != null) {      // 전에 재생중인것이 있으면 정지
                 musicPlayer.stopBgm();
-                musicPlayer.releaseBgm();
+                musicPlayer.releaseBgm();   // 안정성을 위해 release
             }
             if (bgm.isInnerfile()) {
                 musicPlayer = new MusicPlayer(this, bgm.getInnerfileCode());
