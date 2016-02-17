@@ -21,27 +21,41 @@ public class LockScreenBgmButton extends RelativeLayout {
     ImageView bgmFavoriteImg;
     TextView bgmFavoriteText;
 
+    // Method : 생성자
+    // Return value : void
+    // parameter : context(액티비티)
+    // use ; 해당 context를 받고 레이아웃 xml의 요소들을 받아온다.
     public LockScreenBgmButton(Context context) {
         super(context);
         this.context = context;
-        init(context, null);
+        init(context);
     }
-
+    // Method : 생성자
+    // Return value : void
+    // parameter : context(액티비티), attrs(애트리뷰트 모음)
+    // use ; 해당 context를 받고 레이아웃 xml의 요소들을 받아온다. (동일)
     public LockScreenBgmButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         this.attr = attrs;
-        init(context, attrs);
+        init(context);
     }
-
+    // Method : 생성자
+    // Return value : void
+    // parameter : context(액티비티), attrs(애트리뷰트 모음), defStyleAttr(초기 스타일)
+    // use ; 해당 context를 받고 레이아웃 xml의 요소들을 받아온다. (동일)
     public LockScreenBgmButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
         this.attr = attrs;
-        init(context, attrs);
+        init(context);
     }
 
-    private void init(Context context, AttributeSet attrs) {
+    // Method : 레이아웃 초기 설정
+    // Return value : void
+    // parameter : context(액티비티)
+    // use ; 레이아웃을 받아와서 imageView와 textView를 받아오도록 한다.
+    private void init(Context context) {
 
         //use : 레이아웃 편집기에서의 편집 여부 (편집하면 true return)
         if (isInEditMode()) {

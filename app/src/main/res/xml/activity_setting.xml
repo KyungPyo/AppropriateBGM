@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:key="lock_setting"
+        android:title="잠금화면">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="lockscreen"
+            android:title="잠금화면 설정"
+            android:summaryOn="잠금화면 사용 상태입니다."
+            android:summaryOff="잠금화면 해제 상태입니다."
+            android:switchTextOff="Off"
+            android:switchTextOn="On"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:key="notification_setting"
+        android:title="알림">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="notification"
+            android:title="알림 설정"
+            android:summaryOn="알림을 사용합니다."
+            android:summaryOff="알림을 해제합니다."
+            android:switchTextOff="Off"
+            android:switchTextOn="On" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
