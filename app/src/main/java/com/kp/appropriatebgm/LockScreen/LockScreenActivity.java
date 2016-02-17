@@ -202,13 +202,14 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
                         String path = selected.getFavoriteInfo().getBgmPath();
                         if (musicPlayer != null) {  // 전에 재생중인것이 있으면 정지
                             musicPlayer.stopBgm();
+                            musicPlayer.releaseBgm();
                         }
                         if (dbManager.isInnerfile(path)) {
                             musicPlayer = new MusicPlayer(thisContext, Integer.parseInt(path));
                         } else {
                             musicPlayer = new MusicPlayer(thisContext, path);
                         }
-                        musicPlayer.playBgmFromStart();
+                        musicPlayer.playBgm();
                     }
                 });
                 targetGroup.addView(bgmListButton);

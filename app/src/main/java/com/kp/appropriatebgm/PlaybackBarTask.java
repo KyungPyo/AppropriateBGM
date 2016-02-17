@@ -65,6 +65,7 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        progressBar.setEnabled(true);
         progressBar.setMax(music.getDuration());
         progressBar.setProgress(music.getCurrentPosition());
         setTimeText(playTimeText, music.getCurrentPosition());
@@ -79,6 +80,7 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     // Use : PROGRESS_INTERVAL(50ms)마다 재생툴 갱신작업(onProgressUpdate)을 한다.
     @Override
     protected Void doInBackground(Void... params) {
+        Log.i(""+music.isPlaying(), ""+music.isPaused());
         while (music.isPlaying() || music.isPaused()) {
             if (isCancelled()) {
                 return null;
@@ -123,7 +125,17 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
         toggleBtnImage();
         super.onCancelled();
     }
-    /***** 스레드 동작 *****/
+
+    // Method : 스레드 종료 후 동작
+    // Return Value : void
+    // Parameter : void
+    // Use :
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        progressBar.setEnabled(false);
+        super.onPostExecute(aVoid);
+    }
+/***** 스레드 동작 *****/
 
 
     /***** 기타 메소드 *****/
@@ -161,7 +173,7 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
         SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(fromUser) {
+                if(fromUser && (music.isPaused() || music.isPlaying())) {
                     music.seekToBgm(progress);
                     setTimeText(playTimeText, progress);
                 }

@@ -177,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         progressBar = (SeekBar)findViewById(R.id.main_seekbar_playtime);
+        progressBar.setEnabled(false);
         btnPlayMusic = (ImageView)findViewById(R.id.main_btn_play);
         btnStopMusic = (ImageView)findViewById(R.id.main_btn_stop);
         btnPauseMusic = (ImageView)findViewById(R.id.main_btn_pause);
@@ -615,13 +616,14 @@ public class MainActivity extends AppCompatActivity {
             }
             if (musicPlayer != null) {  // 전에 재생중인것이 있으면 정지
                 musicPlayer.stopBgm();
+                musicPlayer.releaseBgm();
             }
             if (bgm.isInnerfile()) {
                 musicPlayer = new MusicPlayer(this, bgm.getInnerfileCode());
             } else {
                 musicPlayer = new MusicPlayer(this, bgm.getBgmPath());
             }
-            musicPlayer.playBgmFromStart();
+            musicPlayer.playBgm();
             playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
             playbackBarTask.setMusic(musicPlayer);
             playbackBarTask.execute();
@@ -642,11 +644,7 @@ public class MainActivity extends AppCompatActivity {
                     if (playbackBarTask != null) {  // 진행중인 스레드가 있다면 종료
                         playbackBarTask.cancel(true);
                     }
-                    if(musicPlayer.isPaused()) {    // 일시정지라면 그부분부터 다시재생
-                        musicPlayer.playBgm();
-                    } else {
-                        musicPlayer.playBgmFromStart();
-                    }
+                    musicPlayer.playBgm();
                     playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
                     playbackBarTask.setMusic(musicPlayer);
                     playbackBarTask.execute();
