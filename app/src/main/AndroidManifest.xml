@@ -30,6 +30,7 @@
         <activity android:name=".record.RecordActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".LockScreen.LockScreenActivity"
+            android:taskAffinity="com.kp.LockScreen"
             android:screenOrientation="portrait"
             android:excludeFromRecents="true"
             android:theme="@style/AppTheme.NoActionBar"/>
