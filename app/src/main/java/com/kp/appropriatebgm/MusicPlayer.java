@@ -15,7 +15,6 @@ public class MusicPlayer {
     private MediaPlayer music = null;
     private Uri uri = null;
     private boolean paused = false;
-    private boolean readyToPlay = false;
     private boolean released = false;
     private Context targetContext;
     private String filePath;
@@ -51,7 +50,6 @@ public class MusicPlayer {
         uri = Uri.fromFile(new File(path));
         music = MediaPlayer.create(context, uri);
         music.setLooping(false);
-        setMediaListener();
     }
 
     // Method : 재생준비
@@ -61,61 +59,24 @@ public class MusicPlayer {
     private void prepareToPlay(Context context, int innerFileCode){
         music = MediaPlayer.create(context, innerFileCode);
         music.setLooping(false);
-        setMediaListener();
     }
 
-    private void setMediaListener(){
-//        music.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//            @Override
-//            public void onPrepared(MediaPlayer mp) {
-//                Log.d("onPrepared!!", "!!!!!!!!");
-//                if (readyToPlay) {
-//                    music.start();
-//                    readyToPlay = false;
-//                }
-//            }
-//        });
-
-//        music.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(MediaPlayer mp) {
-//                Log.d("onCompletion!!", "?!!?!?");
-//                music.release();
-//                released = true;
-//                readyToPlay = false;
-//                paused = false;
-//            }
-//        });
-    }
-
+    // Method : 등록된 음악재생정보 release
+    // Return Value : void
+    // Parameter : void
+    // Use : 재생했던 정보를 release 시켜서 충돌을 방지한다.
     public void releaseBgm(){
         music.release();
         released = true;
         music = null;
     }
 
-    // Method : 재생
-    // Return Value : void
-    // Parameter : void
-    // Use : 현재 등록된 음악파일을 재생한다. 재생하기전에 처음으로 되감는 작업을 다시한번 한다. (누르면 처음부터 재생하는 기능을 위해)
-    public void playBgmFromStart(){
-        if (music != null) {
-            music.seekTo(0);            // 처음부터 재생하기
-            stopBgm();
-            try {
-                readyToPlay = true;     // readyToPlay 가 true면 prepare 시 재생한다.
-                music.prepare();        // prepare 하면 리스너에서 받아가서 재생한다.
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
     // Method : 재생,정지,일시정지
     // Return Value : void
     // Parameter : void
     // Use : 현재 재생중인 음악파일을 재생/정지/일시정지 한다.
+    //       재생은 일시정지 중이면 그냥 바로 재생, 릴리즈 됐으면 다시 create 해서 재생,
+    //       그 외에는 처음부터 재생을 위해 정지를 한번 더 실행하고 되감기 후 재생
     public void playBgm(){
         if (music != null) {
             if (paused) {       // 일시정지 중이면
@@ -133,7 +94,6 @@ public class MusicPlayer {
             } else {
                 stopBgm();
                 try {
-                    readyToPlay = true;     // readyToPlay 가 true면 prepare 시 재생한다.
                     music.prepare();        // prepare 하면 리스너에서 받아가서 재생한다.
                     music.seekTo(0);        // 처음부터 재생하기
                     music.start();
@@ -148,7 +108,6 @@ public class MusicPlayer {
             released = false;
         } else {
             paused = false;
-            readyToPlay = false;
             music.stop();
             Log.i("stop!!!","했어!!!");
         }
@@ -189,6 +148,10 @@ public class MusicPlayer {
             return false;
     }
 
+    // Method : 전체 재생길이 받아오기
+    // Return Value : int(재생길이 milisecond)
+    // Parameter : void
+    // Use : 현재 등록된 음악파일의 재생길이를 밀리초 단위로 반환한다.
     public int getDuration() {
         if (music != null && released == false) {
             return music.getDuration();
@@ -197,6 +160,10 @@ public class MusicPlayer {
         }
     }
 
+    // Method : 현재 재생위치 받아오기
+    // Return Value : int(현재 위치 milisecond)
+    // Parameter : void
+    // Use : 재생중인 음악파일의 현재 재생위치를 밀리초 단위로 반환한다.
     public int getCurrentPosition(){
         if (music != null && released == false) {
             Log.d("current", "" + music.getCurrentPosition());
