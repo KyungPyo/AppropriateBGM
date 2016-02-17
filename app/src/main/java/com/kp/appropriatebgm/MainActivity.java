@@ -36,6 +36,7 @@ import com.kp.appropriatebgm.DBController.BGMInfo;
 import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.Setting.SettingActivity;
+import com.kp.appropriatebgm.DBController.Favorite;
 import com.kp.appropriatebgm.favoritebgm.BGMListAdapter;
 import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 import com.kp.appropriatebgm.favoritebgm.FavoriteActivity;
@@ -106,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
     private ImageView searchButton;
     boolean isVisible = false;
 
+    //파일 삭제 시 Favorite 도 update 시켜야 하므로 필요
+    private ArrayList<Favorite> favoriteList;
+
     /**** 멤버 선언 ****/
 
     /****
@@ -116,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        Log.d("onCreate", "Created!!");
 
         initMember();                   // 멤버변수 초기화
         initMenuLayoutSize();           // 메뉴 레이아웃 크기설정
@@ -128,14 +133,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        // 액티비티에서 벗어나면 재생중인 브금 정지
+        if (musicPlayer != null && musicPlayer.isPlaying()) {
+            musicPlayer.pauseBgm();
+        }
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
-
-        // 액티비티에서 벗어나면 재생중인 브금 정지
-        if (musicPlayer != null) {
-            musicPlayer.stopBgm();
-            musicPlayer = null;
-        }
+        if (playbackBarTask != null)
+            playbackBarTask.cancel(true);
     }
 
     // Method : 초기설정
@@ -170,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         progressBar = (SeekBar)findViewById(R.id.main_seekbar_playtime);
+        progressBar.setEnabled(false);
         btnPlayMusic = (ImageView)findViewById(R.id.main_btn_play);
         btnStopMusic = (ImageView)findViewById(R.id.main_btn_stop);
         btnPauseMusic = (ImageView)findViewById(R.id.main_btn_pause);
@@ -184,6 +195,8 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(null);   // 액션바에 타이틀 제거
 
         isFilemanageOpen = false;   // 파일관리가 열려있는지 여부
+
+        favoriteList=dbManager.getFavoriteList();
 
     }
 
@@ -258,6 +271,76 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         categorySpinner.setAdapter(categoryAdapter);
+    }
+
+    // Method : 백키 두번 눌렀을 때 종료되도록
+    // Return Value : void
+    // Parameter : void
+    // Use : backPressCloseHandler 의 onBackPressed 를 호출하여 2초내로 두번이 눌렸는지 아닌지를 판단해 앱 종료 또는 알림.
+    @Override
+    public void onBackPressed() {
+        backPressCloseHandler.onBackPressed();
+    }
+
+    // Method : Setting Listeners
+    // Return Value : void
+    // Parameter : void
+    // Use :  리스너 정의
+    private void initListener(){
+
+        //검색창에서 Text 가 바뀌었을 때
+        editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                listItemCheckFree();
+                String text = editTextSearch.getText().toString().toLowerCase(Locale.getDefault());
+                bgmAdapter.filter(text);
+            }
+        });
+
+        //검색창 엔터키 막는 이벤트
+        editTextSearch.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == event.KEYCODE_ENTER) {
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        //검색 ImageView가 클릭되었을때
+        searchButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (!isVisible) {
+                    editTextSearch.setVisibility(View.VISIBLE);
+                    isVisible = true;
+                } else {
+                    final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    editTextSearch.setVisibility(View.INVISIBLE);
+                    listItemCheckFree();
+                    bgmListView.setAdapter(null);
+                    bgmListView.setAdapter(bgmAdapter);
+                    isVisible = false;
+                    editTextSearch.setText("");
+
+                    //키보드 숨기기
+                    imm.hideSoftInputFromWindow(editTextSearch.getWindowToken(), 0);
+                }
+            }
+        });
     }
 
     @Override
@@ -362,7 +445,7 @@ public class MainActivity extends AppCompatActivity {
         if(resultCode==RESULT_OK){
 
             bgmList.clear();
-            bgmList.addAll(dbManager.getBGMList(1));
+            bgmList.addAll(dbManager.getBGMList(categoryList.get(selectedCategoryPosition).getCateId()));
 
             categoryList.clear();
             categoryList.addAll(dbManager.getCategoryList());
@@ -502,6 +585,8 @@ public class MainActivity extends AppCompatActivity {
         file_delete_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                dbManager.updateFavoriteForDeleteFile(checkedBgmPath);
                 dbManager.deleteBGMFile(checkedBgmPath);
                 deleteFile_dialog.dismiss();
                 bgmList.clear();
@@ -536,15 +621,19 @@ public class MainActivity extends AppCompatActivity {
             bgmAdapter.notifyDataSetChanged();
         } else {        // 파일관리가 닫혀있으면 재생모드
             BGMInfo bgm = bgmAdapter.getItem(position);
-            if (musicPlayer != null) {  // 전에 재생중인것이 있으면 정지
+            if (playbackBarTask != null) {  // 진행중인 스레드가 있다면 종료
+                playbackBarTask.cancel(true);
+            }
+            if (musicPlayer != null) {      // 전에 재생중인것이 있으면 정지
                 musicPlayer.stopBgm();
+                musicPlayer.releaseBgm();   // 안정성을 위해 release
             }
             if (bgm.isInnerfile()) {
                 musicPlayer = new MusicPlayer(this, bgm.getInnerfileCode());
             } else {
                 musicPlayer = new MusicPlayer(this, bgm.getBgmPath());
             }
-            musicPlayer.playFromStartBgm();
+            musicPlayer.playBgm();
             playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
             playbackBarTask.setMusic(musicPlayer);
             playbackBarTask.execute();
@@ -562,11 +651,10 @@ public class MainActivity extends AppCompatActivity {
         if (musicPlayer != null) {  // 재생할 수 있는 파일이 등록된 경우에만
             switch (view.getId()){
                 case R.id.main_btn_play:{
-                    if(musicPlayer.isPlaying()) {
-                        musicPlayer.playFromStartBgm();
-                    } else {
-                        musicPlayer.playBgm();
+                    if (playbackBarTask != null) {  // 진행중인 스레드가 있다면 종료
+                        playbackBarTask.cancel(true);
                     }
+                    musicPlayer.playBgm();
                     playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
                     playbackBarTask.setMusic(musicPlayer);
                     playbackBarTask.execute();
@@ -623,75 +711,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return checkedBgmList;
     }
-
-    // Method : 백키 두번 눌렀을 때 종료되도록
-    // Return Value : void
-    // Parameter : void
-    // Use : backPressCloseHandler 의 onBackPressed 를 호출하여 2초내로 두번이 눌렸는지 아닌지를 판단해 앱 종료 또는 알림.
-    @Override
-    public void onBackPressed() {
-        backPressCloseHandler.onBackPressed();
-    }
-
-    // Method : Setting Listeners
-    // Return Value : void
-    // Parameter : void
-    // Use :  리스너 정의
-    private void initListener(){
-
-        //검색창에서 Text 가 바뀌었을 때
-        editTextSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                listItemCheckFree();
-                String text = editTextSearch.getText().toString().toLowerCase(Locale.getDefault());
-                bgmAdapter.filter(text);
-            }
-        });
-
-        //검색창 엔터키 막는 이벤트
-        editTextSearch.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == event.KEYCODE_ENTER) {
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        //검색 ImageView가 클릭되었을때
-        searchButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (!isVisible) {
-                    editTextSearch.setVisibility(View.VISIBLE);
-                    isVisible = true;
-                } else {
-                    final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    editTextSearch.setVisibility(View.INVISIBLE);
-                    listItemCheckFree();
-                    bgmListView.setAdapter(null);
-                    bgmListView.setAdapter(bgmAdapter);
-                    isVisible = false;
-                    editTextSearch.setText("");
-
-                    //키보드 숨기기
-                    imm.hideSoftInputFromWindow(editTextSearch.getWindowToken(), 0);
-                }
-            }
-        });
-    }
-
 }

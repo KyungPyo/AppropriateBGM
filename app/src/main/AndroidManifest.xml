@@ -30,16 +30,41 @@
         <activity android:name=".record.RecordActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".LockScreen.LockScreenActivity"
+            android:taskAffinity="com.kp.LockScreen"
             android:screenOrientation="portrait"
+            android:excludeFromRecents="true"
             android:theme="@style/AppTheme.NoActionBar"/>
+<<<<<<< HEAD
         <service android:name=".LockScreen.LockScreenService"></service>
         <receiver android:name="com.kp.appropriatebgm.LockScreen.LockScreenReceiver"/>
         <activity android:name=".Setting.SettingActivity"
             android:screenOrientation="portrait"></activity>
+=======
+        <service android:name="com.kp.appropriatebgm.LockScreen.LockScreenService"/>
+        <receiver
+            android:name="com.kp.appropriatebgm.LockScreen.LockScreenReceiver"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_OFF"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+>>>>>>> c1233fb694ced53ddbde1f3338068ad931cecd89
 
+        <receiver
+            android:name="com.kp.appropriatebgm.LockScreen.PackageUpdateReceiver"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
 
     </application>
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 </manifest>

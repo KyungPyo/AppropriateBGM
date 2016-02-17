@@ -15,12 +15,13 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     /***** 멤버 선언 및 초기화 *****/
     private final int PROGRESS_INTERVAL = 50;
 
-    Context targetActivity;
-    MusicPlayer music;
-    SeekBar progressBar;
-    TextView playTimeText;
-    TextView maxTimeText;
-    ImageView playAndPause = null;
+    private Context targetActivity;
+    private MusicPlayer music;
+    private SeekBar progressBar;
+    private TextView playTimeText;
+    private TextView maxTimeText;
+    private ImageView playAndPause = null;
+    private boolean seekBarTouchPaused = false;
 
     public PlaybackBarTask(){}
 
@@ -64,15 +65,13 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        progressBar.setEnabled(true);
         progressBar.setMax(music.getDuration());
         progressBar.setProgress(music.getCurrentPosition());
         setTimeText(playTimeText, music.getCurrentPosition());
         setTimeText(maxTimeText, music.getDuration());
 
-        if (playAndPause != null) {     // 재생,일시정지 토글버튼이 등록된 경우
-            // 재생버튼을 일시정지 모양으로 변경
-            playAndPause.setImageResource(R.drawable.ic_pause_circle_outline_black_48dp);
-        }
+        toggleBtnImage();
     }
 
     // Method : 실제 스레드 동작
@@ -81,7 +80,7 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     // Use : PROGRESS_INTERVAL(50ms)마다 재생툴 갱신작업(onProgressUpdate)을 한다.
     @Override
     protected Void doInBackground(Void... params) {
-        while (music.isPlaying()) {
+        while (music.isPlaying() || music.isPaused()) {
             if (isCancelled()) {
                 return null;
             } else {
@@ -111,10 +110,8 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
             progressBar.setProgress(currentTime);
             setTimeText(playTimeText, currentTime); //시간 계속 갱신.
         }
-        if (playAndPause != null && (currentTime >= music.getDuration() || !music.isPlaying())) { // 재생시간이 최대시간을 넘기면 or 재생중이 아니면
-            // 일시정지 버튼 재생모양으로 변경
-            playAndPause.setImageResource(R.drawable.ic_play_circle_outline_black_48dp);
-        }
+
+        toggleBtnImage();
     }
 
     // Method : 스레드 종료시
@@ -124,16 +121,20 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     @Override
     protected void onCancelled() {
         Log.d("onCancelled", "called!!");
-        progressBar.setProgress(0);
-        setTimeText(playTimeText, 0);
+        toggleBtnImage();
         super.onCancelled();
-
-        if (playAndPause != null) {     // 재생,일시정지 토글버튼이 등록된 경우
-            // 일시정지 버튼 재생모양으로 변경
-            playAndPause.setImageResource(R.drawable.ic_play_circle_outline_black_48dp);
-        }
     }
-    /***** 스레드 동작 *****/
+
+    // Method : 스레드 종료 후 동작
+    // Return Value : void
+    // Parameter : void
+    // Use :
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        progressBar.setEnabled(false);
+        super.onPostExecute(aVoid);
+    }
+/***** 스레드 동작 *****/
 
 
     /***** 기타 메소드 *****/
@@ -163,23 +164,56 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     // Return Value : void
     // Parameter : void
     // Use : 재생바에서 현재 위치가 사용자에 의해 변경되면 재생중인 시간을 변경시키는 이벤트 리스너를 만들고 현재 조작중인 SeekBar에 등록
+    //       일시정지 해놓고 재생바를 움직였을 때는 놓아도 계속 일시정지가 되어있어야 하기 때문에 seekBarTouchPaused 라는 boolean 변수를 사용하여
+    //       재생중에 재생바가 움직였을 때만 해당 변수가 true로 변경되게 하여서, 재생중이었으면 놓았을 때 다시 재생하고
+    //       일시정지 중이었으면 놓았을 때 계속 일시정지 상태로 남도록 하였다. 그 와중에도 스레드는 종료되지 않아야 하기에 isPaused() 로 반환받는
+    //       값은 재생바 움직일 때 일시정지로는 변화가 없다.
     private void setSeekBarListener(){
         SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(fromUser && music.isPlaying()) {
+                if(fromUser && (music.isPaused() || music.isPlaying())) {
                     music.seekToBgm(progress);
+                    setTimeText(playTimeText, progress);
                 }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {            }
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                if (music.isPlaying()) {
+                    music.pauseBgm();
+                    seekBarTouchPaused = true;
+                }
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {            }
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (seekBarTouchPaused) {
+                    music.playBgm();
+                    seekBarTouchPaused = false;
+                }
+            }
         };
 
         progressBar.setOnSeekBarChangeListener(seekBarChangeListener);
+    }
+
+    // Method : 버튼이미지 토글
+    // Return Value : void
+    // Parameter : void
+    // Use : 버튼이미지가 재생상태에 따라서 변경되어야 하는 경우에 사용
+    private void toggleBtnImage(){
+        if (music.isPlaying()) {
+            if (playAndPause != null) {
+                // 재생버튼을 일시정지 모양으로 변경
+                playAndPause.setImageResource(R.drawable.ic_pause_circle_outline_black_48dp);
+            }
+        } else {
+            if (playAndPause != null) {
+                // 일시정지 버튼 재생모양으로 변경
+                playAndPause.setImageResource(R.drawable.ic_play_circle_outline_black_48dp);
+            }
+        }
     }
     /***** 기타 메소드 *****/
 }

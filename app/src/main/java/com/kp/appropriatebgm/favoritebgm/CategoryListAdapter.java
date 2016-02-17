@@ -1,7 +1,6 @@
 package com.kp.appropriatebgm.favoritebgm;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,9 +93,6 @@ public class CategoryListAdapter extends BaseAdapter {
         viewHolder.chkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.e("position", pos + "");
-                Log.e("isChecked", isChecked + "");
-                Log.e("name", categoryArrayList.get(pos).getCateName());
                 if (isChecked) {
                     ctgcheckHashList.put(categoryArrayList.get(pos).getCateName(), pos);
                 } else if (!isChecked) {

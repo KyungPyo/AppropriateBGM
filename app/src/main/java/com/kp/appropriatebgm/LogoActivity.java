@@ -104,7 +104,7 @@ public class LogoActivity extends AppCompatActivity {
                     file[0] = cursor.getString(0);
                     file[1] = cursor.getString(1);
                     fileList.add(file);
-                    Log.i("저장된 파일들", cursor.getString(0) + " : " + cursor.getString(1));
+                    //Log.i("저장된 파일들", cursor.getString(0) + " : " + cursor.getString(1));
                 }
             }
 

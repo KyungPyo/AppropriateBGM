@@ -5,26 +5,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Layout;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
+import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.DBController.Favorite;
+import com.kp.appropriatebgm.MusicPlayer;
 import com.kp.appropriatebgm.R;
-import com.kp.appropriatebgm.favoritebgm.FavoriteListAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,7 +31,8 @@ import java.util.Date;
 public class LockScreenActivity extends AppCompatActivity implements UnlockScreenWidget.OnUnlockListener{
 
     ArrayList<Favorite> bgmfavoriteArrayList;
-    DBManager bgmdbManager=DBManager.getInstance(this);//DB
+    DBManager dbManager;//DB
+    Context thisContext = this;
 
     BroadcastReceiver timeBroadcastReceiver;
     private final SimpleDateFormat apm_format = new SimpleDateFormat("aa");
@@ -49,10 +45,14 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
     HorizontalScrollView bgmFavoriteScroll;
     LockScreenBgmButton bgmListButton;
 
+    MusicPlayer musicPlayer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("잘왔냐~", "Activity onCreate Ok");
+        dbManager=DBManager.getInstance(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         setContentView(R.layout.activity_lockscreen);
         Log.e("Locker", " : on");
@@ -60,8 +60,7 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         ImageView background_ImageView = (ImageView) findViewById(R.id.lockscreen_image_background);
         background_ImageView.setImageDrawable(WallpaperManager.getInstance(this).getDrawable());
         bgmFavoriteScroll = (HorizontalScrollView) findViewById(R.id.lockscreen_group_horizontalscroll);
-        LinearLayout testLinear = (LinearLayout) findViewById(R.id.lockscreen_group_btnadd);
-
+        LinearLayout btnListGroup = (LinearLayout) findViewById(R.id.lockscreen_group_btnadd);
 
         apm_clock = (TextView) findViewById(R.id.lockscreen_textview_apmclock);
         time_clock = (TextView) findViewById(R.id.lockscreen_textview_timeclock);
@@ -71,20 +70,9 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         slide_widget.setOnUnlockListener(this);
         timeInit();
 
-        bgmfavoriteArrayList=new ArrayList<Favorite>();
+        // 가로 listView 설정
+        addHorizontalListBtn(btnListGroup);
 
-        //listView 설정
-        bgmfavoriteArrayList=bgmdbManager.getFavoriteList();//DB
-        for(int i=0; i < bgmfavoriteArrayList.size() ; i++) {
-            if (bgmfavoriteArrayList.get(i).getBgmPath() != null)
-            {
-                bgmListButton = new LockScreenBgmButton(this);
-                // .setID 지정 가능
-                bgmListButton.bgmFavoriteText.setText(bgmfavoriteArrayList.get(i).getBgmName());
-                bgmListButton.bgmFavoriteImg.setBackgroundColor(Color.parseColor("#30FF0000"));
-                testLinear.addView(bgmListButton);
-            }
-        }
     }
 
     // Method : 잠금해제 이벤트
@@ -130,6 +118,12 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         super.onStop();
         if (timeBroadcastReceiver!= null)
             unregisterReceiver(timeBroadcastReceiver);
+
+        // 액티비티에서 벗어나면 재생중인 브금 정지
+        if (musicPlayer != null) {
+            musicPlayer.stopBgm();
+            musicPlayer = null;
+        }
     }
 
 
@@ -166,6 +160,17 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         return super.onKeyDown(keyCode, event);
     }
 
+    // Method : 홈버튼 이벤트
+    // Return value : void
+    // paremeter : void
+    // Use : 잠금화면에서 홈버튼을 눌렀을 때 액티비티를 종료시킨다.
+    //       이렇게 안하면 애플리케이션을 켰을 때 Lock화면이 맨 위로 온다.
+    @Override
+    protected void onUserLeaveHint() {
+        finish();
+        super.onUserLeaveHint();
+    }
+
     // Method : 시간 설정
     // Return value : void
     // paremeter : void
@@ -175,5 +180,40 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         apm_clock.setText(apm_format.format(new Date()));
         time_clock.setText(time_format.format(new Date()));
         day_clock.setText(day_format.format(new Date()));
+    }
+
+    // Method : 잠금화면 가로 리스트에 버튼 추가
+    // Return value : void
+    // paremeter : targetGroup(추가될 버튼들이 들어가는 LinearLayout. HorizontalScrollView 안에 있는 뷰그룹이다.)
+    // Use : 가로로 스크롤 되는 버튼을 만들기 위함. 즐겨찾기에 등록되어있는 BGM들을 뽑아내서 이미지 버튼으로 만들어 넣는다.
+    //       하나하나마다 즐겨찾기 정보를 저장하고 있고, 클릭했을 때 해당 BGM이 재생되는 이벤트 리스너를 등록한다.
+    public void addHorizontalListBtn(LinearLayout targetGroup){
+        bgmfavoriteArrayList=dbManager.getFavoriteList();//DB
+        for(int i=0; i < bgmfavoriteArrayList.size() ; i++) {
+            if (bgmfavoriteArrayList.get(i).getBgmPath() != null)
+            {
+                bgmListButton = new LockScreenBgmButton(this);
+                // .setID 지정 가능
+                bgmListButton.setBtnInfo(bgmfavoriteArrayList.get(i));
+                bgmListButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        LockScreenBgmButton selected = (LockScreenBgmButton)v;
+                        String path = selected.getFavoriteInfo().getBgmPath();
+                        if (musicPlayer != null) {  // 전에 재생중인것이 있으면 정지
+                            musicPlayer.stopBgm();
+                            musicPlayer.releaseBgm();
+                        }
+                        if (dbManager.isInnerfile(path)) {
+                            musicPlayer = new MusicPlayer(thisContext, Integer.parseInt(path));
+                        } else {
+                            musicPlayer = new MusicPlayer(thisContext, path);
+                        }
+                        musicPlayer.playBgm();
+                    }
+                });
+                targetGroup.addView(bgmListButton);
+            }
+        }
     }
 }

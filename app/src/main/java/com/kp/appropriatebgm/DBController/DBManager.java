@@ -223,7 +223,7 @@ public class DBManager extends SQLiteOpenHelper {
                     query.append("'" + filename + "')");
                     mDataBase.execSQL(query.toString());
                 } catch (SQLiteConstraintException e) {
-                    Log.i("SQLite Error", "이미 존재하는 값 입력 : " + e.toString());
+                    Log.i("SQLite Error", "이미 DB에 존재함 : " + e.toString());
                 } catch (SQLiteException e) {
                     Log.e("checkBGMRecordExist", e.toString());
                 } catch (ArrayIndexOutOfBoundsException e){
@@ -382,6 +382,31 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
+    // Method : 내장파일인지 여부 확인
+    // Return Value : boolean(내장파일이면 true, 아니면 false)
+    // Parameter : path(DB에서 내장파일 여부 확인하려는 음악의 path[PrimaryKey])
+    // Use : BGMList 테이블의 PrimaryKey인 bgm_path를 받아서 조회하여 내장파일인지 확인한다.
+    public boolean isInnerfile(String path){
+        String query;
+        Cursor cursor;
+
+        query = "SELECT innerfile FROM BGMList WHERE bgm_path = '"+path+"'";
+        try {
+            cursor = mDataBase.rawQuery(query, null);
+
+            cursor.moveToNext();
+            if (cursor.getInt(0) == 0) {    // 내장파일이 아닌 경우 0이 기본값으로 입력되어있다.
+                return false;
+            } else {
+                return true;
+            }
+        } catch (SQLiteException e){
+            // 오류가 난 경우는 일단 외장파일이라고 판단한다. 나중에 MusicPlayer에서 재생하기전에 파일확인을 한번 더 한다.
+            Log.e("isInnerfile", e.toString());
+            return false;
+        }
+    }
+
     /*****  DB 결과 요청(select)  *****/
 
 
@@ -427,7 +452,6 @@ public class DBManager extends SQLiteOpenHelper {
 
         try {
             mDataBase.execSQL(query.toString());
-            Log.d("category_insertQuery", query.toString());
         } catch (SQLiteException e) {
             Log.e("insertBGM", e.toString());
         }
@@ -553,4 +577,27 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
     /*****  DB 레코드 삭제(delete)  *****/
+    // Method : 파일 삭제 시 삭제된 파일 Favorite update
+    // Return Value : void
+    // Parameter : bgmPath(삭제할 음악파일 경로. 여러개 가능)
+    // Use : MainActivity에서 삭제할 음악파일을 여러개 선택해서 삭제할 때 사용한다. 이 때 해당 음악 파일들이
+    //       FavoriteList에 존재한다면 해당 Favorite_id의 bgmPath를 null로 만든다.
+    public void updateFavoriteForDeleteFile(String[] bgmPath) {
+
+        StringBuffer query = new StringBuffer();
+
+        query.append("UPDATE favorite SET bgm_path=null WHERE bgm_path in(");
+        for (int i = 0; i < bgmPath.length; i++) {
+            query.append("'" + bgmPath[i] + "'");
+            if (i + 1 < bgmPath.length)
+                query.append(",");
+        }
+        query.append(")");
+
+        try {
+            mDataBase.execSQL(query.toString());
+        } catch (SQLiteException e) {
+            Log.e("파일 삭제 시 Favorite update", e.toString());
+        }
+    }
 }
