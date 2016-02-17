@@ -4,6 +4,7 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
@@ -75,6 +76,7 @@ public class FavoriteActivity extends AppCompatActivity {
 
         //listView 설정
         favoriteArrayList=dbManager.getFavoriteList();//DB
+
         favoriteList=(ListView)findViewById(R.id.favorite_listView_favoriteList);
         adapter=new FavoriteListAdapter(this, favoriteArrayList);
         favoriteList.setAdapter(adapter);

@@ -577,4 +577,27 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
     /*****  DB 레코드 삭제(delete)  *****/
+    // Method : 파일 삭제 시 삭제된 파일 Favorite update
+    // Return Value : void
+    // Parameter : bgmPath(삭제할 음악파일 경로. 여러개 가능)
+    // Use : MainActivity에서 삭제할 음악파일을 여러개 선택해서 삭제할 때 사용한다. 이 때 해당 음악 파일들이
+    //       FavoriteList에 존재한다면 해당 Favorite_id의 bgmPath를 null로 만든다.
+    public void updateFavoriteForDeleteFile(String[] bgmPath) {
+
+        StringBuffer query = new StringBuffer();
+
+        query.append("UPDATE favorite SET bgm_path=null WHERE bgm_path in(");
+        for (int i = 0; i < bgmPath.length; i++) {
+            query.append("'" + bgmPath[i] + "'");
+            if (i + 1 < bgmPath.length)
+                query.append(",");
+        }
+        query.append(")");
+
+        try {
+            mDataBase.execSQL(query.toString());
+        } catch (SQLiteException e) {
+            Log.e("파일 삭제 시 Favorite update", e.toString());
+        }
+    }
 }

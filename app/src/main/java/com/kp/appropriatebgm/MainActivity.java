@@ -35,6 +35,7 @@ import com.kp.appropriatebgm.Category.CategoryActivity;
 import com.kp.appropriatebgm.DBController.BGMInfo;
 import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.DBController.DBManager;
+import com.kp.appropriatebgm.DBController.Favorite;
 import com.kp.appropriatebgm.favoritebgm.BGMListAdapter;
 import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 import com.kp.appropriatebgm.favoritebgm.FavoriteActivity;
@@ -103,6 +104,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText editTextSearch;
     private ImageView searchButton;
     boolean isVisible = false;
+
+    //파일 삭제 시 Favorite 도 update 시켜야 하므로 필요
+    private ArrayList<Favorite> favoriteList;
 
     /**** 멤버 선언 ****/
 
@@ -187,6 +191,8 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(null);   // 액션바에 타이틀 제거
 
         isFilemanageOpen = false;   // 파일관리가 열려있는지 여부
+
+        favoriteList=dbManager.getFavoriteList();
 
     }
 
@@ -568,6 +574,8 @@ public class MainActivity extends AppCompatActivity {
         file_delete_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                dbManager.updateFavoriteForDeleteFile(checkedBgmPath);
                 dbManager.deleteBGMFile(checkedBgmPath);
                 deleteFile_dialog.dismiss();
                 bgmList.clear();
