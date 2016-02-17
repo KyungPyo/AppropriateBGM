@@ -449,6 +449,8 @@ public class RecordActivity extends AppCompatActivity {
                     file.renameTo(renamedFile);
                     dbManager.insertBGM(renamedFile.getPath(), newFileName, selectedCategory.getCateId());
                     setResult(RESULT_OK);
+                    if (playbackBar != null)
+                        playbackBar.cancel(true);
                     finish();
                 }
             }
