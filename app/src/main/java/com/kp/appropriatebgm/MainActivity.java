@@ -428,7 +428,7 @@ public class MainActivity extends AppCompatActivity {
         if(resultCode==RESULT_OK){
 
             bgmList.clear();
-            bgmList.addAll(dbManager.getBGMList(1));
+            bgmList.addAll(dbManager.getBGMList(selectedCategoryPosition));
 
             categoryList.clear();
             categoryList.addAll(dbManager.getCategoryList());
