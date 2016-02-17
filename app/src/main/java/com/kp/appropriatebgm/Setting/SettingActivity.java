@@ -3,6 +3,7 @@ package com.kp.appropriatebgm.Setting;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 
 /**
@@ -27,5 +28,6 @@ public class SettingActivity extends AppCompatActivity{
 
         // Use : FragmentManager의 트랜잭션을 SettingFragment(PreferenceFragment)로 대체한다.
         getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingFragment(getApplicationContext())).commit();
+        Log.e("setting","created");
     }
 }
