@@ -80,7 +80,6 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     // Use : PROGRESS_INTERVAL(50ms)마다 재생툴 갱신작업(onProgressUpdate)을 한다.
     @Override
     protected Void doInBackground(Void... params) {
-        Log.i(""+music.isPlaying(), ""+music.isPaused());
         while (music.isPlaying() || music.isPaused()) {
             if (isCancelled()) {
                 return null;
