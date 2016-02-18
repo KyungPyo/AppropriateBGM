@@ -132,6 +132,7 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         progressBar.setEnabled(false);
+        progressBar.setProgress(0);
         super.onPostExecute(aVoid);
     }
 /***** 스레드 동작 *****/
