@@ -128,10 +128,12 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     // Method : 스레드 종료 후 동작
     // Return Value : void
     // Parameter : void
-    // Use :
+    // Use : 재생이 끝나면 재생바를 맨 앞으로 돌려놓고, 재생시간을 0초로 만든다.
     @Override
     protected void onPostExecute(Void aVoid) {
         progressBar.setEnabled(false);
+        progressBar.setProgress(0);
+        setTimeText(playTimeText, 0);
         super.onPostExecute(aVoid);
     }
 /***** 스레드 동작 *****/

@@ -163,6 +163,7 @@ public class RecordActivity extends AppCompatActivity {
         btnSave = (ImageView) findViewById(R.id.recordActivity_btn_saveAtvrecord);                // 저장버튼
         btnPlay.setEnabled(false);  // 녹음하기전엔(녹음된 파일이 없으면) 재생버튼을 누를 수 없다.
         btnSave.setEnabled(false);  // 저장버튼도
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//화면꺼짐방지
         setPopupWindow();
         TempDelete();
     }
@@ -481,6 +482,7 @@ public class RecordActivity extends AppCompatActivity {
                                 // TODO Auto-generated method stub
                                 File files = new File(recordManager.getPath());
                                 Log.i("RecordAcitivity","Deleted : " + recordManager.getPath());
+                                recordManager.stop();
                                 files.delete();
                                 finish();
                             }

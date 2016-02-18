@@ -3,6 +3,7 @@ package com.kp.appropriatebgm;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.PowerManager;
 import android.util.Log;
 
 import java.io.File;
@@ -19,6 +20,7 @@ public class MusicPlayer {
     private Context targetContext;
     private String filePath;
     private int fileCode;
+    private PowerManager.WakeLock wakeLock;
 
 
     // Method : MusicPlayer 생성자
@@ -29,6 +31,8 @@ public class MusicPlayer {
         targetContext = context;
         filePath = path;
         prepareToPlay(context, path);
+        screenSleepLocker();
+        setMusicListeners();
     }
 
     // Method : MusicPlayer 생성자
@@ -40,6 +44,8 @@ public class MusicPlayer {
         fileCode = innerFileCode;
         filePath = null;
         prepareToPlay(context, innerFileCode);
+        screenSleepLocker();
+        setMusicListeners();
     }
 
     // Method : 재생준비
@@ -61,6 +67,30 @@ public class MusicPlayer {
         music.setLooping(false);
     }
 
+    // Method : 화면꺼짐방지 설정
+    // Return Value : void
+    // Parameter : void
+    // Use : 재생중에는 화면이 자동으로 꺼지지 않게 하기 위해 미리 설정해놓는다.
+    //       화면이 꺼지지 않기를 원하면 wakeLock.acquire(), 해제하려면 wakeLock.release()를 사용한다.
+    private void screenSleepLocker(){
+        PowerManager powerManager = (PowerManager)targetContext.getSystemService(Context.POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK,"SleepLock while play");
+    }
+
+    // Method : 음악재생 리스너 등록
+    // Return Value : void
+    // Parameter : void
+    // Use : 재생 상태에 따른 리스너를 등록한다. setOnCompletionListener로 재생완료됐을 때 이벤트를 처리한다.
+    private void setMusicListeners(){
+        music.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                if (wakeLock.isHeld())     // 화면꺼짐방지가 켜져있으면 해제
+                    wakeLock.release();
+            }
+        });
+    }
+
     // Method : 등록된 음악재생정보 release
     // Return Value : void
     // Parameter : void
@@ -69,6 +99,9 @@ public class MusicPlayer {
         music.release();
         released = true;
         music = null;
+        if(wakeLock.isHeld()) {     // 화면꺼짐방지가 켜져있으면 해제
+            wakeLock.release();
+        }
     }
 
     // Method : 재생,정지,일시정지
@@ -101,6 +134,10 @@ public class MusicPlayer {
                     e.printStackTrace();
                 }
             }
+            Log.d("isHeld?", ""+wakeLock.isHeld());
+            if (!wakeLock.isHeld()) {
+                wakeLock.acquire();     // 재생중에는 화면 꺼짐방지 활성화
+            }
         }
     }
     public void stopBgm(){
@@ -109,12 +146,21 @@ public class MusicPlayer {
         } else {
             paused = false;
             music.stop();
-            Log.i("stop!!!","했어!!!");
+        }
+        Log.d("isHeld", ""+wakeLock.isHeld());
+        if(wakeLock.isHeld()) {     // 화면꺼짐방지가 켜져있으면 해제
+            wakeLock.release();
         }
     }
     public void pauseBgm() {
-        paused = true;
-        music.pause();
+        if (music.isPlaying()) {
+            paused = true;
+            music.pause();
+        }
+        Log.d("isHeld", "" + wakeLock.isHeld());
+        if(wakeLock.isHeld()) {     // 화면꺼짐방지가 켜져있으면 해제
+            wakeLock.release();
+        }
     }
 
     // Method : 재생중인 음악 재생시간 조작
