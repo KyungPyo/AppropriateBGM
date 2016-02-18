@@ -153,8 +153,10 @@ public class MusicPlayer {
         }
     }
     public void pauseBgm() {
-        paused = true;
-        music.pause();
+        if (music.isPlaying()) {
+            paused = true;
+            music.pause();
+        }
         Log.d("isHeld", "" + wakeLock.isHeld());
         if(wakeLock.isHeld()) {     // 화면꺼짐방지가 켜져있으면 해제
             wakeLock.release();

@@ -223,8 +223,22 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
     // paremeter : v(클릭한 뷰)
     // Use :
     public void onClickLockerPlayToolBtn(View v){
-        switch (v.getId()) {
-
+        if (musicPlayer != null) {  // 재생할 수 있는 파일이 등록된 경우에만
+            switch (v.getId()) {
+                case R.id.lockscreen_btn_play: {
+                    musicPlayer.playBgm();
+                    break;
+                }
+                case R.id.lockscreen_btn_pause: {
+                    if (musicPlayer.isPlaying())    // 재생중인 경우에만
+                        musicPlayer.pauseBgm();
+                    break;
+                }
+                case R.id.lockscreen_btn_stop: {
+                    musicPlayer.stopBgm();
+                    break;
+                }
+            }
         }
     }
 }
