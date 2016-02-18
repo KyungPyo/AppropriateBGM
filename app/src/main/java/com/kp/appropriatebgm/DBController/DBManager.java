@@ -96,7 +96,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        insertInnerBGM(db);
     }
 
     // Method : 내장 음악파일추가
@@ -108,11 +108,15 @@ public class DBManager extends SQLiteOpenHelper {
         StringBuffer query = new StringBuffer();
 
         for (int i=0; i<innerBgmRegister.getListSize(); i++) {
-            query.append("INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('");
-            query.append(innerBgmRegister.getInnerBgmName(i));
-            query.append("', '#', #)");
-            db.execSQL(query.toString().replace("#", innerBgmRegister.getInnerBgmCode(i)));
-            query.delete(0, query.length());
+            try {
+                query.append("INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('");
+                query.append(innerBgmRegister.getInnerBgmName(i));
+                query.append("', '#', #)");
+                db.execSQL(query.toString().replace("#", innerBgmRegister.getInnerBgmCode(i)));
+                query.delete(0, query.length());
+            } catch (SQLiteConstraintException e) {
+                Log.i("SQLite Error", "내장BGM 이미 DB에 존재함 : " + e.toString());
+            }
         }
     }
 
