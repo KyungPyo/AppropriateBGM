@@ -49,7 +49,7 @@ public class RecordActivity extends AppCompatActivity {
     private int maxTime = 0;    // 현재 녹음된 파일 재생길이
 
     // 화면 출력 관련
-    private PlaybackBarTask playbackBar ;
+    private PlaybackBarTask playbackBar;
 
     private int currentRecordTimeMs = 0, currentPlayTimeMs = 0;
     private SeekBar recordProgressBar = null;
@@ -111,16 +111,26 @@ public class RecordActivity extends AppCompatActivity {
                 }
             }
         }
+
         @Override
         protected void onCancelled() { // 녹음이 취소 된다면
-            if (recordManager.isRecording())// 녹음이였다면
+            if (recordManager.isRecording()) {// 녹음이였다면
+                if (playbackBar != null) {
+                    playbackBar.cancel(true);
+                }
                 recordManager.stop(); //녹음 중지
+
+
+            }
             btnPlay.setEnabled(true);   // 재생버튼 클릭가능
             btnSave.setEnabled(true);   // 저장버튼 클릭가능
             btnRecord.setEnabled(true); // 다시 녹음하고 싶으면 녹음클릭시 재녹음 가능
+
             prepareRecordFileToPlay();  // 녹음한 파일을 Temp로 만들어 재생할 준비.
             super.onCancelled();
         }
+
+
         @Override
         protected void onProgressUpdate(Integer... values) {
             int currentTime = values[0];
@@ -142,10 +152,14 @@ public class RecordActivity extends AppCompatActivity {
             prepareRecordFileToPlay();
             super.onPostExecute(aVoid);
         }
+
+
     }
     /***** 녹음 스레드  *****/
 
-    /******** 액티비티  *****/
+    /********
+     * 액티비티
+     *****/
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -194,13 +208,12 @@ public class RecordActivity extends AppCompatActivity {
     // Parameter : void
     // Use : 녹음이 된 이후, Temp폴더에서 임시저장된 음원을 가지고와서 재생준비 //
     public void prepareRecordFileToPlay() {
-        musicPlayer = new MusicPlayer(this,recordManager.getPath());
-        playbackBar = new PlaybackBarTask(this,recordProgressBar,recordPlayTimeText,recordMaxTimeText);
+        musicPlayer = new MusicPlayer(this, recordManager.getPath());
+        playbackBar = new PlaybackBarTask(this, recordProgressBar, recordPlayTimeText, recordMaxTimeText);
         playbackBar.setMusic(musicPlayer);
         playbackBar.setPlayAndPauseBtn(btnPlay);
         playbackBar.execute();
     }
-
     // Method : 녹음하기 클릭
     // Return Value : void
     // Parameter : View
@@ -210,7 +223,7 @@ public class RecordActivity extends AppCompatActivity {
             case R.id.recordActivity_btn_startRecord: {
                 if (v.getId() == R.id.recordActivity_btn_startRecord) {
                     // 재생중이면 재생중이던것을 정지하고 녹음
-                    if (musicPlayer != null && (musicPlayer.isPlaying() || musicPlayer.isPaused()) ) {   // 재생중 또는 일시정지 상태이면
+                    if (musicPlayer != null && (musicPlayer.isPlaying() || musicPlayer.isPaused())) {   // 재생중 또는 일시정지 상태이면
                         musicPlayer.stopBgm();  // 재생중이던거 정지하고
                         musicPlayer = null;
                     }
@@ -225,11 +238,11 @@ public class RecordActivity extends AppCompatActivity {
                                     .setPositiveButton("예", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
                                             // TODO Auto-generated method stub
+                                            btnRecordUp.setImageResource(R.drawable.btn_stoprecord_selector1);
                                             recordTask = new RecordTask();
-                                            Log.i("RecordActivity","Accept : recordAgain");
+                                            Log.i("RecordActivity", "Accept : recordAgain");
                                             recordTask.execute();   // 녹음 시작
                                             dialog.dismiss();       //본래의 액티비티로 복귀
-                                            btnRecordUp.setImageResource(R.drawable.btn_stoprecord_selector1);
 
                                         }
                                     })
@@ -237,7 +250,7 @@ public class RecordActivity extends AppCompatActivity {
 
                                         public void onClick(DialogInterface dialog, int which) {
                                             // TODO Auto-generated method stub
-                                            Log.i("RecordActivity","Cancel : Remainrecord");
+                                            Log.i("RecordActivity", "Cancel : Remainrecord");
                                             dialog.cancel();
                                         }
                                     })
@@ -276,8 +289,8 @@ public class RecordActivity extends AppCompatActivity {
                 // Use : 재생중과 녹음중이 아니라면 재생 시작 후 seekbar&textview 처리
                 if (!musicPlayer.isPlaying() && !recordManager.isRecording()) {
                     musicPlayer.playBgm();
-                    Log.i("RecordAcitivity","onClickPlayBtn");
-                    playbackBar = new PlaybackBarTask(this,recordProgressBar,recordPlayTimeText,recordMaxTimeText);
+                    Log.i("RecordAcitivity", "onClickPlayBtn");
+                    playbackBar = new PlaybackBarTask(this, recordProgressBar, recordPlayTimeText, recordMaxTimeText);
                     playbackBar.setMusic(musicPlayer);
                     playbackBar.setPlayAndPauseBtn(btnPlay);
                     playbackBar.execute();
@@ -295,8 +308,6 @@ public class RecordActivity extends AppCompatActivity {
     }
 
 
-
-
     // Method : 저장버튼 클릭시 Dlg 출력
     // Return Value : void
     // Parameter : View
@@ -306,7 +317,7 @@ public class RecordActivity extends AppCompatActivity {
             // 팝업윈도우 출력
             // 가운데에서 위로 120만큼 올라와서 팝업윈도우 등장.
             mPopupWindow.showAtLocation(mPopupLayout, Gravity.CENTER, 0, -120);
-            Log.i("RecordActivity","OnClickSaveBtn With PopupWindow");
+            Log.i("RecordActivity", "OnClickSaveBtn With PopupWindow");
         }
     }
 
@@ -336,10 +347,9 @@ public class RecordActivity extends AppCompatActivity {
     // Return Value : void
     // Parameter : Void
     // Use : 녹음 액티비티 시작시 Temp파일이 있으면 삭제.
-    public void TempDelete(){
+    public void TempDelete() {
         boolean isTempExist = new File(recordManager.getPath()).isFile();
-        if(isTempExist = true)
-        {
+        if (isTempExist = true) {
             new File(recordManager.getPath()).delete();
             Log.i("RecordAcitivity", "DeletedTempFile");
         }
@@ -371,7 +381,7 @@ public class RecordActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedCategory = categoryList.get(position);
-                Log.d("RecordAcitivity","CategoryId : "+ selectedCategory.getCateId() + "");
+                Log.d("RecordAcitivity", "CategoryId : " + selectedCategory.getCateId() + "");
             }
 
             @Override
@@ -386,6 +396,7 @@ public class RecordActivity extends AppCompatActivity {
         // Use :  한글 영어 숫자말고는 아에 입력이 안됨.
         TextWatcher watcher = new TextWatcher() {
             String text;
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 text = s.toString();
@@ -444,7 +455,7 @@ public class RecordActivity extends AppCompatActivity {
                 }
                 // Use :  해당 예외처리사항이 아무것도 없을시 저장
                 else {
-                    Log.i("RecordActivity","SavedFilename :" + newFileName);
+                    Log.i("RecordActivity", "SavedFilename :" + newFileName);
                     File file = new File(recordManager.getPath());
                     File renamedFile = new File(recordManager.getDirPath() + File.separator + newFileName + ".mp3");
                     file.renameTo(renamedFile);
@@ -464,7 +475,10 @@ public class RecordActivity extends AppCompatActivity {
             }
         });
     }
-    /***** 액티비티 *****/
+
+    /*****
+     * 액티비티
+     *****/
 
     // Method : 뒤로버튼 이벤트 리스너
     // Return Value : void
@@ -472,18 +486,21 @@ public class RecordActivity extends AppCompatActivity {
     // Use : 백키버튼을 눌렀을 때 출력되는 팝업윈도우 설정(버튼 이벤트리스너 포함)
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(new File(recordManager.getPath()).isFile()) {
+        if (new File(recordManager.getPath()).isFile() && recordManager.isRecording()) {
             if (keyCode == event.KEYCODE_BACK && event.getRepeatCount() == 0) {
+                recordManager.stop();
+                recordTask.cancel(true);
                 AlertDialog dialog;
                 dialog = new AlertDialog.Builder(this).setTitle("종료확인")
                         .setMessage(" 지금 종료하시면 녹음파일이 삭제됩니다. 종료하시겠습니까?")
                         .setPositiveButton("예", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO Auto-generated method stub
+                                prepareRecordFileToPlay();
                                 File files = new File(recordManager.getPath());
-                                Log.i("RecordAcitivity","Deleted : " + recordManager.getPath());
-                                recordManager.stop();
+                                Log.i("RecordAcitivity", "Deleted 1111: " + recordManager.getPath());
                                 files.delete();
+
                                 finish();
                             }
                         })
@@ -497,7 +514,37 @@ public class RecordActivity extends AppCompatActivity {
                         .show();
                 return true;
             }
+        } else if (new File(recordManager.getPath()).isFile()) {
+
+            if (keyCode == event.KEYCODE_BACK && event.getRepeatCount() == 0) {
+                AlertDialog dialog;
+                dialog = new AlertDialog.Builder(this).setTitle("종료확인")
+                        .setMessage(" 지금 종료하시면 녹음파일이 삭제됩니다. 종료하시겠습니까?")
+                        .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+
+                                recordManager.stop();
+                                File files = new File(recordManager.getPath());
+                                Log.i("RecordAcitivity", "Deleted 2222222222: " + recordManager.getPath());
+                                files.delete();
+
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("아니요", new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
+                return true;
+            }
         }
+
         return super.onKeyDown(keyCode, event);
     }
 }
