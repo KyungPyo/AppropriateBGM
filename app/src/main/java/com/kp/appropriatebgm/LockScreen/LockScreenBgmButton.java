@@ -56,7 +56,7 @@ public class LockScreenBgmButton extends RelativeLayout {
         init(context);
     }
 
-    // Method :
+    // Method : 초기 설정
     // Return value : void
     // paremeter : context()
     // Use : 레이아웃을 받아와서 imageView와 textView를 받아오도록 한다.
