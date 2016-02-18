@@ -3,14 +3,13 @@ package com.kp.appropriatebgm.Setting;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
-import android.support.v7.app.NotificationCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.kp.appropriatebgm.CheckPref;
@@ -27,7 +26,7 @@ public class SettingFragment extends PreferenceFragment {
     private NotificationManager mNotifyManager;
     Context context;
 
-    // Method : 생성자
+    // Method : SettingFragment 생성자
     // Return Value : void
     // Parameter : void
     // Use : context를 받기 위한 default 생성자
@@ -35,7 +34,8 @@ public class SettingFragment extends PreferenceFragment {
     {
         super();
     }
-    // Method : 생성자 2
+
+    // Method : SettingFragment 생성자 (2)
     // Return Value : void
     // Parameter : context(액티비티 정보)
     // Use : SettingActivity의 context를 받기 위한 생성자
@@ -44,30 +44,19 @@ public class SettingFragment extends PreferenceFragment {
     {
         this.context = context;
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.activity_setting);
-
         // Use : 리스너 등록
+        mPref = new CheckPref((AppCompatActivity) getActivity());
         findPreference("lockscreen").setOnPreferenceChangeListener(onPreferenceChangeListener);
         findPreference("notification").setOnPreferenceChangeListener(onPreferenceChangeListener);
 
         // Use : 알림 기능을 위해 필요한 서비스를 얻어옴
-        mNotifyManager = (NotificationManager)  context.getSystemService(Context.NOTIFICATION_SERVICE);
+        //mNotifyManager = (NotificationManager)  context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Use : 알림 기능의 클릭 이벤트에는 PendingIntent 사용하여 SettingActivity로 인텐트 넘김
-        PendingIntent notifyIntent = PendingIntent.getActivity(context, 0, new Intent(context, SettingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-
-        /* 알림 내용 구현 부분 */
-        // Use : 알림 제목과 내용, 아이콘, 인텐트등을 정해주고 빌드
-        mNotification = new NotificationCompat.Builder(context)
-                .setContentTitle("적절한브금")
-                .setContentText("빠른 재생이 실행중입니다.")
-                .setSmallIcon(R.drawable.ic_delete_black_18dp)
-                .setAutoCancel(true)
-                .setContentIntent(notifyIntent)
-                .build();
     }
 
     /* 환경 설정 스위치 클릭 부분 */
@@ -84,6 +73,7 @@ public class SettingFragment extends PreferenceFragment {
             {
                 SwitchPreference switchPreference = (SwitchPreference) preference;
                 preference.setSummary(stringValue);
+                ((SwitchPreference) findPreference("lockscreen")).setChecked(mPref.getLockerOnOff());
                 if(preference.getKey().equals("lockscreen"))
                 {
                     // Use : 빠른 실행을 ON 시키려는 경우 (체크 FALSE)
@@ -99,8 +89,9 @@ public class SettingFragment extends PreferenceFragment {
                         Intent intent = new Intent(context, LockScreenService.class);
                         context.stopService(intent);
                     }
+                    mPref.setLockerOnOff();
                 }
-                else if(preference.getKey().equals("notification"))
+            /*    else if(preference.getKey().equals("notification"))
                 {
                     // Use : 빠른 실행을 ON 시키려는 경우 (체크 FALSE)
                     if(!switchPreference.isChecked()) {
@@ -114,7 +105,7 @@ public class SettingFragment extends PreferenceFragment {
                         Log.e("lock", "알림 종료");
                         mNotifyManager.cancel(5555);
                     }
-                }
+                }*/
             }
             return true;
         }
