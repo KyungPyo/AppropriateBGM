@@ -21,9 +21,7 @@ import com.kp.appropriatebgm.R;
  */
 public class SettingFragment extends PreferenceFragment {
 
-    private CheckPref mPref;    // 공유변수인데 이거 자체가 Preference라서 써야되는지 잘 모르겠음
-    private Notification mNotification;
-    private NotificationManager mNotifyManager;
+    private CheckPref mPref;
     Context context;
 
     // Method : SettingFragment 생성자
@@ -59,8 +57,20 @@ public class SettingFragment extends PreferenceFragment {
 
     }
 
+    // Method : onResume (일시정지 후 시작)
+    // Return Value : void
+    // Parameter : void
+    // Use : 체크
+    @Override
+    public void onResume() {
+        ((SwitchPreference) findPreference("lockscreen")).setChecked(mPref.getLockerOnOff());
+        Log.e("preference", mPref.getLockerOnOff() + "");
+        super.onResume();
+    }
+
     /* 환경 설정 스위치 클릭 부분 */
     private Preference.OnPreferenceChangeListener onPreferenceChangeListener = new Preference.OnPreferenceChangeListener(){
+
         // Method : 스위치 설정 변경 시 이벤트
         // Return Value : void
         // Parameter : preference(사용한 preference 객체), newValue(사용될 새로운 값)
@@ -73,39 +83,21 @@ public class SettingFragment extends PreferenceFragment {
             {
                 SwitchPreference switchPreference = (SwitchPreference) preference;
                 preference.setSummary(stringValue);
-                ((SwitchPreference) findPreference("lockscreen")).setChecked(mPref.getLockerOnOff());
                 if(preference.getKey().equals("lockscreen"))
                 {
                     // Use : 빠른 실행을 ON 시키려는 경우 (체크 FALSE)
                     if(!switchPreference.isChecked()) {
-                        Log.e("lock", "잠금 시작");
                         Intent intent = new Intent(context, LockScreenService.class);
                         context.startService(intent);
                     }
                     // Use : 빠른 실행을 OFF 시키려는 경우 (체크 TRUE)
                     else
                     {
-                        Log.e("lock", "잠금 종료");
                         Intent intent = new Intent(context, LockScreenService.class);
                         context.stopService(intent);
                     }
                     mPref.setLockerOnOff();
                 }
-            /*    else if(preference.getKey().equals("notification"))
-                {
-                    // Use : 빠른 실행을 ON 시키려는 경우 (체크 FALSE)
-                    if(!switchPreference.isChecked()) {
-                        Log.e("lock", "알림 시작");
-                        mNotification.flags = mNotification.FLAG_NO_CLEAR;
-                        mNotifyManager.notify(5555, mNotification);
-                    }
-                    // Use : 알림을 OFF 시키려는 경우 (체크 TRUE)
-                    else
-                    {
-                        Log.e("lock", "알림 종료");
-                        mNotifyManager.cancel(5555);
-                    }
-                }*/
             }
             return true;
         }

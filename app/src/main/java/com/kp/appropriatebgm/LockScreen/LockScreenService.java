@@ -29,6 +29,7 @@ public class LockScreenService extends Service {
 
     private LockScreenReceiver lockReceive;
     private Notification notification;
+    private PendingIntent notificationIntent;
 
     @Nullable
     @Override
@@ -77,16 +78,19 @@ public class LockScreenService extends Service {
             }
         }
         // Use : 알림 기능의 클릭 이벤트에는 PendingIntent 사용하여 SettingActivity로 인텐트 넘김
-        PendingIntent notifyIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), SettingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        //       NO_HISTORY 플래그를 설정하고 Manifest에 기능 추가하여 알림 눌렀을 때 액티비티 새로 뜨는 것 방지
+        Intent noIntent = new Intent(getApplicationContext(), SettingActivity.class);
+        noIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        notificationIntent = PendingIntent.getActivity(getApplicationContext(), 0, noIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         /* 알림 내용 구현 부분 */
         // Use : 알림 제목과 내용, 아이콘, 인텐트등을 정해주고 빌드
         notification = new NotificationCompat.Builder(getApplicationContext())
                 .setContentTitle("적절한브금")
                 .setContentText("빠른 재생이 실행중입니다.")
-                .setSmallIcon(R.drawable.ic_delete_black_18dp)
+                .setSmallIcon(R.drawable.ic_queue_music_black_24dp)
                 .setAutoCancel(true)
-                .setContentIntent(notifyIntent)
+                .setContentIntent(notificationIntent)
                 .build();
 
         //이게 음악 어플처럼 Task Killer 작동해도 살아있게 해주는 거, Foreground 에서 돌리겠다는 뜻

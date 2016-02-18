@@ -35,7 +35,8 @@
             android:excludeFromRecents="true"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".Setting.SettingActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:noHistory="true"></activity>
 
         <service android:name="com.kp.appropriatebgm.LockScreen.LockScreenService"/>
         <receiver
