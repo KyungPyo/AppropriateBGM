@@ -32,6 +32,7 @@ public class MusicPlayer {
         filePath = path;
         prepareToPlay(context, path);
         screenSleepLocker();
+        setMusicListeners();
     }
 
     // Method : MusicPlayer 생성자
@@ -44,6 +45,7 @@ public class MusicPlayer {
         filePath = null;
         prepareToPlay(context, innerFileCode);
         screenSleepLocker();
+        setMusicListeners();
     }
 
     // Method : 재생준비
