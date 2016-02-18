@@ -113,6 +113,14 @@ public class DBManager extends SQLiteOpenHelper {
         query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('함정카드', '#', #)";
         query = query.replace("#", Integer.toString(R.raw.trapcard));
         db.execSQL(query);
+
+        query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('사나이 눈물', '#', #)";
+        query = query.replace("#", Integer.toString(R.raw.boycry));
+        db.execSQL(query);
+
+        query = "INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('야외취침확정', '#', #)";
+        query = query.replace("#", Integer.toString(R.raw.misson_failed));
+        db.execSQL(query);
     }
 
     // Method : 앱 실행시 BGMList 테이블 무결성 체크
