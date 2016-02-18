@@ -65,10 +65,11 @@ public class MusicPlayer {
         music.setLooping(false);
     }
 
-    // Method :
+    // Method : 화면꺼짐방지 설정
     // Return Value : void
     // Parameter : void
-    // Use :
+    // Use : 재생중에는 화면이 자동으로 꺼지지 않게 하기 위해 미리 설정해놓는다.
+    //       화면이 꺼지지 않기를 원하면 wakeLock.acquire(), 해제하려면 wakeLock.release()를 사용한다.
     private void screenSleepLocker(){
         PowerManager powerManager = (PowerManager)targetContext.getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK,"SleepLock while play");
@@ -82,6 +83,9 @@ public class MusicPlayer {
         music.release();
         released = true;
         music = null;
+        if(wakeLock.isHeld()) {     // 화면꺼짐방지가 켜져있으면 해제
+            wakeLock.release();
+        }
     }
 
     // Method : 재생,정지,일시정지
