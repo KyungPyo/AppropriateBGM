@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -51,6 +52,7 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         Log.d("잘왔냐~", "Activity onCreate Ok");
         dbManager=DBManager.getInstance(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
@@ -188,12 +190,11 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
     // Use : 가로로 스크롤 되는 버튼을 만들기 위함. 즐겨찾기에 등록되어있는 BGM들을 뽑아내서 이미지 버튼으로 만들어 넣는다.
     //       하나하나마다 즐겨찾기 정보를 저장하고 있고, 클릭했을 때 해당 BGM이 재생되는 이벤트 리스너를 등록한다.
     public void addHorizontalListBtn(LinearLayout targetGroup){
-        bgmfavoriteArrayList=dbManager.getFavoriteList();//DB
+        bgmfavoriteArrayList=dbManager.getFavoriteList();   //DB
         for(int i=0; i < bgmfavoriteArrayList.size() ; i++) {
             if (bgmfavoriteArrayList.get(i).getBgmPath() != null)
             {
                 bgmListButton = new LockScreenBgmButton(this);
-                // .setID 지정 가능
                 bgmListButton.setBtnInfo(bgmfavoriteArrayList.get(i));
                 bgmListButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -214,6 +215,16 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
                 });
                 targetGroup.addView(bgmListButton);
             }
+        }
+    }
+
+    // Method :
+    // Return value : void
+    // paremeter : v(클릭한 뷰)
+    // Use :
+    public void onClickLockerPlayToolBtn(View v){
+        switch (v.getId()) {
+
         }
     }
 }
