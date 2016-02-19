@@ -193,6 +193,10 @@
                         android:id="@+id/main_seekbar_playtime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:background="@color/colorAccent"
+                        android:progressDrawable="@color/pressed"
+                        android:paddingRight="-3dp"
+                        android:paddingLeft="-3dp"
                         android:layout_margin="2dp"
                         android:layout_weight="8"/>
 
