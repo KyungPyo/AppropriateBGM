@@ -238,6 +238,7 @@ public class RecordActivity extends AppCompatActivity {
                                     .setPositiveButton("예", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
                                             // TODO Auto-generated method stub
+                                            playbackBar.cancel(true);
                                             btnRecordUp.setImageResource(R.drawable.btn_stoprecord_selector1);
                                             recordTask = new RecordTask();
                                             Log.i("RecordActivity", "Accept : recordAgain");
