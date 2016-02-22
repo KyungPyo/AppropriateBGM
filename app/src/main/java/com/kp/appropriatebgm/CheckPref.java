@@ -3,6 +3,7 @@ package com.kp.appropriatebgm;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 public class CheckPref {
 
@@ -51,5 +52,23 @@ public class CheckPref {
     // Use : 잠금화면기능 사용여부를 받아온다. 기본설정값은 false.
     public boolean getLockerOnOff(){
         return settingPref.getBoolean("LockerOn", false);
+    }
+
+    // Method : 마지막으로 선택된 카테고리를 저장
+    // Return Value : void
+    // Parameter : int (선택된 카테고리 id)
+    // Use : 마지막으로 선택된 카테고리를 저장한다. category spinner 변경 이벤트 발생 시 호출
+    public void setLastSelecedCategory(int categoryId){
+        SharedPreferences.Editor prefEditor = settingPref.edit();
+        prefEditor.putInt("lastSelectedCategory",categoryId);
+        prefEditor.apply();
+    }
+
+    // Method : 마지막으로 선택된 카테고리를 가져온다.
+    // Return Value : int (선택된 카테고리 id)
+    // Parameter : void
+    // Use : 마지막으로 선택된 카테고리를 저장가져온다. init 에서 호출 예정
+    public int  getLastSelecedCategory(){
+        return settingPref.getInt("lastSelectedCategory",1);
     }
 }
