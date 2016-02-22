@@ -65,7 +65,7 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        progressBar.setEnabled(true);
+        //progressBar.setEnabled(true);
         progressBar.setMax(music.getDuration());
         progressBar.setProgress(music.getCurrentPosition());
         setTimeText(playTimeText, music.getCurrentPosition());
@@ -131,7 +131,7 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     // Use : 재생이 끝나면 재생바를 맨 앞으로 돌려놓고, 재생시간을 0초로 만든다.
     @Override
     protected void onPostExecute(Void aVoid) {
-        progressBar.setEnabled(false);
+        //progressBar.setEnabled(false);
         progressBar.setProgress(0);
         setTimeText(playTimeText, 0);
         super.onPostExecute(aVoid);
