@@ -97,7 +97,6 @@ public class DBManager extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        insertBasicCategory(db);
         insertInnerBGM(db);
     }
 
@@ -129,19 +128,9 @@ public class DBManager extends SQLiteOpenHelper {
     // Use : 기본적으로 사용할 수 있는 카테고리 세가지 추가
     private void insertBasicCategory(SQLiteDatabase db){
         String[] basicCategories = {"웃긴", "슬픈", "공포"};
-        StringBuffer query = new StringBuffer();
 
         for (int i=0; i<basicCategories.length; i++) {
-            try {
-                query.append("INSERT INTO Category(category_name) VALUES ('");
-                query.append(basicCategories[i]);
-                query.append("')");
-                db.execSQL(query.toString());
-                query.delete(0, query.length());
-            } catch (SQLiteConstraintException e) {
-                e.printStackTrace();
-                query.delete(0, query.length());
-            }
+            insertCategory(basicCategories[i]);
         }
     }
 
@@ -491,11 +480,20 @@ public class DBManager extends SQLiteOpenHelper {
     // Return Value : void
     // Parameter : categoryName(새로 추가할 카테고리명)
     // Use : CategoryActivity에서 새로 추가할 카테고리명을 받아서 DB에 추가한다.
+    //       카테고리명으로 검색하여 중복되는 이름이 있는지 확인한다. 중복되는 값이 있으면 추가되지 않는다.
     public void insertCategory(String categoryName){
         String query;
-        query = "INSERT INTO Category(category_name) VALUES ('"+categoryName+"')";
+        Cursor cursor;
         try {
-            mDataBase.execSQL(query);
+            query = "SELECT COUNT(*) FROM Category WHERE category_name='"+categoryName+"'";
+            cursor = mDataBase.rawQuery(query, null);
+            cursor.moveToNext();
+            if (cursor.getInt(0) == 0) {    // 중복되는 카테고리명이 없는 경우에만 추가
+                query = "INSERT INTO Category(category_name) VALUES ('"+categoryName+"')";
+                mDataBase.execSQL(query);
+            } else {
+                Log.i("insertCategory", "카테고리명 중복");
+            }
         } catch (SQLiteException e){
             Log.e("insertCategory", e.toString());
         }
