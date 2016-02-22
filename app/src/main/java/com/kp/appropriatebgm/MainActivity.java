@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
         initListener();                 // 리스너 정의
         settingDeleteDialog();          // 삭제 시 뜨는 다이얼로그 초기 구성
         settingUpdateCategoryDialog();  // 카테고리 변경 시 뜨는 다이얼로그 초기 구성
+        progressBar.setPadding(0,0,0,0);
     }
 
     @Override
