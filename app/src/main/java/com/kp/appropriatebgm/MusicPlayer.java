@@ -22,30 +22,31 @@ public class MusicPlayer {
     private int fileCode;
     private PowerManager.WakeLock wakeLock;
 
-
     // Method : MusicPlayer 생성자
     // Return Value : Constructor
     // Parameter : context(재생할 액티비티), path(재생할 파일경로)
     // Use : 외부 파일을 재생하고 싶을 때 사용. 넘겨받은 파일경로로 재생준비를 한다.
-    public MusicPlayer(Context context, String path){
+    public MusicPlayer(Context context, String path, boolean loop){
         targetContext = context;
         filePath = path;
         prepareToPlay(context, path);
         screenSleepLocker();
         setMusicListeners();
+        setLooping(loop);
     }
 
     // Method : MusicPlayer 생성자
     // Return Value : Constructor
     // Parameter : context(재생할 액티비티), innerFileCode
     // Use : 내장 파일을 재생하고 싶을 때 사용. 넘겨받은 내장파일코드로 재생준비를 한다.
-    public MusicPlayer(Context context, int innerFileCode){
+    public MusicPlayer(Context context, int innerFileCode, boolean loop){
         targetContext = context;
         fileCode = innerFileCode;
         filePath = null;
         prepareToPlay(context, innerFileCode);
         screenSleepLocker();
         setMusicListeners();
+        setLooping(loop);
     }
 
     // Method : 재생준비
@@ -55,7 +56,6 @@ public class MusicPlayer {
     private void prepareToPlay(Context context, String path){
         uri = Uri.fromFile(new File(path));
         music = MediaPlayer.create(context, uri);
-        music.setLooping(false);
     }
 
     // Method : 재생준비
@@ -64,7 +64,6 @@ public class MusicPlayer {
     // Use : 내장 파일을 재생하고 싶을 때 사용. innerFileCode에 내장파일의 R.raw.내장파일ID 를 넣어주면 된다.
     private void prepareToPlay(Context context, int innerFileCode){
         music = MediaPlayer.create(context, innerFileCode);
-        music.setLooping(false);
     }
 
     // Method : 화면꺼짐방지 설정
@@ -217,5 +216,17 @@ public class MusicPlayer {
         } else {
             return 0;
         }
+    }
+
+    // Method : 반복재생여부 받아오기
+    // Return Value : boolean(반복재생이면 true, 아니면 false)
+    // Parameter : void
+    // Use : 현재 반복재생기능이 켜져있는지 확인한다.
+    public boolean getLoopSetInfo(){
+        return music.isLooping();
+    }
+
+    public void setLooping(boolean loopSet){
+        music.setLooping(loopSet);
     }
 }

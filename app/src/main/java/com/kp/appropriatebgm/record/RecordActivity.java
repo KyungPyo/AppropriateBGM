@@ -208,7 +208,7 @@ public class RecordActivity extends AppCompatActivity {
     // Parameter : void
     // Use : 녹음이 된 이후, Temp폴더에서 임시저장된 음원을 가지고와서 재생준비 //
     public void prepareRecordFileToPlay() {
-        musicPlayer = new MusicPlayer(this, recordManager.getPath());
+        musicPlayer = new MusicPlayer(this, recordManager.getPath(), false);
         playbackBar = new PlaybackBarTask(this, recordProgressBar, recordPlayTimeText, recordMaxTimeText);
         playbackBar.setMusic(musicPlayer);
         playbackBar.setPlayAndPauseBtn(btnPlay);

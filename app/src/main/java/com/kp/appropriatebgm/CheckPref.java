@@ -3,7 +3,8 @@ package com.kp.appropriatebgm;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+
+import java.io.File;
 
 public class CheckPref {
 
@@ -70,5 +71,68 @@ public class CheckPref {
     // Use : 마지막으로 선택된 카테고리를 저장가져온다. init 에서 호출 예정
     public int  getLastSelecedCategory(){
         return settingPref.getInt("lastSelectedCategory",1);
+    }
+
+    // Method : 마지막으로 재생된 BGM을 저장
+    // Return Value : void
+    // Parameter : bgmPath(재생한 bgmPath)
+    // Use : 마지막으로 재생된 파일의 경로를 저장한다. 리스트에서 선택해서 재생했을 때 호출
+    public void setLastPlayedBgm(String bgmPath, boolean isInnerfile){
+        SharedPreferences.Editor prefEditor = settingPref.edit();
+        prefEditor.putBoolean("lastPlayedBgmisInnerfile", isInnerfile);
+        prefEditor.putString("lastPlayedBgm",bgmPath);
+        prefEditor.apply();
+    }
+
+    // Method : 마지막으로 선택된 BGM을 가져온다
+    // Return Value : String(재생했던 bgmPath)
+    // Parameter : void
+    // Use : 마지막으로 재생된 파일의 경로를 가져온다. mainActivity의 onCreate에서 호출
+    //       내장파일이 아닌데도 파일이 존재하지 않으면 null로 리턴한다.
+    public String getLastPlayedBgm(){
+        String path = settingPref.getString("lastPlayedBgm", null);
+        // 내장파일이 아니면
+        if (path != null && !settingPref.getBoolean("lastPlayedBgmisInnerfile", false)) {
+            File file = new File(path);
+            if (file.isFile()){
+                return path;
+            } else {
+                return null;
+            }
+        }
+        // 내장파일이면 바로 값 리턴
+        else if(settingPref.getBoolean("lastPlayedBgmisInnerfile", false)){
+            return path;
+        }
+        // 등록된 이전 재생기록이 없으면 null 리턴
+        else {
+            return null;
+        }
+    }
+
+    // Method : 마지막 재생내역의 내장파일 여부 가져오기
+    // Return Value : boolean(내장파일이면 true 아니면 false)
+    // Parameter : void
+    // Use : 마지막으로 선택된 BGM이 내장파일인지 여부를 가져온다
+    public boolean getLastPlayedBgmIsInnerfile(){
+        return settingPref.getBoolean("lastPlayedBgmisInnerfile", false);
+    }
+
+    // Method : 반복재생 설정 저장
+    // Return Value : void
+    // Parameter : void
+    // Use : 반복재생 여부를 토글한다.
+    public void setLoopPlay(){
+        SharedPreferences.Editor prefEditor = settingPref.edit();
+        prefEditor.putBoolean("loopPlay", !settingPref.getBoolean("loopPlay", false));
+        prefEditor.apply();
+    }
+
+    // Method : 반복재생 여부 가져오기
+    // Return Value : boolean(반복재생이면 true 아니면 false)
+    // Parameter : void
+    // Use : 마지막으로 설정된 반복재생 여부를 가져온다
+    public boolean getLoopPlay(){
+        return settingPref.getBoolean("loopPlay", false);
     }
 }

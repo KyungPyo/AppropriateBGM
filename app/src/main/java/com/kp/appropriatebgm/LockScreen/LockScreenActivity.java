@@ -206,9 +206,9 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
                             musicPlayer.releaseBgm();
                         }
                         if (dbManager.isInnerfile(path)) {
-                            musicPlayer = new MusicPlayer(thisContext, Integer.parseInt(path));
+                            musicPlayer = new MusicPlayer(thisContext, Integer.parseInt(path), false);
                         } else {
-                            musicPlayer = new MusicPlayer(thisContext, path);
+                            musicPlayer = new MusicPlayer(thisContext, path, false);
                         }
                         musicPlayer.playBgm();
                     }

@@ -203,9 +203,17 @@ public class MainActivity extends AppCompatActivity {
         isFilemanageOpen = false;   // 파일관리가 열려있는지 여부
 
         favoriteList=dbManager.getFavoriteList();
-
         checkPref=new CheckPref(this);
 
+        // 이전에 마지막으로 재생했던 정보가 있다면 파일 재생준비
+        if (checkPref.getLastPlayedBgm() != null) {
+            if(checkPref.getLastPlayedBgmIsInnerfile())
+                musicPlayer = new MusicPlayer(this, Integer.parseInt(checkPref.getLastPlayedBgm()), checkPref.getLoopPlay());
+            else
+                musicPlayer = new MusicPlayer(this, checkPref.getLastPlayedBgm(), checkPref.getLoopPlay());
+            playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
+            playbackBarTask.setMusic(musicPlayer);
+        }
     }
 
     // Method : 메뉴 레이아웃 설정
@@ -658,9 +666,11 @@ public class MainActivity extends AppCompatActivity {
                 musicPlayer.releaseBgm();   // 안정성을 위해 release
             }
             if (bgm.isInnerfile()) {
-                musicPlayer = new MusicPlayer(this, bgm.getInnerfileCode());
+                musicPlayer = new MusicPlayer(this, bgm.getInnerfileCode(), checkPref.getLoopPlay());
+                checkPref.setLastPlayedBgm(bgm.getBgmPath(), true);
             } else {
-                musicPlayer = new MusicPlayer(this, bgm.getBgmPath());
+                musicPlayer = new MusicPlayer(this, bgm.getBgmPath(), checkPref.getLoopPlay());
+                checkPref.setLastPlayedBgm(bgm.getBgmPath(), false);
             }
             musicPlayer.playBgm();
             playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
@@ -699,6 +709,12 @@ public class MainActivity extends AppCompatActivity {
                     if (musicPlayer.isPlaying()) {  // 재생중인 경우에만
                         musicPlayer.pauseBgm();
                     }
+                    break;
+                }
+                case R.id.main_btn_loop:{
+                    checkPref.setLoopPlay();
+                    if (musicPlayer != null)
+                        musicPlayer.setLooping(checkPref.getLoopPlay());
                     break;
                 }
             }
