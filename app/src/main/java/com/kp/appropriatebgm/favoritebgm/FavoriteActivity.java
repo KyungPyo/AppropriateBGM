@@ -25,6 +25,7 @@ public class FavoriteActivity extends AppCompatActivity {
     ListView favoriteList;
     Toolbar toolbar;
     Switch onOffSwitch;
+    Boolean mBoolean = false;
 
     FavoriteListAdapter adapter;
     ArrayList<Favorite> favoriteArrayList;
@@ -38,12 +39,62 @@ public class FavoriteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_favorite);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         mPref = new CheckPref(this);        // 공유 프레퍼런스 객체
-
         init();
+        onOffSwitch.setChecked(mPref.getLockerOnOff());
+        onOffSwitch.setOnCheckedChangeListener(checkedChangeListener);
 
         setSupportActionBar(toolbar);           // Toolbar를 액션바로 사용한다
         getSupportActionBar().setTitle(null);   // 액션바에 타이틀 제거
 
+    }
+
+    //체크 변경 리스너 부분
+    private Switch.OnCheckedChangeListener checkedChangeListener = new Switch.OnCheckedChangeListener(){
+        // Method : 체크 변경
+        // Return Value : void
+        // Parameter : buttonView(변경 버튼), isChecked(체크유무)
+        // Use : 체크유무에 따라 잠금화면 서비스로 인텐트를 넘겨 서비스 시작 및 종료하며 setChecked에 의해 리스너로 들어가 값이 바뀔 경우
+        //       mBoolean값을 false로 하여 공유변수에 값이 저장되지 않도록 하여 값 유지
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            Log.e("favorite", " listener gogo");
+            if (isChecked) {
+                Log.e("favorite", " ischecked true");
+                Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
+                startService(intent);
+            } else {
+                Log.e("favorite", " ischecked false");
+                Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
+                stopService(intent);
+            }
+            if(mBoolean) {
+                mPref.setLockerOnOff();
+            }
+            Log.e("setlocker", mPref.getLockerOnOff() + "");
+        }
+    };
+
+    // Method : Restart (재시작)
+    // Return Value : void
+    // Parameter : void
+    // Use : mBoolean값을 false로 하여 setChecked시에 리스너의 공유변수 저장이 되지 않도록 하여 뒤엉킴을 방지함
+    @Override
+    protected void onRestart() {
+        Log.e("onrestart", "called");
+        mBoolean = false;
+        onOffSwitch.setChecked(mPref.getLockerOnOff());
+        super.onRestart();
+    }
+
+    // Method : Resume (일시정지 후 시작)
+    // Return Value : void
+    // Parameter : void
+    // Use : mBoolean값을 true로 하여 리스너가 문제없이 돌아가도록 한다.
+    @Override
+    protected void onResume() {
+        Log.e("onresume", "called");
+        mBoolean = true;
+        super.onResume();
     }
 
     // Method : 초기설정
@@ -54,23 +105,6 @@ public class FavoriteActivity extends AppCompatActivity {
 
         toolbar=(Toolbar)findViewById(R.id.favorite_toolbar);
         onOffSwitch=(Switch)findViewById(R.id.favorite_switch_onOffSwitch);
-        onOffSwitch.setChecked(mPref.getLockerOnOff());
-        onOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked)
-                {
-                    Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
-                    startService(intent);
-                }
-                else
-                {
-                    Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
-                    stopService(intent);
-                }
-                mPref.setLockerOnOff();
-            }
-        });
 
         favoriteArrayList=new ArrayList<Favorite>();
 

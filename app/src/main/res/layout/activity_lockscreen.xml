@@ -16,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
@@ -60,17 +61,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="40dp"
             android:singleLine="true"
             android:textColor="#FFFFFFFF"
             android:shadowColor="#FF000000"
             android:shadowDx="2.0"
             android:shadowDy="2.0"
             android:shadowRadius="2.0"
-            android:textSize="20dp"
-            android:paddingLeft="15dp"
-            android:paddingBottom="20dp"/>
+            android:textSize="20dp"/>
 
     </LinearLayout>
 
@@ -78,9 +77,8 @@
         android:id="@+id/lockscreen_group_horizontalscroll"
         android:layout_below="@id/lockscreen_group_clock"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:scrollbars="none"
-        >
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
         <LinearLayout
             android:id="@+id/lockscreen_group_btnadd"
             android:layout_width="match_parent"
@@ -100,5 +98,38 @@
         android:background="@android:color/transparent"
         widget:thumb="@drawable/widget_unlock"
         />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/lockscreen_widget_unlock"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/lockscreen_btn_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_play_circle_outline_black_48dp"
+            android:onClick="onClickLockerPlayToolBtn"
+            android:layout_weight="2"/>
+
+        <ImageView
+            android:id="@+id/lockscreen_btn_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_pause_circle_outline_black_48dp"
+            android:onClick="onClickLockerPlayToolBtn"
+            android:layout_weight="2"/>
+
+        <ImageView
+            android:id="@+id/lockscreen_btn_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_stop_circle_outline_black_48dp"
+            android:onClick="onClickLockerPlayToolBtn"
+            android:layout_weight="2"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

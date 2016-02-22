@@ -35,6 +35,7 @@ import com.kp.appropriatebgm.Category.CategoryActivity;
 import com.kp.appropriatebgm.DBController.BGMInfo;
 import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.DBController.DBManager;
+import com.kp.appropriatebgm.Setting.SettingActivity;
 import com.kp.appropriatebgm.DBController.Favorite;
 import com.kp.appropriatebgm.favoritebgm.BGMListAdapter;
 import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     private View btnMoveToRecord;
     private View btnMoveToFavorite;
     private View btnMoveToCategory;
+    private View btnMoveToSetting;
 
     private ListView bgmListView;
     private CategoryListAdapter categoryAdapter;
@@ -162,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
         btnMoveToRecord = findViewById(R.id.main_menubtn_to_record);
         btnMoveToFavorite = findViewById(R.id.main_menubtn_to_favorite);
         btnMoveToCategory = findViewById(R.id.main_menubtn_to_category);
+        btnMoveToSetting = findViewById(R.id.main_menubtn_to_setting);
 
         bgmListView = (ListView) findViewById(R.id.main_list_soundlist);
         categorySpinner = (Spinner) findViewById(R.id.main_spinner_category);
@@ -390,6 +393,13 @@ public class MainActivity extends AppCompatActivity {
             case R.id.main_menubtn_to_category: {
                 intent.setClass(getApplicationContext(), CategoryActivity.class);
                 startActivityForResult(intent, 0);
+                setOriginalCondition();
+                break;
+            }
+            case R.id.main_menubtn_to_setting:{
+                Log.e("setting", "환경설정 버튼 click");
+                intent.setClass(getApplicationContext(), SettingActivity.class);
+                startActivity(intent);
                 setOriginalCondition();
                 break;
             }

@@ -38,12 +38,18 @@ public class UnlockScreenWidget extends RelativeLayout {
         super(context);
         init(context, null);
     }
-
+    // Method : 생성자
+    // Return value : void
+    // parameter : context(액티비티)
+    // use ; 생성자를 통해 init 메소드를 호출하여 위젯을 구성한다.
     public UnlockScreenWidget(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
-
+    // Method : 생성자
+    // Return value : void
+    // parameter : context(액티비티)
+    // use ; 생성자를 통해 init 메소드를 호출하여 위젯을 구성한다.
     public UnlockScreenWidget(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context, attrs);
@@ -105,6 +111,7 @@ public class UnlockScreenWidget extends RelativeLayout {
         int defaultOffset = seekbar.getThumbOffset();
         seekbar.setThumb(thumb);
         seekbar.setThumbOffset(defaultOffset);
+        // use ; 초기 seekbar 위치 10으로 설정
         seekbar.setProgress(10);
 
 
@@ -180,20 +187,27 @@ public class UnlockScreenWidget extends RelativeLayout {
         });
     }
 
-
+    // Method : 레이아웃 크기 설정
+    // Return value : void
+    // parameter : widthMeasureSpec(부모뷰로부터 결정된 넓이) , heightMeasureSpec(부모뷰로부터 결정된 높이)
+    // use ; 이 레이아웃의 부모뷰로부터 결정된 치수를 가져와 크기를 설정해준다.
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (isInEditMode()) {
             return;
         }
 
-        //prevents 9-patch background image from full size stretching
+        // use : 높이가 뷰그룹의 wrap_content와 동일할경우 background의 높이를 추가
+        // prevents 9-patch background image from full size stretching
         if (getLayoutParams().height == ViewGroup.LayoutParams.WRAP_CONTENT) {
             background.getLayoutParams().height = seekbar.getHeight() + fromDpToPx(3);
         }
 
     }
-
+    // Method : dp를 px로 변환
+    // Return value : int
+    // parameter : dp (dip)
+    // use ; 해당 dp를 px(pixel)로 바꿔주는 역할을 하는 함수
     public int fromDpToPx(int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 getResources().getDisplayMetrics());

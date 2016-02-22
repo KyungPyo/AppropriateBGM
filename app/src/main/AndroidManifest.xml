@@ -34,6 +34,10 @@
             android:screenOrientation="portrait"
             android:excludeFromRecents="true"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".Setting.SettingActivity"
+            android:screenOrientation="portrait"
+            android:noHistory="true"></activity>
+
         <service android:name="com.kp.appropriatebgm.LockScreen.LockScreenService"/>
         <receiver
             android:name="com.kp.appropriatebgm.LockScreen.LockScreenReceiver"
@@ -60,4 +64,5 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 </manifest>

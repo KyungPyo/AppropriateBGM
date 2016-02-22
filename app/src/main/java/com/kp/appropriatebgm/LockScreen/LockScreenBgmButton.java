@@ -27,42 +27,40 @@ public class LockScreenBgmButton extends RelativeLayout {
     private DBManager dbManager;
 
     // Method : LockScreenBgmButton 생성자(1)
-    // Return value :
-    // paremeter : context()
-    // Use :
+    // Return value : void
+    // paremeter : context(액티비티)
+    // Use : 해당 context를 받고 레이아웃 xml의 요소들을 받아온다.
     public LockScreenBgmButton(Context context) {
         super(context);
         this.context = context;
-        init(context, null);
+        init(context);
     }
-
     // Method : LockScreenBgmButton 생성자(2)
     // Return value :
-    // paremeter : context(), attrs()
-    // Use :
+    // paremeter : context(액티비티), attrs(애트리뷰트 모음)
+    // Use : 해당 context를 받고 레이아웃 xml의 요소들을 받아온다. (동일)
     public LockScreenBgmButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         this.attr = attrs;
-        init(context, attrs);
+        init(context);
     }
-
     // Method : LockScreenBgmButton 생성자(3)
     // Return value :
-    // paremeter : context(), attrs(), defStyleAttr()
-    // Use :
+    // paremeter : context(액티비티), attrs(애트리뷰트 모음), defStyleAttr(초기 스타일)
+    // Use : 해당 context를 받고 레이아웃 xml의 요소들을 받아온다. (동일)
     public LockScreenBgmButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
         this.attr = attrs;
-        init(context, attrs);
+        init(context);
     }
 
-    // Method :
+    // Method : 초기 설정
     // Return value : void
-    // paremeter : context(), attrs()
-    // Use :
-    private void init(Context context, AttributeSet attrs) {
+    // paremeter : context()
+    // Use : 레이아웃을 받아와서 imageView와 textView를 받아오도록 한다.
+    private void init(Context context) {
 
         //use : 레이아웃 편집기에서의 편집 여부 (편집하면 true return)
         if (isInEditMode()) {

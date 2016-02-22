@@ -193,6 +193,10 @@
                         android:id="@+id/main_seekbar_playtime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:background="@color/colorAccent"
+                        android:progressDrawable="@color/pressed"
+                        android:paddingRight="-3dp"
+                        android:paddingLeft="-3dp"
                         android:layout_margin="2dp"
                         android:layout_weight="8"/>
 
@@ -284,9 +288,11 @@
                 android:text="카테고리설정"
                 android:onClick="onClickMenuSelection"/>
             <Button
+                android:id="@+id/main_menubtn_to_setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="환경설정"/>
+                android:text="환경설정"
+                android:onClick="onClickMenuSelection"/>
 
         </LinearLayout>
         <!-- 메뉴 -->

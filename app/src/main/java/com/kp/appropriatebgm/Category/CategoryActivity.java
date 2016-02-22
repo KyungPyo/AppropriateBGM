@@ -42,9 +42,6 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
 
     ActionMenuItemView ctg_actionbar_add_button;
 
-    // Use : Select 쿼리 (LIST를 계속 갱신해주는 데 필요한 쿼리)
-    //final static String querySelectAll = String.format( " SELECT * FROM %s ", TABLE_NAME );
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,70 +65,62 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
         fab = (FloatingActionButton) findViewById(R.id.category_btn_checkdelete);
         fab.setVisibility(View.INVISIBLE);
         fab.setEnabled(false);
-
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            //Method : 체크 후 삭제 액션 버튼 설정
-            //Return value : void
-            //Paremeter : view (fab 버튼)
-            //Use : 액션바의 휴지통(삭제) 버튼을 누른 후 각 리스트 아이템의 체크박스 유무를 검사하여
-            //      체크된 아이템 항목을 삭제하는 용도로 사용한다.
-            @Override
-            public void onClick(View view) {
-
-                if(ctgAdapter.addCheckData().size() > 0) {
-                    final View mView = view;
-                    LayoutInflater inflater = getLayoutInflater();
-                    View delete_dialog_view = inflater.inflate(R.layout.dialog_category_deletecheck, null);
-                    AlertDialog.Builder delete_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
-                    delete_Digbuild.setTitle("카테고리 삭제");
-                    delete_Digbuild.setView(delete_dialog_view);
-                    delete_Digbuild.setMessage(ctgAdapter.addCheckData().size() + "개 카테고리를 삭제하시겠습니까?");
-
-                    Button ctg_delete_btn = (Button) delete_dialog_view.findViewById(R.id.category_btn_delete);
-                    Button ctg_deleteCancel_btn = (Button) delete_dialog_view.findViewById(R.id.category_btn_deletecancel);
-
-                    ctg_delete_btn.setText(R.string.ctgdialog_checkbtn_text);
-                    ctg_deleteCancel_btn.setText(R.string.ctgdialog_cancelbtn_text);
-                    final AlertDialog deleteCategory_dialog = delete_Digbuild.create();
-
-                    ctg_delete_btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            CtgcheckDelete(ctg_Listview);
-                            //fab 버튼이 사라지지 않는 경우를 고려하여 invisible, enable(false) 설정
-                            mView.setVisibility(View.INVISIBLE);
-                            mView.setEnabled(false);
-                            ctg_actionbar_add_button.setEnabled(true);
-                            deleteCategory_dialog.dismiss();
-                        }
-                    });
-                    ctg_deleteCancel_btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            deleteCategory_dialog.dismiss();
-                        }
-                    });
-                    deleteCategory_dialog.show();
-                }
-                else
-                {
-                    AlertDialog.Builder no_delete_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
-                    no_delete_Digbuild.setMessage(R.string.ctgdialog_notdelete_message);
-                    final AlertDialog notDeleteCategory_dialog = no_delete_Digbuild.create();
-                    notDeleteCategory_dialog.show();
-                }
-            }
-        });
-
+        fab.setOnClickListener(onClickListener);
 
     }
 
-    // Method : 옵션메뉴 생성
-    // Return value : boolean
-    // parameter : menu(메뉴)
-    // use ; 옵션 메뉴를 설정해준다.
-    @Override
+    View.OnClickListener onClickListener = new View.OnClickListener(){
+        //Method : 체크 후 삭제 액션 버튼 설정
+        //Return value : void
+        //Paremeter : view (fab 버튼)
+        //Use : 액션바의 휴지통(삭제) 버튼을 누른 후 각 리스트 아이템의 체크박스 유무를 검사하여
+        //      체크된 아이템 항목을 삭제하는 용도로 사용한다.
+        @Override
+        public void onClick(View view) {
+            if(ctgAdapter.addCheckData().size() > 0) {
+                final View mView = view;
+                LayoutInflater inflater = getLayoutInflater();
+                View delete_dialog_view = inflater.inflate(R.layout.dialog_category_deletecheck, null);
+                AlertDialog.Builder delete_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
+                delete_Digbuild.setTitle("카테고리 삭제");
+                delete_Digbuild.setView(delete_dialog_view);
+                delete_Digbuild.setMessage(ctgAdapter.addCheckData().size() + "개 카테고리를 삭제하시겠습니까?");
+
+                Button ctg_delete_btn = (Button) delete_dialog_view.findViewById(R.id.category_btn_delete);
+                Button ctg_deleteCancel_btn = (Button) delete_dialog_view.findViewById(R.id.category_btn_deletecancel);
+
+                ctg_delete_btn.setText(R.string.ctgdialog_checkbtn_text);
+                ctg_deleteCancel_btn.setText(R.string.ctgdialog_cancelbtn_text);
+                final AlertDialog deleteCategory_dialog = delete_Digbuild.create();
+
+                ctg_delete_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CtgcheckDelete(ctg_Listview);
+                        //fab 버튼이 사라지지 않는 경우를 고려하여 invisible, enable(false) 설정
+                        mView.setVisibility(View.INVISIBLE);
+                        mView.setEnabled(false);
+                        ctg_actionbar_add_button.setEnabled(true);
+                        deleteCategory_dialog.dismiss();
+                    }
+                });
+                ctg_deleteCancel_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        deleteCategory_dialog.dismiss();
+                    }
+                });
+                deleteCategory_dialog.show();
+            }
+            else
+            {
+                AlertDialog.Builder no_delete_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
+                no_delete_Digbuild.setMessage(R.string.ctgdialog_notdelete_message);
+                final AlertDialog notDeleteCategory_dialog = no_delete_Digbuild.create();
+                notDeleteCategory_dialog.show();
+            }
+        }
+    };
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.actionbar_category_menu, menu);
@@ -361,7 +350,6 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                 finish();
             }
         }
-
         return super.onKeyDown(keyCode, event);
     }
     // Method : 카테고리 추가
@@ -437,7 +425,20 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     {
             String t_title = editText.getText().toString();
             //Use : 카테고리 이름 중복 처리 (이름이 중복될 경우 다이얼로그로 알려준다)
-            if (dbManager.isExistCategoryName(t_title)) {
+            if(t_title.contains("'"))
+            {
+                AlertDialog.Builder nochar_Dig = new AlertDialog.Builder(CategoryActivity.this);
+                nochar_Dig.setTitle("따옴표(특수문자)는 포함할 수 없습니다.")
+                        .setNegativeButton(R.string.ctgdialog_checkbtn_text, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface indialog, int which) {
+                                indialog.cancel();
+                            }
+                        });
+                nochar_Dig.show();
+                return false;
+            }
+            else if (dbManager.isExistCategoryName(t_title)) {
                 AlertDialog.Builder repeat_Dig = new AlertDialog.Builder(CategoryActivity.this);
                 repeat_Dig.setTitle("카테고리 이름이 중복됩니다.")
                         .setNegativeButton(R.string.ctgdialog_checkbtn_text, new DialogInterface.OnClickListener() {
