@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class DBManager extends SQLiteOpenHelper {
 
     static final String DB_NAME = "AppropriateBGM_DB";
-    static final int DB_VERSION = 1;
+    static final int DB_VERSION = 2;
 
     Context mContext = null;
     private static DBManager mDBManager = null;
@@ -82,7 +82,8 @@ public class DBManager extends SQLiteOpenHelper {
             for( int n=0; n<SQLquery.length-1; n++) // split 후 맨 뒤에 아무내용없는 값 제외 -1
                 db.execSQL(SQLquery[n]);
 
-            // 내장 BGM 파일 DB 등록
+            // 내장 BGM 파일, 기본 카테고리 DB 등록
+            insertBasicCategory(db);
             insertInnerBGM(db);
 
             Log.i("query!!", "init success");
@@ -96,6 +97,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        insertBasicCategory(db);
         insertInnerBGM(db);
     }
 
@@ -116,6 +118,29 @@ public class DBManager extends SQLiteOpenHelper {
                 query.delete(0, query.length());
             } catch (SQLiteConstraintException e) {
                 Log.i("SQLite Error", "내장BGM 이미 DB에 존재함 : " + e.toString());
+                query.delete(0, query.length());
+            }
+        }
+    }
+
+    // Method : 기본 카테고리 추가
+    // Return Value : void
+    // Parameter : SQLiteDatabase(앱에서 사용하는 DB)
+    // Use : 기본적으로 사용할 수 있는 카테고리 세가지 추가
+    private void insertBasicCategory(SQLiteDatabase db){
+        String[] basicCategories = {"웃긴", "슬픈", "공포"};
+        StringBuffer query = new StringBuffer();
+
+        for (int i=0; i<basicCategories.length; i++) {
+            try {
+                query.append("INSERT INTO Category(category_name) VALUES ('");
+                query.append(basicCategories[i]);
+                query.append("')");
+                db.execSQL(query.toString());
+                query.delete(0, query.length());
+            } catch (SQLiteConstraintException e) {
+                e.printStackTrace();
+                query.delete(0, query.length());
             }
         }
     }
