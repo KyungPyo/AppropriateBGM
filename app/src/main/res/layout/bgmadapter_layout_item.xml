@@ -18,11 +18,14 @@
 
     <CheckBox
         android:id="@+id/bgmListAdapter_checkBox_musicCheck"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:padding="5dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="10dp"
+        android:scaleX="1"
+        android:scaleY="1"
         android:gravity="center"
         android:focusable="false"
+        android:button="@drawable/checkbox_selector"
         />
 
 </LinearLayout>

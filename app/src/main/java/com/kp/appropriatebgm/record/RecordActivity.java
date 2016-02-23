@@ -239,7 +239,7 @@ public class RecordActivity extends AppCompatActivity {
                         // 녹음이 된 임시파일이 있다면 다이얼로그를 호출
                         if (new File(recordManager.getPath()).isFile()) {
                             AlertDialog dialog;
-                            dialog = new AlertDialog.Builder(this).setTitle("녹 음 확 인")
+                            dialog = new AlertDialog.Builder(this,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).setTitle("녹 음 확 인")
                                     .setMessage("현재 녹음된 파일을 삭제하고 다시 녹음을 시작 하시겠습니까?")
                                     .setPositiveButton("예", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
@@ -500,7 +500,7 @@ public class RecordActivity extends AppCompatActivity {
                 recordManager.stop();
                 recordTask.cancel(true);
                 AlertDialog dialog;
-                dialog = new AlertDialog.Builder(this).setTitle("종료확인")
+                dialog = new AlertDialog.Builder(this,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).setTitle("종료확인")
                         .setMessage(" 지금 종료하시면 녹음파일이 삭제됩니다. 종료하시겠습니까?")
                         .setPositiveButton("예", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -527,7 +527,7 @@ public class RecordActivity extends AppCompatActivity {
 
             if (keyCode == event.KEYCODE_BACK && event.getRepeatCount() == 0) {
                 AlertDialog dialog;
-                dialog = new AlertDialog.Builder(this).setTitle("종료확인")
+                dialog = new AlertDialog.Builder(this,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).setTitle("종료확인")
                         .setMessage(" 지금 종료하시면 녹음파일이 삭제됩니다. 종료하시겠습니까?")
                         .setPositiveButton("예", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {

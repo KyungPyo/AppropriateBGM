@@ -35,10 +35,9 @@ import com.kp.appropriatebgm.Category.CategoryActivity;
 import com.kp.appropriatebgm.DBController.BGMInfo;
 import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.DBController.DBManager;
-import com.kp.appropriatebgm.Setting.SettingActivity;
 import com.kp.appropriatebgm.DBController.Favorite;
+import com.kp.appropriatebgm.Setting.SettingActivity;
 import com.kp.appropriatebgm.favoritebgm.BGMListAdapter;
-import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 import com.kp.appropriatebgm.favoritebgm.CategoryListAdapterForMain;
 import com.kp.appropriatebgm.favoritebgm.FavoriteActivity;
 
@@ -57,9 +56,6 @@ public class MainActivity extends AppCompatActivity {
     private PlaybackBarTask playbackBarTask;
 
     // View 선언
-    private ImageView actionbarSearchBtn;
-    private ImageView actionbarLogo;
-    private EditText actionbarSearchTxt;
     private ViewGroup btnFileManage;
     private ViewGroup groupFileManage;
     private ViewGroup btnEditComplete;
@@ -106,7 +102,9 @@ public class MainActivity extends AppCompatActivity {
     //검색 부분
     private EditText editTextSearch;
     private ImageView searchButton;
-    boolean isVisible = false;
+    private boolean isVisible = false;
+    private ImageView imageLogo;
+    private ImageView imageTitle;
 
     //파일 삭제 시 Favorite 도 update 시켜야 하므로 필요
     private ArrayList<Favorite> favoriteList;
@@ -193,8 +191,10 @@ public class MainActivity extends AppCompatActivity {
         txtMaxTime = (TextView)findViewById(R.id.main_text_maxtime);
         txtPlayTime = (TextView)findViewById(R.id.main_text_playtime);
 
-        editTextSearch=(EditText)findViewById(R.id.main_editText_search);
-        searchButton=(ImageView)findViewById(R.id.main_btn_search);
+        editTextSearch = (EditText)findViewById(R.id.main_editText_search);
+        searchButton = (ImageView)findViewById(R.id.main_btn_search);
+        imageLogo = (ImageView)findViewById(R.id.main_image_logo);
+        imageTitle = (ImageView)findViewById(R.id.main_image_title);
 
 
         setSupportActionBar(toolbar);           // Toolbar를 액션바로 사용한다
@@ -363,10 +363,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!isVisible) {
                     editTextSearch.setVisibility(View.VISIBLE);
+                    imageTitle.setVisibility(View.INVISIBLE);
                     isVisible = true;
                 } else {
                     final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                     editTextSearch.setVisibility(View.INVISIBLE);
+                    imageTitle.setVisibility(View.VISIBLE);
                     listItemCheckFree();
                     bgmListView.setAdapter(null);
                     bgmListView.setAdapter(bgmAdapter);
@@ -567,7 +569,7 @@ public class MainActivity extends AppCompatActivity {
     //       리스트 item 을 클릭하면 카테고리를 이동하고 리스트 갱신을 위해 Database 에서 BGM 목록을 다시 받아온다.
     private void settingUpdateCategoryDialog(){
         View updateCategory_dialog_view = getLayoutInflater().inflate(R.layout.dialog_category_update, null);
-        AlertDialog.Builder updateDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder updateDialogBuilder = new AlertDialog.Builder(MainActivity.this,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         updateDialogBuilder.setTitle("변경하실 카테고리를 선택하세요.");
         updateDialogBuilder.setView(updateCategory_dialog_view);
 
@@ -611,7 +613,7 @@ public class MainActivity extends AppCompatActivity {
     private void settingDeleteDialog() {
 
         View delete_dialog_view = getLayoutInflater().inflate(R.layout.dialog_category_deletecheck, null);
-        AlertDialog.Builder deleteDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder deleteDialogBuilder = new AlertDialog.Builder(MainActivity.this,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         deleteDialogBuilder.setTitle("파일 삭제");
         deleteDialogBuilder.setView(delete_dialog_view);
         deleteDialogBuilder.setMessage("선택하신 파일은 영구 삭제됩니다. 계속 진행하시겠습니까?");
