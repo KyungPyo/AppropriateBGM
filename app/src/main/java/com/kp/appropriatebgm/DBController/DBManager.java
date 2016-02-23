@@ -54,6 +54,7 @@ public class DBManager extends SQLiteOpenHelper {
     // DB 최초 생성 이벤트
     @Override
     public void onCreate(SQLiteDatabase db) {
+        mDataBase = db;
         String[] SQLquery = null;
         // raw 에 있는 테이블 생성 SQL문이 저장되어있는 Text파일 불러오기(sqlite_create.txt)
         InputStream inputStream = mContext.getResources().openRawResource(R.raw.sqlite_create);

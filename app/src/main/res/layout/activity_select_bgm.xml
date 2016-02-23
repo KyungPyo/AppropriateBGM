@@ -3,30 +3,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.choi.favoriteactivitytest.SelectBgmActivity"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:padding="10dp">
+    tools:context="com.example.choi.favoriteactivitytest.SelectBgmActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/selectbgm_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:background="@color/mainActionBar"
+        android:minHeight="?attr/actionBarSize">
 
         <ImageView
             android:id="@+id/favorite_btn_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_search_black_24dp"
-            android:layout_gravity="right"/>
+            android:layout_gravity="right"
+            android:paddingRight="10dp"
+            android:src="@drawable/ic_search_white_24dp" />
+
         <EditText
             android:id="@+id/favorite_editText_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:layout_gravity="left"/>
+            android:layout_gravity="left"
+            android:visibility="invisible" />
 
 
     </android.support.v7.widget.Toolbar>
@@ -35,41 +37,52 @@
         android:id="@+id/favorite_group_bottomBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true">
-    <Button
-        android:id="@+id/favorite_btn_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="확인"
-        android:layout_weight="1"/>
+        android:layout_alignParentBottom="true"
+        android:background="@color/mainManageFile"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/favorite_btn_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_weight="1"
-        android:text="취소"
-        />
+        <Button
+            android:id="@+id/favorite_btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/mainUnderDock"
+            android:text="확인" />
+
+        <Button
+            android:id="@+id/favorite_btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="1"
+            android:background="@color/mainUnderDock"
+            android:text="취소" />
     </LinearLayout>
 
-    <Spinner
-        android:id="@+id/favorite_spinner_category"
+    <LinearLayout
+        android:id="@+id/selectbgm_group_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:spinnerMode="dialog"
-        android:prompt="@string/spinner_dialog_name"
-        android:layout_below="@id/selectbgm_toolbar"/>
+        android:layout_below="@id/selectbgm_toolbar"
+        android:background="@color/mainManageFile">
+        <Spinner
+            android:id="@+id/favorite_spinner_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:prompt="@string/spinner_dialog_name"
+            android:spinnerMode="dialog" />
+    </LinearLayout>
+
     <ListView
         android:id="@+id/musicList"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@id/favorite_group_bottomBtn"
-        android:layout_below="@id/favorite_spinner_category"
-        android:choiceMode="singleChoice"/>
-
-
+        android:layout_below="@id/selectbgm_group_spinner"
+        android:background="@color/list_select"
+        android:choiceMode="singleChoice"
+        android:divider="@color/listViewDivider"
+        android:dividerHeight="1dp"/>
 
 
 </RelativeLayout>

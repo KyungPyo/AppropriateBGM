@@ -4,4 +4,8 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:text="비워두기" />
+    android:background="@color/list_select"
+    android:textColor="@color/ctg_Actionbar_Primary"
+    android:text="[ 비워두기 ]"
+    android:textSize="15dp"
+    android:textStyle="bold"/>
