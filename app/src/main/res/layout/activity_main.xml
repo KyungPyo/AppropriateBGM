@@ -11,7 +11,8 @@
         android:id="@+id/main_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize">
+        android:minHeight="?attr/actionBarSize"
+        android:background="@color/mainActionBar">
 
         <ImageView
             android:id="@+id/main_btn_search"
@@ -43,8 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".MainActivity"
-            android:paddingTop="10dp"
-            android:background="#00dfdfdf">
+            android:background="@color/mainManageFile">
 
             <LinearLayout
                 android:id="@+id/main_group_selectcategory"
@@ -54,6 +54,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="5dp"
+                android:paddingTop="0dp"
                 android:gravity="center_vertical">
 
                 <ImageView
@@ -64,7 +65,7 @@
 
                 <Spinner
                     android:id="@+id/main_spinner_category"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:spinnerMode="dialog"
                     android:prompt="@string/spinner_dialog_name" />
@@ -73,6 +74,7 @@
 
 
             <LinearLayout
+                android:paddingTop="10dp"
                 android:id="@+id/main_group_filemanage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -99,6 +101,7 @@
                 android:id="@+id/main_group_filemanagegroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingTop="10dp"
                 android:layout_alignParentRight="true"
                 android:paddingRight="10dp"
                 android:visibility="invisible">
@@ -170,6 +173,7 @@
 
             <!--재생관리 툴 부분-->
             <LinearLayout
+                android:background="@color/mainUnderDock"
                 android:id="@+id/main_group_playtool"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -213,6 +217,7 @@
                 </RelativeLayout>
 
                 <LinearLayout
+                    android:background="@color/mainUnderDock"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"

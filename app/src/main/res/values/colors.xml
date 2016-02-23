@@ -8,5 +8,8 @@
     <color name="list_press">#dadaea</color>
     <color name="list_select">#dadada</color>
     <color name="ctg_Actionbar_Primary">#2F2F4F</color>
+    <color name="mainActionBar">#750152</color>
+    <color name="mainManageFile">#a44b83</color>
+    <color name="mainUnderDock">#726970</color>
 
 </resources>

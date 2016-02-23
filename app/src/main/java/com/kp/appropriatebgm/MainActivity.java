@@ -39,6 +39,7 @@ import com.kp.appropriatebgm.Setting.SettingActivity;
 import com.kp.appropriatebgm.DBController.Favorite;
 import com.kp.appropriatebgm.favoritebgm.BGMListAdapter;
 import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
+import com.kp.appropriatebgm.favoritebgm.CategoryListAdapterForMain;
 import com.kp.appropriatebgm.favoritebgm.FavoriteActivity;
 
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private View btnMoveToSetting;
 
     private ListView bgmListView;
-    private CategoryListAdapter categoryAdapter;
+    private CategoryListAdapterForMain categoryAdapter;
     private DBManager dbManager;
     private ArrayList<BGMInfo> bgmList;
     private ArrayList<Category> categoryList;
@@ -270,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
     // Use :  카테고리를 DB 에서 가져와서 Spinner 에서 보여주는 Method
     private void initCategory() {
         categoryList = dbManager.getCategoryList();//DB
-        categoryAdapter = new CategoryListAdapter(this, categoryList);
+        categoryAdapter = new CategoryListAdapterForMain(this, categoryList);
 
         categorySpinner.setAdapter(categoryAdapter);
 
