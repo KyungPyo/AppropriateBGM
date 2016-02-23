@@ -38,33 +38,52 @@
         android:orientation="vertical"
         android:background="@color/background_material_light">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+
+            <SeekBar
+                android:id="@+id/recordActivity_seekbar_recordSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:progressDrawable="@drawable/playbackbar_color"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:layout_weight="8"/>
 
             <TextView
                 android:id="@+id/recordActivity_textview_playtimeAtvrecord"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/list_press"
+                android:layout_alignLeft="@id/recordActivity_seekbar_recordSeekBar"
+                android:layout_centerVertical="true"
+                android:paddingLeft="10dp"
+                android:textSize="13dp"
+                android:textColor="#efe5ec"
+                android:shadowColor="#726970"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
                 android:text="00:00"/>
-
-            <SeekBar
-                android:id="@+id/recordActivity_seekbar_recordSeekBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="8"/>
 
             <TextView
                 android:id="@+id/recordActivity_textview_maxtimeAtvrecord"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/list_press"
+                android:layout_alignRight="@id/recordActivity_seekbar_recordSeekBar"
+                android:layout_centerVertical="true"
+                android:paddingRight="10dp"
+                android:textSize="13dp"
+                android:textColor="#efe5ec"
+                android:shadowColor="#726970"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
                 android:text="00:00"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
