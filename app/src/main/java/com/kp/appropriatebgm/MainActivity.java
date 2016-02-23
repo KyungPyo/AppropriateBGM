@@ -567,7 +567,7 @@ public class MainActivity extends AppCompatActivity {
     //       리스트 item 을 클릭하면 카테고리를 이동하고 리스트 갱신을 위해 Database 에서 BGM 목록을 다시 받아온다.
     private void settingUpdateCategoryDialog(){
         View updateCategory_dialog_view = getLayoutInflater().inflate(R.layout.dialog_category_update, null);
-        AlertDialog.Builder updateDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder updateDialogBuilder = new AlertDialog.Builder(MainActivity.this,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         updateDialogBuilder.setTitle("변경하실 카테고리를 선택하세요.");
         updateDialogBuilder.setView(updateCategory_dialog_view);
 
@@ -611,7 +611,7 @@ public class MainActivity extends AppCompatActivity {
     private void settingDeleteDialog() {
 
         View delete_dialog_view = getLayoutInflater().inflate(R.layout.dialog_category_deletecheck, null);
-        AlertDialog.Builder deleteDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder deleteDialogBuilder = new AlertDialog.Builder(MainActivity.this,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         deleteDialogBuilder.setTitle("파일 삭제");
         deleteDialogBuilder.setView(delete_dialog_view);
         deleteDialogBuilder.setMessage("선택하신 파일은 영구 삭제됩니다. 계속 진행하시겠습니까?");
