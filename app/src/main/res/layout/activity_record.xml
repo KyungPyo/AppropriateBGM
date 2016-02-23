@@ -110,7 +110,7 @@
                 android:id="@+id/recordActivity_btn_saveAtvrecord"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_save_white_24dp"
+                android:src="@drawable/ic_save_white_48dp"
                 android:layout_weight="2"
                 android:onClick="onClick_save"/>
 
