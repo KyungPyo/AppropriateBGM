@@ -98,6 +98,10 @@ public class SettingFragment extends PreferenceFragment {
                     }
                     mPref.setLockerOnOff();
                 }
+                else if(preference.getKey().equals("notification"))
+                {
+
+                }
             }
             return true;
         }
