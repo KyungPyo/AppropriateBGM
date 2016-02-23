@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -182,7 +181,7 @@ public class RecordActivity extends AppCompatActivity {
         btnPlay.setEnabled(false);  // 녹음하기전엔(녹음된 파일이 없으면) 재생버튼을 누를 수 없다.
         btnSave.setEnabled(false);  // 저장버튼도
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//화면꺼짐방지
-        btnRecordUp.setBackgroundResource(R.drawable.recoring_img);
+        btnRecordUp.setBackgroundResource(R.drawable.recording_ani_img);
         frameAnimation =(AnimationDrawable) btnRecordUp.getBackground();
         setPopupWindow();
         TempDelete();
@@ -280,7 +279,6 @@ public class RecordActivity extends AppCompatActivity {
                         recordTask.cancel(true);
                         frameAnimation.stop();
                         v.setBackgroundResource(R.drawable.btn_startrecord_selector);// 녹음버튼의 이미지를 녹음 준비중으로 변경
-//                        btnRecordUp.setImageResource(R.drawable.recoring_img);// 녹음버튼의 이미지를 녹음 준비중으로 변경
                     }
                     break;
                 }
