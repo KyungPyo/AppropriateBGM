@@ -43,8 +43,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".MainActivity"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
             android:paddingTop="10dp"
             android:background="#00dfdfdf">
 
@@ -79,6 +77,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:paddingRight="10dp"
                 android:onClick="onClickFilemanage">
 
                 <ImageView
@@ -101,6 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:paddingRight="10dp"
                 android:visibility="invisible">
 
                 <LinearLayout
@@ -178,24 +178,26 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp">
 
                     <SeekBar
                         android:id="@+id/main_seekbar_playtime"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:progressDrawable="@color/pressed"
+                        android:layout_height="20dp"
+                        android:progressDrawable="@drawable/seekbar_gradation"
                         android:padding="0dp"
-                        android:layout_margin="2dp" />
+                        android:layout_margin="2dp"/>
 
                     <TextView
                         android:id="@+id/main_text_playtime"
-                        android:layout_alignLeft="@id/main_seekbar_playtime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="12dp"
+                        android:layout_alignLeft="@id/main_seekbar_playtime"
                         android:layout_centerVertical="true"
+                        android:paddingLeft="5dp"
+                        android:textSize="13dp"
                         android:text="00:00"/>
 
                     <TextView
@@ -206,6 +208,7 @@
                         android:layout_centerVertical="true"
                         android:textSize="12dp"
                         android:text="00:00"/>
+
                 </RelativeLayout>
 
                 <LinearLayout
@@ -238,6 +241,13 @@
                         android:onClick="onClickPlayToolBtn"
                         android:layout_weight="2"/>
 
+                    <ImageView
+                        android:id="@+id/main_btn_loop"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_loop_black_48dp"
+                        android:layout_weight="2"/>
+
                 </LinearLayout>
 
             </LinearLayout>
@@ -247,6 +257,7 @@
                 android:id="@+id/main_list_soundlist"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/list_select"
                 android:layout_below="@id/main_group_selectcategory"
                 android:layout_above="@id/main_group_playtool">
             </ListView>
