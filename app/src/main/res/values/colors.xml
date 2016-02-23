@@ -3,13 +3,14 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="pressed">#B4D4FF</color>
+    <color name="pressed">#efe5ec</color>
     <color name="release">#dadaea</color>
     <color name="list_press">#dadaea</color>
-    <color name="list_select">#dadada</color>
+    <color name="list_select">#ffffff</color>
     <color name="ctg_Actionbar_Primary">#2F2F4F</color>
     <color name="mainActionBar">#750152</color>
     <color name="mainManageFile">#a44b83</color>
     <color name="mainUnderDock">#726970</color>
+    <color name="listViewDivider">#eee9e9</color>
 
 </resources>

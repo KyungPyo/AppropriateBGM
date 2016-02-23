@@ -266,7 +266,9 @@
                 android:layout_height="match_parent"
                 android:background="@color/list_select"
                 android:layout_below="@id/main_group_selectcategory"
-                android:layout_above="@id/main_group_playtool">
+                android:layout_above="@id/main_group_playtool"
+                android:divider="@color/listViewDivider"
+                android:dividerHeight="1dp">
             </ListView>
 
         </RelativeLayout>
