@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class DBManager extends SQLiteOpenHelper {
 
     static final String DB_NAME = "AppropriateBGM_DB";
-    static final int DB_VERSION = 1;
+    static final int DB_VERSION = 2;
 
     Context mContext = null;
     private static DBManager mDBManager = null;
@@ -82,7 +82,8 @@ public class DBManager extends SQLiteOpenHelper {
             for( int n=0; n<SQLquery.length-1; n++) // split 후 맨 뒤에 아무내용없는 값 제외 -1
                 db.execSQL(SQLquery[n]);
 
-            // 내장 BGM 파일 DB 등록
+            // 내장 BGM 파일, 기본 카테고리 DB 등록
+            insertBasicCategory(db);
             insertInnerBGM(db);
 
             Log.i("query!!", "init success");
@@ -116,7 +117,20 @@ public class DBManager extends SQLiteOpenHelper {
                 query.delete(0, query.length());
             } catch (SQLiteConstraintException e) {
                 Log.i("SQLite Error", "내장BGM 이미 DB에 존재함 : " + e.toString());
+                query.delete(0, query.length());
             }
+        }
+    }
+
+    // Method : 기본 카테고리 추가
+    // Return Value : void
+    // Parameter : SQLiteDatabase(앱에서 사용하는 DB)
+    // Use : 기본적으로 사용할 수 있는 카테고리 세가지 추가
+    private void insertBasicCategory(SQLiteDatabase db){
+        String[] basicCategories = {"웃긴", "슬픈", "공포"};
+
+        for (int i=0; i<basicCategories.length; i++) {
+            insertCategory(basicCategories[i]);
         }
     }
 
@@ -466,11 +480,20 @@ public class DBManager extends SQLiteOpenHelper {
     // Return Value : void
     // Parameter : categoryName(새로 추가할 카테고리명)
     // Use : CategoryActivity에서 새로 추가할 카테고리명을 받아서 DB에 추가한다.
+    //       카테고리명으로 검색하여 중복되는 이름이 있는지 확인한다. 중복되는 값이 있으면 추가되지 않는다.
     public void insertCategory(String categoryName){
         String query;
-        query = "INSERT INTO Category(category_name) VALUES ('"+categoryName+"')";
+        Cursor cursor;
         try {
-            mDataBase.execSQL(query);
+            query = "SELECT COUNT(*) FROM Category WHERE category_name='"+categoryName+"'";
+            cursor = mDataBase.rawQuery(query, null);
+            cursor.moveToNext();
+            if (cursor.getInt(0) == 0) {    // 중복되는 카테고리명이 없는 경우에만 추가
+                query = "INSERT INTO Category(category_name) VALUES ('"+categoryName+"')";
+                mDataBase.execSQL(query);
+            } else {
+                Log.i("insertCategory", "카테고리명 중복");
+            }
         } catch (SQLiteException e){
             Log.e("insertCategory", e.toString());
         }

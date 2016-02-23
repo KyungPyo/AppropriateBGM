@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.kp.appropriatebgm.R;
@@ -51,6 +52,7 @@ public class LockScreenService extends Service {
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(Intent.ACTION_BOOT_COMPLETED);
         filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
+        filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
         registerReceiver(lockReceive, filter);
 
     }
@@ -73,6 +75,7 @@ public class LockScreenService extends Service {
                     filter.addAction(Intent.ACTION_BOOT_COMPLETED);
                     filter.addAction(Intent.ACTION_SCREEN_OFF);
                     filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
+                    filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
                     registerReceiver(lockReceive, filter);
                 }
             }

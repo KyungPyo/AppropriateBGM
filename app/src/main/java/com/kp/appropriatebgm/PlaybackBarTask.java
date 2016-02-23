@@ -41,9 +41,13 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     // Method : 재생하는 음악 등록
     // Return Value : void
     // Parameter : nowPlaying(재생하려는 음악이 등록된 MusicPlayer 인스턴스)
-    // Use : 재생툴 조작에 필요한 MusicPlayer 인스턴스 저장
+    // Use : 재생툴 조작에 필요한 MusicPlayer 인스턴스 저장. 재생툴에 현재 재생하려는 음악의 최대길이를 입력하고 시작위치를 0으로 설정
     public void setMusic(MusicPlayer nowPlaying){
         this.music = nowPlaying;
+        progressBar.setMax(music.getDuration());
+        progressBar.setProgress(music.getCurrentPosition());
+        setTimeText(playTimeText, music.getCurrentPosition());
+        setTimeText(maxTimeText, music.getDuration());
     }
 
     // Method : 하나의 뷰로 설정된 재생버튼과 일시정지버튼 등록
@@ -61,15 +65,11 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
     // Method : 스레드 동작 전 사전작업
     // Return Value : void
     // Parameter : void
-    // Use : 재생툴에 현재 재생하려는 음악의 최대길이를 입력하고 시작위치를 0으로 설정
+    // Use : 재생여부에 따라서 변경해야하는 아이콘이 있다면 변경
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
         //progressBar.setEnabled(true);
-        progressBar.setMax(music.getDuration());
-        progressBar.setProgress(music.getCurrentPosition());
-        setTimeText(playTimeText, music.getCurrentPosition());
-        setTimeText(maxTimeText, music.getDuration());
 
         toggleBtnImage();
     }

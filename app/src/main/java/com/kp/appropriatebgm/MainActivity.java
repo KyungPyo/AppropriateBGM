@@ -110,6 +110,11 @@ public class MainActivity extends AppCompatActivity {
     //파일 삭제 시 Favorite 도 update 시켜야 하므로 필요
     private ArrayList<Favorite> favoriteList;
 
+    //마지막으로 선택한 카테고리
+    private CheckPref checkPref;
+    private boolean isCategoryExist;
+    private int lastSelectedCategoryPosition;
+
     /**** 멤버 선언 ****/
 
     /****
@@ -125,8 +130,8 @@ public class MainActivity extends AppCompatActivity {
         initMember();                   // 멤버변수 초기화
         initMenuLayoutSize();           // 메뉴 레이아웃 크기설정
         initDrawerToggle();             // 네비게이션 드로워 리스너설정
-        initBgmList();                  // BGMList 초기 구성
         initCategory();                 // 카테고리 목록 초기 구성 및 이벤트 정의
+        initBgmList();                  // BGMList 초기 구성
         initListener();                 // 리스너 정의
         settingDeleteDialog();          // 삭제 시 뜨는 다이얼로그 초기 구성
         settingUpdateCategoryDialog();  // 카테고리 변경 시 뜨는 다이얼로그 초기 구성
@@ -198,7 +203,17 @@ public class MainActivity extends AppCompatActivity {
         isFilemanageOpen = false;   // 파일관리가 열려있는지 여부
 
         favoriteList=dbManager.getFavoriteList();
+        checkPref=new CheckPref(this);
 
+        // 이전에 마지막으로 재생했던 정보가 있다면 파일 재생준비
+        if (checkPref.getLastPlayedBgm() != null) {
+            if(checkPref.getLastPlayedBgmIsInnerfile())
+                musicPlayer = new MusicPlayer(this, Integer.parseInt(checkPref.getLastPlayedBgm()), checkPref.getLoopPlay());
+            else
+                musicPlayer = new MusicPlayer(this, checkPref.getLastPlayedBgm(), checkPref.getLoopPlay());
+            playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
+            playbackBarTask.setMusic(musicPlayer);
+        }
     }
 
     // Method : 메뉴 레이아웃 설정
@@ -239,7 +254,12 @@ public class MainActivity extends AppCompatActivity {
     // Parameter : void
     // Use :  DB에서 전체리스트를 가져오고 list뷰의 어댑터 설정을 담당. onCreate에서 호출
     private void initBgmList() {
-        bgmList = dbManager.getBGMList(1);
+        if(isCategoryExist){
+            bgmList = dbManager.getBGMList(checkPref.getLastSelecedCategory());
+        }else{
+            bgmList = dbManager.getBGMList(1);
+        }
+
         bgmAdapter = new BGMListAdapter(this, bgmList);
         bgmListView.setAdapter(bgmAdapter);
     }
@@ -252,6 +272,21 @@ public class MainActivity extends AppCompatActivity {
         categoryList = dbManager.getCategoryList();//DB
         categoryAdapter = new CategoryListAdapter(this, categoryList);
 
+        categorySpinner.setAdapter(categoryAdapter);
+
+        for(int i=0;i<categoryList.size();i++){
+            if(categoryList.get(i).getCateId()==checkPref.getLastSelecedCategory()){
+                isCategoryExist=true;
+                lastSelectedCategoryPosition=i;
+            }
+        }
+
+        if(isCategoryExist) {
+            categorySpinner.setSelection(lastSelectedCategoryPosition);
+        }else{
+            categorySpinner.setSelection(0);
+        }
+
         //스피너에서 item을 선택했을 때
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -260,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
                 bgmList.clear();
                 bgmList.addAll(dbManager.getBGMList(categoryList.get(position).getCateId()));
                 selectedCategoryPosition = position;
+                checkPref.setLastSelecedCategory(categoryList.get(position).getCateId());
                 bgmAdapter.setSearchingList();
                 bgmAdapter.filter(editTextSearch.getText().toString());
                 bgmAdapter.notifyDataSetChanged();
@@ -271,8 +307,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        categorySpinner.setAdapter(categoryAdapter);
     }
+
 
     // Method : 백키 두번 눌렀을 때 종료되도록
     // Return Value : void
@@ -630,9 +666,11 @@ public class MainActivity extends AppCompatActivity {
                 musicPlayer.releaseBgm();   // 안정성을 위해 release
             }
             if (bgm.isInnerfile()) {
-                musicPlayer = new MusicPlayer(this, bgm.getInnerfileCode());
+                musicPlayer = new MusicPlayer(this, bgm.getInnerfileCode(), checkPref.getLoopPlay());
+                checkPref.setLastPlayedBgm(bgm.getBgmPath(), true);
             } else {
-                musicPlayer = new MusicPlayer(this, bgm.getBgmPath());
+                musicPlayer = new MusicPlayer(this, bgm.getBgmPath(), checkPref.getLoopPlay());
+                checkPref.setLastPlayedBgm(bgm.getBgmPath(), false);
             }
             musicPlayer.playBgm();
             playbackBarTask = new PlaybackBarTask(this, progressBar, txtPlayTime, txtMaxTime);
@@ -671,6 +709,12 @@ public class MainActivity extends AppCompatActivity {
                     if (musicPlayer.isPlaying()) {  // 재생중인 경우에만
                         musicPlayer.pauseBgm();
                     }
+                    break;
+                }
+                case R.id.main_btn_loop:{
+                    checkPref.setLoopPlay();
+                    if (musicPlayer != null)
+                        musicPlayer.setLooping(checkPref.getLoopPlay());
                     break;
                 }
             }
