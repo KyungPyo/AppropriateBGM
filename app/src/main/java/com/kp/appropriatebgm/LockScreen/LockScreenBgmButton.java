@@ -70,7 +70,6 @@ public class LockScreenBgmButton extends RelativeLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.button_layout_favoritebgmlist, this, true);
 
-        bgmFavoriteImg = (ImageView) findViewById(R.id.bgmlist_imageview_img);
         bgmFavoriteText = (TextView) findViewById(R.id.bgmlist_textview_name);
 
         dbManager = DBManager.getInstance(context);
@@ -83,7 +82,6 @@ public class LockScreenBgmButton extends RelativeLayout {
     public void setBtnInfo(Favorite favorite) {
         favoriteInfo = favorite;
         bgmFavoriteText.setText(favorite.getBgmName());
-        bgmFavoriteImg.setBackgroundColor(Color.parseColor("#30FF0000"));
     }
 
     // Method : 즐겨찾기 정보 받아가기
