@@ -11,10 +11,10 @@
         <TextView
             android:layout_width="70dp"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="파일명"
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:textColor="@color/list_press"
+            android:textSize="18dp"
+            android:textColor="@color/mainActionBar"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             />
@@ -39,10 +39,11 @@
         <TextView
             android:layout_width="70dp"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="5dp"
             android:text="카테고리"
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:textColor="@color/list_press"
+            android:textSize="18dp"
+            android:textColor="@color/mainActionBar"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             />
@@ -51,8 +52,6 @@
             android:id="@+id/popupRecordActivity_spinner_selectSaveCategory"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:prompt="@string/sel_category"
-            style="@style/SpinnerColor"
             android:spinnerMode="dialog"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"/>
@@ -63,19 +62,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="30dp">
+        >
 
         <Button
             android:id="@+id/popupRecordActivity_btn_AcceptSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="저 장"
+            android:background="@color/mainUnderDock"
             android:layout_weight="5"/>
 
         <Button
             android:id="@+id/popupRecordActivity_btn_saveCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/mainUnderDock"
             android:text="취 소"
             android:layout_weight="5"/>
 
