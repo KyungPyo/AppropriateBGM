@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog updateCategory_dialog;
     private int selectedCategoryPosition;
     private ArrayList<Category> categoryListForDialog;
-    private CategoryListAdapter categoryAdapterForDialog;
+    private CategoryListAdapterForMain categoryAdapterForDialog;
 
     // 재생툴
     private SeekBar progressBar;
@@ -577,7 +577,7 @@ public class MainActivity extends AppCompatActivity {
         categoryListForDialog=new ArrayList<>();
         categoryListForDialog.addAll(categoryList);
         categoryListForDialog.remove(0);
-        categoryAdapterForDialog=new CategoryListAdapter(this,categoryListForDialog);
+        categoryAdapterForDialog=new CategoryListAdapterForMain(this,categoryListForDialog);
 
         ctg_cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
