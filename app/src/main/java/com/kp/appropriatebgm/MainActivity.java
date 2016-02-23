@@ -136,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
         initListener();                 // 리스너 정의
         settingDeleteDialog();          // 삭제 시 뜨는 다이얼로그 초기 구성
         settingUpdateCategoryDialog();  // 카테고리 변경 시 뜨는 다이얼로그 초기 구성
-        progressBar.setThumb(null);
     }
 
     @Override
@@ -187,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         progressBar = (SeekBar)findViewById(R.id.main_seekbar_playtime);
-        //progressBar.setEnabled(false);
+        progressBar.setThumb(null);
         btnPlayMusic = (ImageView)findViewById(R.id.main_btn_play);
         btnStopMusic = (ImageView)findViewById(R.id.main_btn_stop);
         btnPauseMusic = (ImageView)findViewById(R.id.main_btn_pause);

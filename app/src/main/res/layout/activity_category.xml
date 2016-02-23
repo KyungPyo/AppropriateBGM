@@ -16,7 +16,7 @@
             android:id="@+id/category_toolbar_menu"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/ctg_Actionbar_Primary"
+            android:background="@color/mainActionBar"
             />
 
     </android.support.design.widget.AppBarLayout>
@@ -25,6 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="#CCFFEEFF"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="com.example.gd.category.CategoryActivity">
 
@@ -41,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:backgroundTint="@android:color/white"
-        android:src="@drawable/ic_delete_black_24dp" />
+        app:backgroundTint="@color/mainActionBar"
+        android:src="@drawable/ic_delete_white_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>

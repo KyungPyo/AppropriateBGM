@@ -173,6 +173,7 @@ public class RecordActivity extends AppCompatActivity {
         recordManager = new RecordManager(getString(R.string.app_name));
         btnRecordUp = (ImageView) findViewById(R.id.recardActivity_btn_startRecordImg); // 녹음상태 상단 이미지
         recordProgressBar = (SeekBar) findViewById(R.id.recordActivity_seekbar_recordSeekBar);            // 재생 바
+        recordProgressBar.setThumb(null);
         recordMaxTimeText = (TextView) findViewById(R.id.recordActivity_textview_maxtimeAtvrecord);   // 재생할 파일 최대길이
         recordPlayTimeText = (TextView) findViewById(R.id.recordActivity_textview_playtimeAtvrecord); // 재생하는 파일 현재시간
         btnPlay = (ImageView) findViewById(R.id.recordActivity_btn_playAtvrecord);                // 재생버튼
