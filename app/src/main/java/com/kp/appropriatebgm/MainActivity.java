@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText editTextSearch;
     private ImageView searchButton;
     private boolean isVisible = false;
-    private ImageView imageLogo;
     private ImageView imageTitle;
 
     //파일 삭제 시 Favorite 도 update 시켜야 하므로 필요
@@ -193,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
 
         editTextSearch = (EditText)findViewById(R.id.main_editText_search);
         searchButton = (ImageView)findViewById(R.id.main_btn_search);
-        imageLogo = (ImageView)findViewById(R.id.main_image_logo);
         imageTitle = (ImageView)findViewById(R.id.main_image_title);
 
 
