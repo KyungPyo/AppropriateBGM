@@ -81,7 +81,8 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                 final View mView = view;
                 LayoutInflater inflater = getLayoutInflater();
                 View delete_dialog_view = inflater.inflate(R.layout.dialog_category_deletecheck, null);
-                AlertDialog.Builder delete_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
+                AlertDialog.Builder delete_Digbuild = new AlertDialog.Builder(CategoryActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+
                 delete_Digbuild.setTitle("카테고리 삭제");
                 delete_Digbuild.setView(delete_dialog_view);
                 delete_Digbuild.setMessage(ctgAdapter.addCheckData().size() + "개 카테고리를 삭제하시겠습니까?");
@@ -146,7 +147,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
             case R.id.category_actionbtn_addmenu:
                 LayoutInflater inflater = getLayoutInflater();
                 final View add_dialog_view = inflater.inflate(R.layout.dialog_category_add, null);
-                final AlertDialog.Builder add_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
+                final AlertDialog.Builder add_Digbuild = new AlertDialog.Builder(CategoryActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
                 add_Digbuild.setTitle("카테고리 추가");
                 add_Digbuild.setView(add_dialog_view);
                 add_Digbuild.setMessage(R.string.ctgdialog_add_message);
@@ -226,7 +227,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
 
         if(position>=2 && ctgAdapter.getCheckBoxVisibility() == false) {
             final CharSequence[] property_items = {"이름 변경", "삭 제", "취 소"};
-            final AlertDialog.Builder alertDig = new AlertDialog.Builder(view.getContext());
+            final AlertDialog.Builder alertDig = new AlertDialog.Builder(view.getContext(), AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
             alertDig.setTitle(R.string.ctg_long_property);
             alertDig.setItems(property_items, new DialogInterface.OnClickListener() {
                 @Override
@@ -240,7 +241,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                             // Use : 이름 변경의 경우
                             // 이름 변경을 하는 다이얼로그를 띄우며 변경 시 해당 아이템의 아이디를 받아 다이얼로그의 EditText의 값을 DB에 갱신하는 UPDATE 연산 수행
                             final View add_dialog_view = inflater.inflate(R.layout.dialog_category_add, null);
-                            final AlertDialog.Builder add_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
+                            final AlertDialog.Builder add_Digbuild = new AlertDialog.Builder(CategoryActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
                             add_Digbuild.setTitle("카테고리 이름 변경");
                             add_Digbuild.setView(add_dialog_view);
                             add_Digbuild.setMessage(R.string.ctgdialog_add_message);
@@ -288,7 +289,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                             //      해당 아이템의 id를 가져와 DELETE 연산을 수행하며 다이얼로그로 삭제를 한번 더 확인한다.
                             // 삭제 확인 다이얼로그 부분
                             final View delete_dialog_view = inflater.inflate(R.layout.dialog_category_deletecheck, null);
-                            final AlertDialog.Builder delete_Digbuild = new AlertDialog.Builder(CategoryActivity.this);
+                            final AlertDialog.Builder delete_Digbuild = new AlertDialog.Builder(CategoryActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
                             delete_Digbuild.setTitle("카테고리 삭제");
                             delete_Digbuild.setView(delete_dialog_view);
                             delete_Digbuild.setMessage("'"+ctgAdapter.getlistName(pos)+"' 를(을) 삭제하시겠습니까?");
@@ -427,7 +428,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
             //Use : 카테고리 이름 중복 처리 (이름이 중복될 경우 다이얼로그로 알려준다)
             if(t_title.contains("'"))
             {
-                AlertDialog.Builder nochar_Dig = new AlertDialog.Builder(CategoryActivity.this);
+                AlertDialog.Builder nochar_Dig = new AlertDialog.Builder(CategoryActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
                 nochar_Dig.setTitle("따옴표(특수문자)는 포함할 수 없습니다.")
                         .setNegativeButton(R.string.ctgdialog_checkbtn_text, new DialogInterface.OnClickListener() {
                             @Override
@@ -439,7 +440,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                 return false;
             }
             else if (dbManager.isExistCategoryName(t_title)) {
-                AlertDialog.Builder repeat_Dig = new AlertDialog.Builder(CategoryActivity.this);
+                AlertDialog.Builder repeat_Dig = new AlertDialog.Builder(CategoryActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
                 repeat_Dig.setTitle("카테고리 이름이 중복됩니다.")
                         .setNegativeButton(R.string.ctgdialog_checkbtn_text, new DialogInterface.OnClickListener() {
                             @Override
@@ -452,7 +453,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
             }
             //Use : 카테고리 이름이 8자 이상인 경우 처리 (다이얼로그)
             else if (editText.length() > 8) {
-                AlertDialog.Builder eight_Dig = new AlertDialog.Builder(CategoryActivity.this);
+                AlertDialog.Builder eight_Dig = new AlertDialog.Builder(CategoryActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
                 eight_Dig.setTitle("카테고리 글자 수를 8자 이하로 해주십시오.")
                         .setNegativeButton(R.string.ctgdialog_checkbtn_text, new DialogInterface.OnClickListener() {
                             @Override
@@ -465,7 +466,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
             }
             // Use : EditText에 아무 것도 입력되지 않은 경우
             else if (editText.length() == 0) {
-                AlertDialog.Builder null_Dig = new AlertDialog.Builder(CategoryActivity.this);
+                AlertDialog.Builder null_Dig = new AlertDialog.Builder(CategoryActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
                 null_Dig.setTitle("카테고리 명을 입력해주세요!")
                         .setNegativeButton(R.string.ctgdialog_checkbtn_text, new DialogInterface.OnClickListener() {
                             @Override
@@ -480,7 +481,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
             //Use : 카테고리 이름 처음에 공백이 들어간 경우 처리
             else if(t_title.charAt(0) == ' ')
             {
-                AlertDialog.Builder firstblank_Dig = new AlertDialog.Builder(CategoryActivity.this);
+                AlertDialog.Builder firstblank_Dig = new AlertDialog.Builder(CategoryActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
                 firstblank_Dig.setTitle("카테고리명은 공백문자로 시작할 수 없습니다!")
                         .setNegativeButton(R.string.ctgdialog_checkbtn_text, new DialogInterface.OnClickListener() {
                             @Override
@@ -494,7 +495,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
             //Use : 카테고리 이름 끝에 공백이 들어간 경우 처리
             else if(t_title.charAt(editText.length()-1) == ' ')
             {
-                AlertDialog.Builder lastblank_Dig = new AlertDialog.Builder(CategoryActivity.this);
+                AlertDialog.Builder lastblank_Dig = new AlertDialog.Builder(CategoryActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
                 lastblank_Dig.setTitle("카테고리명은 공백문자로 끝날 수 없습니다!")
                         .setNegativeButton(R.string.ctgdialog_checkbtn_text, new DialogInterface.OnClickListener() {
                             @Override
