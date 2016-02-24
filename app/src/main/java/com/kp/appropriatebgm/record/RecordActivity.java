@@ -246,6 +246,7 @@ public class RecordActivity extends AppCompatActivity {
                                             // TODO Auto-generated method stub
                                             playbackBar.cancel(true);
                                             frameAnimation.start();
+
 //                                            btnRecordUp.setImageResource(R.drawable.btn_stoprecord_selector1);
                                             recordTask = new RecordTask();
                                             Log.i("RecordActivity", "Accept : recordAgain");
@@ -267,15 +268,17 @@ public class RecordActivity extends AppCompatActivity {
                         }
                         // 녹음된 파일이 없다면 녹음을 시작한다.
                         else {
-                            recordTask = new RecordTask();
-                            recordTask.execute();  // 녹음 시작
-                            frameAnimation.start();
-                            v.setBackgroundResource(R.drawable.btn_stoprecord_selector);// 녹음버튼의 이미지를 녹음중으로 변경
+                            recordStart(v);
+//                            recordTask = new RecordTask();
+//                            recordTask.execute();  // 녹음 시작
+//                            frameAnimation.start();
+//                            v.setBackgroundResource(R.drawable.btn_stoprecord_selector);// 녹음버튼의 이미지를 녹음중으로 변경
 //                            btnRecordUp.setImageResource(R.drawable.btn_stoprecord_selector1);
                         }
                     }
                     // 녹음 중이라면 녹음을 중지한다.
                     else {
+
                         recordManager.stop();
                         recordTask.cancel(true);
                         frameAnimation.stop();
@@ -285,6 +288,13 @@ public class RecordActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void recordStart(View v){
+     recordTask = new RecordTask();
+        recordTask.execute();
+        frameAnimation.start();
+        v.setBackgroundResource(R.drawable.btn_stoprecord_selector);
     }
 
     // Method : 재생하기
