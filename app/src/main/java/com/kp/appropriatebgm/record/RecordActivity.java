@@ -3,7 +3,6 @@ package com.kp.appropriatebgm.record;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.os.AsyncTask;
@@ -17,6 +16,8 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -48,14 +49,15 @@ public class RecordActivity extends AppCompatActivity {
     private int maxTime = 0;    // 현재 녹음된 파일 재생길이
     // 화면 출력 관련
     private PlaybackBarTask playbackBar;
-    private AnimationDrawable frameAnimation;
+    private Animation animation;
     private int currentRecordTimeMs = 0, currentPlayTimeMs = 0;
     private SeekBar recordProgressBar = null;
     private TextView recordMaxTimeText = null;
     private TextView recordPlayTimeText = null;
     private ImageView btnPlay = null;
     private ImageView btnRecord = null;
-    private ImageView btnRecordUp = null;
+    private ImageView btnRecordUpMic = null;
+    private ImageView btnRecordUpProgress = null;
     private ImageView btnSave = null;
     //다이얼로그
     private Category selectedCategory;
@@ -148,6 +150,7 @@ public class RecordActivity extends AppCompatActivity {
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         initMemberRecordActvity();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//화면꺼짐방지
+
         setPopupWindow();
         TempDelete();
     }
@@ -171,7 +174,6 @@ public class RecordActivity extends AppCompatActivity {
     // Use : 초기에 현재 액티비티에서 뷰나 뷰그룹들의 인스턴스들을 실제 객체들과 연결시키고, 초기 설정값을 입력한다. onCreate에서 호출.
     private void initMemberRecordActvity() {
         recordManager = new RecordManager(getString(R.string.app_name));
-        btnRecordUp = (ImageView) findViewById(R.id.recardActivity_btn_startRecordImg); // 녹음상태 상단 이미지
         recordProgressBar = (SeekBar) findViewById(R.id.recordActivity_seekbar_recordSeekBar);          // 재생 바
         recordProgressBar.setThumb(null);
         recordMaxTimeText = (TextView) findViewById(R.id.recordActivity_textview_maxtimeAtvrecord);     // 재생할 파일 최대길이
@@ -181,8 +183,11 @@ public class RecordActivity extends AppCompatActivity {
         btnSave = (ImageView) findViewById(R.id.recordActivity_btn_saveAtvrecord);                      // 저장버튼
         btnPlay.setEnabled(false);  // 녹음하기전엔(녹음된 파일이 없으면) 재생버튼을 누를 수 없다.
         btnSave.setEnabled(false);  // 저장버튼도
-        btnRecordUp.setBackgroundResource(R.drawable.recording_ani_img);
-        frameAnimation = (AnimationDrawable) btnRecordUp.getBackground();
+        btnRecordUpMic = (ImageView) findViewById(R.id.recardActivity_imgView_RecordMic); // 녹음상태 상단 이미지
+        //animation 기능 선언
+        btnRecordUpProgress = (ImageView) findViewById(R.id.recardActivity_img_statsRecord); // 녹음상태 상단 이미지
+        btnRecordUpProgress.setBackgroundResource(R.drawable.rotate_view_progressimg);
+        animation = AnimationUtils.loadAnimation(this,R.anim.rotate_record_activity_progressimg);
     }
     @Override
     protected void onStop() {
@@ -259,7 +264,10 @@ public class RecordActivity extends AppCompatActivity {
     public void startRecord(){
         recordTask = new RecordTask();
         recordTask.execute();  // 녹음 시작
-        frameAnimation.start();
+        animation.setFillAfter(false);
+        animation.setRepeatMode(Animation.RESTART);
+        btnRecordUpProgress.startAnimation(animation);
+        animation.setRepeatCount(Animation.INFINITE);
     }
 
     // Method : 녹음정지
@@ -269,7 +277,7 @@ public class RecordActivity extends AppCompatActivity {
     public void stopRecord(){
         recordManager.stop();
         recordTask.cancel(true);
-        frameAnimation.stop();
+        animation.cancel();
     }
 
     // Method : 재생하기

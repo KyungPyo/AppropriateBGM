@@ -303,6 +303,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="@color/pressed"
+            android:onClick="onClickMenuSelection"
             android:orientation="vertical">
 
             <LinearLayout
@@ -313,6 +314,7 @@
                 android:paddingLeft="10dp">
 
                 <ImageView
+                    android:clickable="false"
                     android:id="@+id/main_image_record"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
