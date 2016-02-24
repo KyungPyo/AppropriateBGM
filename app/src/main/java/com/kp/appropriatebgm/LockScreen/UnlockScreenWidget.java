@@ -14,7 +14,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.kp.appropriatebgm.R;
 
@@ -91,7 +90,7 @@ public class UnlockScreenWidget extends RelativeLayout {
 
         //use : 이미지를 받아오지 못한 경우 이미지 설정
         if (thumb == null) {
-            thumb = getResources().getDrawable(R.drawable.widget_unlock);
+            thumb = getResources().getDrawable(R.drawable.ic_lock_selector);
         }
         track = attributes.getDrawable(R.styleable.lockscreen_SlideToUnlockView_tracks);
         //use : 메모리 할당 해제
