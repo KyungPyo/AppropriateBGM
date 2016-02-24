@@ -93,7 +93,7 @@ public class UnlockScreenWidget extends RelativeLayout {
             thumb = getResources().getDrawable(R.drawable.widget_unlock);
         }
         track = attributes.getDrawable(R.styleable.lockscreen_SlideToUnlockView_tracks);
-        //use : 메모리 할당을 풀어줘서 가비지 콜렉션 방지
+        //use : 메모리 할당 해제
         attributes.recycle();
 
         thumbWidth = thumb.getIntrinsicWidth();

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Switch xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/setting_switch_lockscreen"
+    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:gravity="center_vertical"
+    android:textColor="@android:color/white"
+    android:textIsSelectable="false"
+    android:thumb="@drawable/on_off_switch_selector"
+    android:track="@drawable/on_off_switch_track"
+    />
