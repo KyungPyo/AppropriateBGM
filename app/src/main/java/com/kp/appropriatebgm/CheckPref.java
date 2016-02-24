@@ -70,7 +70,7 @@ public class CheckPref {
     // Parameter : void
     // Use : 마지막으로 선택된 카테고리를 저장가져온다. init 에서 호출 예정
     public int  getLastSelecedCategory(){
-        return settingPref.getInt("lastSelectedCategory",1);
+        return settingPref.getInt("lastSelectedCategory", 1);
     }
 
     // Method : 마지막으로 재생된 BGM을 저장
@@ -80,7 +80,7 @@ public class CheckPref {
     public void setLastPlayedBgm(String bgmPath, boolean isInnerfile){
         SharedPreferences.Editor prefEditor = settingPref.edit();
         prefEditor.putBoolean("lastPlayedBgmisInnerfile", isInnerfile);
-        prefEditor.putString("lastPlayedBgm",bgmPath);
+        prefEditor.putString("lastPlayedBgm", bgmPath);
         prefEditor.apply();
     }
 
@@ -134,5 +134,23 @@ public class CheckPref {
     // Use : 마지막으로 설정된 반복재생 여부를 가져온다
     public boolean getLoopPlay(){
         return settingPref.getBoolean("loopPlay", false);
+    }
+
+    // Method : 알람의 on off 여부를 저장한다.
+    // Return Value : void
+    // Parameter : boolean (on이면 true, off 이면 false)
+    // Use : 알람의 on off를 저장하여 락스크린 서비스에서 사용
+    public void setAlarmOnOff(boolean isOn){
+        SharedPreferences.Editor prefEditor = settingPref.edit();
+        prefEditor.putBoolean("alarmOnOff",isOn);
+        prefEditor.apply();
+    }
+
+    // Method : 알람이 on인지 off인지 가져온다.
+    // Return Value : boolean (on이면 true, off 이면 false)
+    // Parameter : void
+    // Use : 알람의 on off 여부를 받아 notification 보여줄지 말지 결정함.
+    public boolean  getAlarmOnOff(){
+        return settingPref.getBoolean("alarmOnOff", false);
     }
 }
