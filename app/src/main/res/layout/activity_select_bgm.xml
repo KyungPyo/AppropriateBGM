@@ -70,7 +70,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:prompt="@string/spinner_dialog_name"
-            android:spinnerMode="dialog" />
+            android:spinnerMode="dialog"
+            android:theme="@android:style/Theme.Holo.Light"/>
     </LinearLayout>
 
     <ListView

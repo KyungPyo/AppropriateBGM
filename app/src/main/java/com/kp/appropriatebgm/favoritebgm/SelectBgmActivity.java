@@ -44,7 +44,7 @@ public class SelectBgmActivity extends AppCompatActivity {
     int position;
     boolean isVisible = false;
 
-    CategoryListAdapter categoryAdapter;
+    CategoryListAdapterForMain categoryAdapter;
     Button save;
     Button cancel;
     Button clear_favorite;
@@ -100,7 +100,7 @@ public class SelectBgmActivity extends AppCompatActivity {
     private void getCategory() {
         categoryList=dbManager.getCategoryList();//DB
 
-        categoryAdapter = new CategoryListAdapter(this, categoryList);
+        categoryAdapter = new CategoryListAdapterForMain(this, categoryList);
         cateSpinner = (Spinner) findViewById(R.id.favorite_spinner_category);
 
         //스피너에서 item을 선택했을 때

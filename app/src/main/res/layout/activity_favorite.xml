@@ -26,6 +26,8 @@
             android:layout_height="wrap_content"
             android:textOn="On"
             android:textOff="Off"
+            android:thumb="@drawable/on_off_switch_selector"
+            android:track="@drawable/on_off_switch_track"
             android:checked="false"
             android:layout_gravity="right"
             android:paddingRight="10dp"
