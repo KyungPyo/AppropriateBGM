@@ -16,6 +16,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 import android.telephony.TelephonyManager;
@@ -33,11 +34,48 @@ public class LockScreenService extends Service {
     private LockScreenReceiver lockReceive;
     private Notification notification;
     private PendingIntent notificationIntent;
+    private static int notifyStartId;
 
-    @Nullable
-    @Override
+    LockNotificationInterface.Stub binder = new LockNotificationInterface.Stub()
+    {
+
+        @Override
+        public void setNotificationOnOff() throws RemoteException {
+
+            SharedPreferences preferences = getApplicationContext().getSharedPreferences("AppSetting",
+                    Context.MODE_PRIVATE);
+
+            Intent noIntent = new Intent(getApplicationContext(), SettingActivity.class);
+            noIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            notificationIntent = PendingIntent.getActivity(getApplicationContext(), 0, noIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            notification = new NotificationCompat.Builder(getApplicationContext())
+                    .setContentTitle("적절한브금")
+                    .setContentText("빠른 재생이 실행중입니다.")
+                    .setSmallIcon(R.drawable.ic_queue_music_black_24dp)
+                    .setAutoCancel(true)
+                    .setContentIntent(notificationIntent)
+                    .build();
+
+
+            //이게 음악 어플처럼 Task Killer 작동해도 살아있게 해주는 거, Foreground 에서 돌리겠다는 뜻
+            startForeground(1, notification);
+
+            if (!preferences.getBoolean("alarmOnOff", false) | !preferences.getBoolean("LockerOn", false)) {
+                stopForeground(true);
+                NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                notification = new Notification(0, "", System.currentTimeMillis());
+
+                nm.notify(notifyStartId, notification);
+                nm.cancel(notifyStartId);
+            }
+        }
+
+    };
     public IBinder onBind(Intent intent) {
-        return null;
+        Log.e("onbind","onbind gogo");
+        return binder;
     }
 
     // Method : 서비스 시작 초기화
@@ -66,9 +104,7 @@ public class LockScreenService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("AppSetting",
-                Context.MODE_PRIVATE);
-
+        notifyStartId = startId;
         Log.d("잘왔냐~", "onStartCommand");
         if (intent != null) {
             if (intent.getAction() == null) {
@@ -86,29 +122,10 @@ public class LockScreenService extends Service {
         }
         // Use : 알림 기능의 클릭 이벤트에는 PendingIntent 사용하여 SettingActivity로 인텐트 넘김
         //       NO_HISTORY 플래그를 설정하고 Manifest에 기능 추가하여 알림 눌렀을 때 액티비티 새로 뜨는 것 방지
-        Intent noIntent = new Intent(getApplicationContext(), SettingActivity.class);
-        noIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        notificationIntent = PendingIntent.getActivity(getApplicationContext(), 0, noIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
 
         /* 알림 내용 구현 부분 */
         // Use : 알림 제목과 내용, 아이콘, 인텐트등을 정해주고 빌드
-        notification = new NotificationCompat.Builder(getApplicationContext())
-                .setContentTitle("적절한브금")
-                .setContentText("빠른 재생이 실행중입니다.")
-                .setSmallIcon(R.drawable.ic_queue_music_black_24dp)
-                .setAutoCancel(true)
-                .setContentIntent(notificationIntent)
-                .build();
-
-        //이게 음악 어플처럼 Task Killer 작동해도 살아있게 해주는 거, Foreground 에서 돌리겠다는 뜻
-        startForeground(1, notification);
-
-      /*NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-
-        notification = new Notification(0, "", System.currentTimeMillis());
-
-        nm.notify(startId, notification);
-        nm.cancel(startId);*/
 
         return START_REDELIVER_INTENT;
     }
@@ -128,4 +145,33 @@ public class LockScreenService extends Service {
 
      }
 
+    public void setNotificationOnOff(int startId, SharedPreferences preferences) {
+        notification = new NotificationCompat.Builder(getApplicationContext())
+                .setContentTitle("적절한브금")
+                .setContentText("빠른 재생이 실행중입니다.")
+                .setSmallIcon(R.drawable.ic_queue_music_black_24dp)
+                .setAutoCancel(true)
+                .setContentIntent(notificationIntent)
+                .build();
+
+
+        //이게 음악 어플처럼 Task Killer 작동해도 살아있게 해주는 거, Foreground 에서 돌리겠다는 뜻
+        startForeground(1, notification);
+
+        if (!preferences.getBoolean("alarmOnOff", false)) {
+            stopForeground(true);
+            NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+            notification = new Notification(0, "", System.currentTimeMillis());
+
+            nm.notify(startId, notification);
+            nm.cancel(startId);
+        }
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.e("onunbind","unbind gogo");
+        return super.onUnbind(intent);
+    }
 }

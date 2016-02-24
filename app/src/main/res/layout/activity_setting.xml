@@ -35,7 +35,7 @@
             android:layout_weight="1">
 
             <TextView
-                android:id="@+id/setting_textview_notificationtitle"
+                android:id="@+id/setting_textview_locktitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
@@ -44,19 +44,18 @@
                 android:text="잠금화면 설정"/>
 
             <TextView
-                android:id="@+id/setting_textview_notifysummary"
+                android:id="@+id/setting_textview_locksummary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
                 android:paddingLeft="20dp"
                 android:textSize="16dp"
                 android:textColor="@android:color/darker_gray"
-                android:text="잠금화면 summary"
                 />
         </LinearLayout>
 
         <Switch
-            android:id="@+id/setting_switch_notificationOnOff"
+            android:id="@+id/setting_switch_lockscreenOnOff"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textOn="On"
@@ -85,7 +84,7 @@
             android:layout_weight="1">
 
             <TextView
-                android:id="@+id/setting_textview_locktitle"
+                android:id="@+id/setting_textview_notificationtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
@@ -94,19 +93,18 @@
                 android:text="알림 설정"/>
 
             <TextView
-                android:id="@+id/setting_textview_locksummary"
+                android:id="@+id/setting_textview_notificationsummary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
                 android:paddingLeft="20dp"
                 android:textSize="16dp"
                 android:textColor="@android:color/darker_gray"
-                android:text="알림 summary"
                 />
         </LinearLayout>
 
         <Switch
-            android:id="@+id/setting_switch_lockscreenOnOff"
+            android:id="@+id/setting_switch_notificationOnOff"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textOn="On"
