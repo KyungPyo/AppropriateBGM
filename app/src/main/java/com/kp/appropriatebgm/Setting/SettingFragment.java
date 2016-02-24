@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.kp.appropriatebgm.CheckPref;
 import com.kp.appropriatebgm.LockScreen.LockScreenService;
@@ -26,6 +27,7 @@ public class SettingFragment extends PreferenceFragment {
 
     private CheckPref mPref;
     Context context;
+    SwitchPreference lockSwitch;
 
     // Method : SettingFragment 생성자
     // Return Value : void
@@ -46,20 +48,27 @@ public class SettingFragment extends PreferenceFragment {
         this.context = context;
     }
 
-    @Override
+    /*@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        view.setBackgroundColor(getResources().getColor(android.R.color.white));
+
+        /*View view = super.onCreateView(inflater, container, savedInstanceState);
+        view.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
         return view;
-    }
+    }*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.activity_setting);
+        context = this.getActivity();
+        context.setTheme(R.style.PreferencesTheme);
         // Use : 리스너 등록
+
+        lockSwitch = (SwitchPreference) findPreference("lockscreen");
+        lockSwitch.setWidgetLayoutResource(R.layout.switch_setting);
+
         mPref = new CheckPref((AppCompatActivity) getActivity());
-        findPreference("lockscreen").setOnPreferenceChangeListener(onPreferenceChangeListener);
+        lockSwitch.setOnPreferenceChangeListener(onPreferenceChangeListener);
         findPreference("notification").setOnPreferenceChangeListener(onPreferenceChangeListener);
 
         // Use : 알림 기능을 위해 필요한 서비스를 얻어옴
@@ -75,8 +84,33 @@ public class SettingFragment extends PreferenceFragment {
     public void onResume() {
         ((SwitchPreference) findPreference("lockscreen")).setChecked(mPref.getLockerOnOff());
         Log.e("preference", mPref.getLockerOnOff() + "");
+        Log.e("lockSwitch",lockSwitch.getKey());
         super.onResume();
     }
+
+    private Preference.OnPreferenceClickListener onPreferenceClickListener = new Preference.OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            Log.e("click","click");
+            if(preference.getKey().equals("lockscreen"))
+            {
+                SwitchPreference switchPreference = (SwitchPreference) preference;
+                if(!switchPreference.isChecked()) {
+                    Intent intent = new Intent(context, LockScreenService.class);
+                    context.startService(intent);
+                }
+                // Use : 빠른 실행을 OFF 시키려는 경우 (체크 TRUE)
+                else
+                {
+                    Intent intent = new Intent(context, LockScreenService.class);
+                    context.stopService(intent);
+                }
+                mPref.setLockerOnOff();
+            }
+            return true;
+        }
+    };
+
 
     /* 환경 설정 스위치 클릭 부분 */
     private Preference.OnPreferenceChangeListener onPreferenceChangeListener = new Preference.OnPreferenceChangeListener(){
@@ -88,13 +122,14 @@ public class SettingFragment extends PreferenceFragment {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             String stringValue = newValue.toString();
-
+            Log.e("preference name",preference.getKey());
             if(preference instanceof SwitchPreference)
             {
                 SwitchPreference switchPreference = (SwitchPreference) preference;
                 preference.setSummary(stringValue);
                 if(preference.getKey().equals("lockscreen"))
                 {
+                    Log.e("lcok checked", switchPreference.isChecked()+"");
                     // Use : 빠른 실행을 ON 시키려는 경우 (체크 FALSE)
                     if(!switchPreference.isChecked()) {
                         Intent intent = new Intent(context, LockScreenService.class);
@@ -110,7 +145,7 @@ public class SettingFragment extends PreferenceFragment {
                 }
                 else if(preference.getKey().equals("notification"))
                 {
-
+                    Log.e("lockSwitch",lockSwitch.isChecked()+"");
                 }
             }
             return true;
