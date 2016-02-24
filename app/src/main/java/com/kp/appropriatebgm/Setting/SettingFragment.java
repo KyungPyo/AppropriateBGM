@@ -11,6 +11,9 @@ import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.kp.appropriatebgm.CheckPref;
 import com.kp.appropriatebgm.LockScreen.LockScreenService;
@@ -41,6 +44,13 @@ public class SettingFragment extends PreferenceFragment {
     public SettingFragment(Context context)
     {
         this.context = context;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        view.setBackgroundColor(getResources().getColor(android.R.color.white));
+        return view;
     }
 
     @Override

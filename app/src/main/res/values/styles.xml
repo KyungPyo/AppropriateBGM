@@ -20,6 +20,20 @@
     <style name="SpinnerColor" >
         <item name="android:textColor">@color/list_press</item>
     </style>
+    
+    <style name="PreferencesTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">#00000000</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:textColorHint">#000000</item>
+        <item name="android:cacheColorHint">#000000</item>
+        <item name="android:listViewStyle">@style/listviewPreferences</item>
+    </style>
+    
+    <style name="listviewPreferences" parent="@android:style/Widget.ListView">
+        <item name="android:background">#FFFFFF</item>
+        <item name="android:cacheColorHint">#00000000</item>
+    </style>
 
 
 </resources>
