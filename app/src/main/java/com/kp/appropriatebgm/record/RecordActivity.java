@@ -42,17 +42,13 @@ public class RecordActivity extends AppCompatActivity {
     // 녹음 관련
     private RecordManager recordManager = null;
     private RecordTask recordTask = null;
-
     // 재생 관련
     private MusicPlayer musicPlayer;
-
     private final int PROGRESS_INTERVAL = 50;     // 재생 progress바 갱신주기
     private int maxTime = 0;    // 현재 녹음된 파일 재생길이
-
     // 화면 출력 관련
     private PlaybackBarTask playbackBar;
     private AnimationDrawable frameAnimation;
-
     private int currentRecordTimeMs = 0, currentPlayTimeMs = 0;
     private SeekBar recordProgressBar = null;
     private TextView recordMaxTimeText = null;
@@ -70,11 +66,9 @@ public class RecordActivity extends AppCompatActivity {
     private Button popCancelBtn = null;
     private EditText filenameEt = null;
     private Spinner categorySel = null;
-
     DBManager dbManager = DBManager.getInstance(this);//DB
     ArrayList<Category> categoryList;
     CategoryListAdapter categoryAdapter;
-
     /******
      * 작업스레드 AsyncTask 상속받아서 클래스 생성 - 녹음 스레드
      *****/
@@ -87,17 +81,10 @@ public class RecordActivity extends AppCompatActivity {
             btnSave.setEnabled(false);  // 저장버튼도
             super.onPreExecute();
         }
-
         @Override
         protected Void doInBackground(Void... params) {      // 실제 작업스레드 동작
             recordManager.start(); //레코드매니저 실행
             while (true) {
-                /** 녹음시간제한 주고 싶다면  **
-                 if (!recordManager.isRecording() || currentRecordTimeMs > 180*1000 )3분이 지나면
-                 {
-                 recordManager.stop();
-                 return true;
-                 }*/
                 if (isCancelled()) {  // 작업이 취소되었으면
                     if (recordManager.isRecording()) {
                         recordManager.stop();
@@ -115,7 +102,6 @@ public class RecordActivity extends AppCompatActivity {
                 }
             }
         }
-
         @Override
         protected void onCancelled() { // 녹음이 취소 된다면
             if (recordManager.isRecording()) {// 녹음이였다면
@@ -128,27 +114,19 @@ public class RecordActivity extends AppCompatActivity {
             btnPlay.setEnabled(true);   // 재생버튼 클릭가능
             btnSave.setEnabled(true);   // 저장버튼 클릭가능
             btnRecord.setEnabled(true); // 다시 녹음하고 싶으면 녹음클릭시 재녹음 가능
-
             prepareRecordFileToPlay();  // 녹음한 파일을 Temp로 만들어 재생할 준비.
             super.onCancelled();
         }
-
-
         @Override
         protected void onProgressUpdate(Integer... values) {
             int currentTime = values[0];
-
-            // 현재 녹음 진행상황 화면에 표시
             // Seekbar 설정
             recordProgressBar.setMax(currentTime);
             recordProgressBar.setProgress(currentTime);
-
             setTimeText(recordMaxTimeText, currentTime);
             setTimeText(recordPlayTimeText, currentTime);
-
             super.onProgressUpdate(values);
         }
-
         @Override
         protected void onPostExecute(Void aVoid) {
             btnPlay.setEnabled(true);   // 재생버튼 클릭가능
@@ -168,26 +146,11 @@ public class RecordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
-        // 저장될 디렉토리명을 app_name으로 설정
-        recordManager = new RecordManager(getString(R.string.app_name));
-        btnRecordUp = (ImageView) findViewById(R.id.recardActivity_btn_startRecordImg); // 녹음상태 상단 이미지
-        recordProgressBar = (SeekBar) findViewById(R.id.recordActivity_seekbar_recordSeekBar);          // 재생 바
-        recordProgressBar.setThumb(null);
-        recordMaxTimeText = (TextView) findViewById(R.id.recordActivity_textview_maxtimeAtvrecord);     // 재생할 파일 최대길이
-        recordPlayTimeText = (TextView) findViewById(R.id.recordActivity_textview_playtimeAtvrecord);   // 재생하는 파일 현재시간
-        btnPlay = (ImageView) findViewById(R.id.recordActivity_btn_playAtvrecord);                      // 재생버튼
-        btnRecord = (ImageView) findViewById(R.id.recordActivity_btn_startRecord);                      // 녹음시작/중지 버튼
-        btnSave = (ImageView) findViewById(R.id.recordActivity_btn_saveAtvrecord);                      // 저장버튼
-        btnPlay.setEnabled(false);  // 녹음하기전엔(녹음된 파일이 없으면) 재생버튼을 누를 수 없다.
-        btnSave.setEnabled(false);  // 저장버튼도
+        initMemberRecordActvity();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//화면꺼짐방지
-        btnRecordUp.setBackgroundResource(R.drawable.recording_ani_img);
-        frameAnimation =(AnimationDrawable) btnRecordUp.getBackground();
         setPopupWindow();
         TempDelete();
     }
-
     // 화면에서 벗어나면 작업을 정지한다.
     // 재생중이면 정지, 녹음중이면 녹음중지
     @Override
@@ -202,13 +165,31 @@ public class RecordActivity extends AppCompatActivity {
         }
     }
 
+    // Method : 초기설정
+    // Return Value : void
+    // Parameter : void
+    // Use : 초기에 현재 액티비티에서 뷰나 뷰그룹들의 인스턴스들을 실제 객체들과 연결시키고, 초기 설정값을 입력한다. onCreate에서 호출.
+    private void initMemberRecordActvity() {
+        recordManager = new RecordManager(getString(R.string.app_name));
+        btnRecordUp = (ImageView) findViewById(R.id.recardActivity_btn_startRecordImg); // 녹음상태 상단 이미지
+        recordProgressBar = (SeekBar) findViewById(R.id.recordActivity_seekbar_recordSeekBar);          // 재생 바
+        recordProgressBar.setThumb(null);
+        recordMaxTimeText = (TextView) findViewById(R.id.recordActivity_textview_maxtimeAtvrecord);     // 재생할 파일 최대길이
+        recordPlayTimeText = (TextView) findViewById(R.id.recordActivity_textview_playtimeAtvrecord);   // 재생하는 파일 현재시간
+        btnPlay = (ImageView) findViewById(R.id.recordActivity_btn_playAtvrecord);                      // 재생버튼
+        btnRecord = (ImageView) findViewById(R.id.recordActivity_btn_startRecord);                      // 녹음시작/중지 버튼
+        btnSave = (ImageView) findViewById(R.id.recordActivity_btn_saveAtvrecord);                      // 저장버튼
+        btnPlay.setEnabled(false);  // 녹음하기전엔(녹음된 파일이 없으면) 재생버튼을 누를 수 없다.
+        btnSave.setEnabled(false);  // 저장버튼도
+        btnRecordUp.setBackgroundResource(R.drawable.recording_ani_img);
+        frameAnimation = (AnimationDrawable) btnRecordUp.getBackground();
+    }
     @Override
     protected void onStop() {
         super.onStop();
         if (playbackBar != null)
             playbackBar.cancel(true);
     }
-
     // Method : 녹음이후 Temp폴더에서 임시저장된 음원을가지고와서 재생을 준비
     // Return Value : void
     // Parameter : void
@@ -220,7 +201,6 @@ public class RecordActivity extends AppCompatActivity {
         playbackBar.setPlayAndPauseBtn(btnPlay);
         playbackBar.execute();
     }
-
     // Method : 녹음하기 클릭
     // Return Value : void
     // Parameter : View
@@ -234,22 +214,17 @@ public class RecordActivity extends AppCompatActivity {
                         musicPlayer.stopBgm();  // 재생중이던거 정지하고
                         musicPlayer = null;
                     }
-
                     // 녹음중이 아니면
                     if (!recordManager.isRecording()) {
                         // 녹음이 된 임시파일이 있다면 다이얼로그를 호출
                         if (new File(recordManager.getPath()).isFile()) {
                             AlertDialog dialog;
-                            dialog = new AlertDialog.Builder(this,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).setTitle("녹 음 확 인")
+                            dialog = new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).setTitle("녹 음 확 인")
                                     .setMessage("현재 녹음된 파일을 삭제하고 다시 녹음을 시작 하시겠습니까?")
                                     .setPositiveButton("예", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
-                                            // TODO Auto-generated method stub
                                             playbackBar.cancel(true);
-                                            frameAnimation.start();
-                                            recordTask = new RecordTask();
-                                            Log.i("RecordActivity", "Accept : recordAgain");
-                                            recordTask.execute();   // 녹음 시작
+                                            startRecord();
                                             dialog.dismiss();       //본래의 액티비티로 복귀
 
                                         }
@@ -257,31 +232,44 @@ public class RecordActivity extends AppCompatActivity {
                                     .setNegativeButton("아니요", new DialogInterface.OnClickListener() {
 
                                         public void onClick(DialogInterface dialog, int which) {
-                                            // TODO Auto-generated method stub
-                                            Log.i("RecordActivity", "Cancel : Remainrecord");
                                             dialog.cancel();
                                         }
                                     })
                                     .show();
-
                         }
                         // 녹음된 파일이 없다면 녹음을 시작한다.
                         else {
-                            recordTask = new RecordTask();
-                            recordTask.execute();  // 녹음 시작
-                            frameAnimation.start();
+                            startRecord();
                         }
                     }
                     // 녹음 중이라면 녹음을 중지한다.
                     else {
-                        recordManager.stop();
-                        recordTask.cancel(true);
-                        frameAnimation.stop();
+                        stopRecord();
                     }
                     break;
                 }
             }
         }
+    }
+
+    // Method : 녹음시작
+    // Return Value : void
+    // Parameter : View
+    // Use : 녹음 버튼 클릭을 했을때 녹음된 파일이 없을 때 녹음 시작
+    public void startRecord(){
+        recordTask = new RecordTask();
+        recordTask.execute();  // 녹음 시작
+        frameAnimation.start();
+    }
+
+    // Method : 녹음정지
+    // Return Value : void
+    // Parameter : View
+    // Use : 녹음 중일때 녹음 정지
+    public void stopRecord(){
+        recordManager.stop();
+        recordTask.cancel(true);
+        frameAnimation.stop();
     }
 
     // Method : 재생하기
@@ -295,7 +283,6 @@ public class RecordActivity extends AppCompatActivity {
                 // Use : 재생중과 녹음중이 아니라면 재생 시작 후 seekbar&textview 처리
                 if (!musicPlayer.isPlaying() && !recordManager.isRecording()) {
                     musicPlayer.playBgm();
-                    Log.i("RecordAcitivity", "onClickPlayBtn");
                     playbackBar = new PlaybackBarTask(this, recordProgressBar, recordPlayTimeText, recordMaxTimeText);
                     playbackBar.setMusic(musicPlayer);
                     playbackBar.setPlayAndPauseBtn(btnPlay);
@@ -304,12 +291,10 @@ public class RecordActivity extends AppCompatActivity {
                 // Use : 재생중이거나 녹음중이라면 일시정지
                 else {
                     musicPlayer.pauseBgm();
-                    Log.i("RecordAcitivity", "onClickPauseBtn");
                     playbackBar.setPlayAndPauseBtn(btnPlay);
                 }
                 break;
             }
-
         }
     }
 
@@ -323,7 +308,6 @@ public class RecordActivity extends AppCompatActivity {
             // 팝업윈도우 출력
             // 가운데에서 위로 120만큼 올라와서 팝업윈도우 등장.
             mPopupWindow.showAtLocation(mPopupLayout, Gravity.CENTER, 0, -120);
-            Log.i("RecordActivity", "OnClickSaveBtn With PopupWindow");
         }
     }
 
@@ -357,16 +341,15 @@ public class RecordActivity extends AppCompatActivity {
         boolean isTempExist = new File(recordManager.getPath()).isFile();
         if (isTempExist = true) {
             new File(recordManager.getPath()).delete();
-            Log.i("RecordAcitivity", "DeletedTempFile");
         }
 
     }
 
-    // Method : 저장버튼 이벤트 리스너
+    // Method : 초기설정
     // Return Value : void
     // Parameter : void
-    // Use : 저장버튼을 눌렀을 때 출력되는 팝업윈도우 설정(버튼 이벤트리스너 포함)
-    public void setPopupWindow() {
+    // Use : 초기에 현재 팝언윈도우에서 뷰나 뷰그룹들의 인스턴스들을 실제 객체들과 연결시키고, 초기 설정값을 입력한다. setPopupWindow에서 호출.
+    public void initMemberPopupWindow(){
         mPopupLayout = getLayoutInflater().inflate(R.layout.popup_saverecord, null);    // 팝업으로 띄울 xml 연결
         // 팝업윈도우
         popSaveBtn = (Button) mPopupLayout.findViewById(R.id.popupRecordActivity_btn_AcceptSave);
@@ -395,6 +378,14 @@ public class RecordActivity extends AppCompatActivity {
             }
         });
         categorySel.setAdapter(categoryAdapter);
+    }
+
+    // Method : 저장버튼 이벤트 리스너
+    // Return Value : void
+    // Parameter : void
+    // Use : 저장버튼을 눌렀을 때 출력되는 팝업윈도우 설정(버튼 이벤트리스너 포함)
+    public void setPopupWindow() {
+       initMemberPopupWindow();
 
         // Method : Edittext 엔터 및 특수문자 입력 안되기
         // Return Value : void
@@ -442,26 +433,21 @@ public class RecordActivity extends AppCompatActivity {
                 // Use : 파일명이 입력안됬을때.
                 if (filenameEt.length() == 0) {     // 파일명 입력확인
                     Toast.makeText(RecordActivity.this, "파일명을 입력해주세요", Toast.LENGTH_SHORT).show();
-                    Log.i("RecordAcitivity", "Error : MissingFileName");
                 }
                 // Use : 파일명이 8글자 초과했을시
                 else if (filenameEt.length() > 10) {
                     Toast.makeText(RecordActivity.this, " 파일명은 10글자를 넘을수 없습니다", Toast.LENGTH_SHORT).show();
-                    Log.i("RecordAcitivity", "Error : OverflowFileNameLength");
                 }
                 // Use : 카테고리를 선택안했을시
                 else if (selectedCategory == null) {   // 카테고리 선택확인
                     Toast.makeText(RecordActivity.this, "카테고리를 선택해주세요", Toast.LENGTH_SHORT).show();
-                    Log.i("RecordActivity", "Error : MissingCategoryId");
                 }
                 // Use : 파일명이 중복일때
                 else if (dbManager.isExistFileName(newFileName)) {
                     Toast.makeText(RecordActivity.this, "파일이름이 중복입니다.", Toast.LENGTH_SHORT).show();
-                    Log.i("RecordActivity", "Error : DuplicationFileName");
                 }
                 // Use :  해당 예외처리사항이 아무것도 없을시 저장
                 else {
-                    Log.i("RecordActivity", "SavedFilename :" + newFileName);
                     File file = new File(recordManager.getPath());
                     File renamedFile = new File(recordManager.getDirPath() + File.separator + newFileName + ".mp3");
                     file.renameTo(renamedFile);
@@ -481,11 +467,6 @@ public class RecordActivity extends AppCompatActivity {
             }
         });
     }
-
-    /*****
-     * 액티비티
-     *****/
-
     // Method : 뒤로버튼 이벤트 리스너
     // Return Value : void
     // Parameter : keycode
@@ -494,26 +475,20 @@ public class RecordActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (new File(recordManager.getPath()).isFile() && recordManager.isRecording()) {
             if (keyCode == event.KEYCODE_BACK && event.getRepeatCount() == 0) {
-                recordManager.stop();
-                recordTask.cancel(true);
+                stopRecord();
                 AlertDialog dialog;
-                dialog = new AlertDialog.Builder(this,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).setTitle("종료확인")
+                dialog = new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).setTitle("종료확인")
                         .setMessage(" 지금 종료하시면 녹음파일이 삭제됩니다. 종료하시겠습니까?")
                         .setPositiveButton("예", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                // TODO Auto-generated method stub
-                                prepareRecordFileToPlay();
                                 File files = new File(recordManager.getPath());
-                                Log.i("RecordAcitivity", "Deleted 1111: " + recordManager.getPath());
                                 files.delete();
-
                                 finish();
                             }
                         })
                         .setNegativeButton("아니요", new DialogInterface.OnClickListener() {
 
                             public void onClick(DialogInterface dialog, int which) {
-                                // TODO Auto-generated method stub
                                 dialog.cancel();
                             }
                         })
@@ -521,28 +496,21 @@ public class RecordActivity extends AppCompatActivity {
                 return true;
             }
         } else if (new File(recordManager.getPath()).isFile()) {
-
             if (keyCode == event.KEYCODE_BACK && event.getRepeatCount() == 0) {
                 AlertDialog dialog;
-                dialog = new AlertDialog.Builder(this,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).setTitle("종료확인")
+                dialog = new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).setTitle("종료확인")
                         .setMessage(" 지금 종료하시면 녹음파일이 삭제됩니다. 종료하시겠습니까?")
                         .setPositiveButton("예", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                // TODO Auto-generated method stub
-
                                 recordManager.stop();
                                 File files = new File(recordManager.getPath());
-                                Log.i("RecordAcitivity", "Deleted 2222222222: " + recordManager.getPath());
                                 files.delete();
-
                                 finish();
                             }
                         })
                         .setNegativeButton("아니요", new DialogInterface.OnClickListener() {
 
                             public void onClick(DialogInterface dialog, int which) {
-                                // TODO Auto-generated method stub
-
                                 dialog.cancel();
                             }
                         })
@@ -550,7 +518,7 @@ public class RecordActivity extends AppCompatActivity {
                 return true;
             }
         }
-
         return super.onKeyDown(keyCode, event);
     }
 }
+    /****** 액티비티*****/

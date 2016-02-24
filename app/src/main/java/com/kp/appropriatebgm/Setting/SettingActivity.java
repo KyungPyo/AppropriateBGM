@@ -4,6 +4,7 @@ package com.kp.appropriatebgm.Setting;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import com.kp.appropriatebgm.R;
 
 
 /**
@@ -18,16 +19,10 @@ public class SettingActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // 아래 한줄과 동일한 소스코드 (축약형)
-        /*FragmentManager mFragmentManager = getFragmentManager();
-        FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
-        SettingFragment prefFragment = new SettingFragment();
-        mFragmentTransaction.replace(android.R.id.content, prefFragment);
-        mFragmentTransaction.commit();*/
+        setContentView(R.layout.activity_setting);
 
         // Use : FragmentManager의 트랜잭션을 SettingFragment(PreferenceFragment)로 대체한다.
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingFragment(getApplicationContext())).commit();
+        //getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingFragment(getApplicationContext())).commit();
         Log.e("setting","created");
     }
 }

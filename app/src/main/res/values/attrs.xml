@@ -2,6 +2,7 @@
 <resources>
     <declare-styleable name="lockscreen_SlideToUnlockView">
         <attr name="text" format="string"/>
+        <attr name="image" format="integer"/>
         <attr name="thumb" format="integer"/>
         <attr name="tracks" format="integer"/>
     </declare-styleable>

@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -57,7 +58,7 @@ public class UnlockScreenWidget extends RelativeLayout {
 
     private OnUnlockListener listener;
     private SeekBar seekbar;
-    private TextView label;
+    private ImageView unlockImage;
     private int thumbWidth;
 
     public void setOnUnlockListener(OnUnlockListener listener)
@@ -79,13 +80,13 @@ public class UnlockScreenWidget extends RelativeLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.widget_lockscreen_unlock, this, true);
 
-        label = (TextView) findViewById(R.id.widget_backlabel_text);
+        unlockImage = (ImageView) findViewById(R.id.widget_backimage_lock);
         seekbar = (SeekBar) findViewById(R.id.widget_slidebar_seekbar);
         background = findViewById(R.id.widget_background);
 
         //use : TypedArray로 attrs.xml의 정의된 내용에서 lcokscreen.xml(widget)에서 설정한 각각의 설정값들을 가져와서 사용한다. (String, Drawable)
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.lockscreen_SlideToUnlockView);
-        String text = attributes.getString(R.styleable.lockscreen_SlideToUnlockView_text);
+        Drawable backimage = attributes.getDrawable(R.styleable.lockscreen_SlideToUnlockView_image);
         Drawable thumb = attributes.getDrawable(R.styleable.lockscreen_SlideToUnlockView_thumb);
 
         //use : 이미지를 받아오지 못한 경우 이미지 설정
@@ -102,11 +103,11 @@ public class UnlockScreenWidget extends RelativeLayout {
             background.setBackground(track);
         }
 
-        if (text != null) {
-            label.setText(text);
+        if (backimage != null) {
+            unlockImage.setImageDrawable(backimage);
         }
 
-        label.setPadding(thumbWidth, 0, 0, 0);
+        unlockImage.setPadding(thumbWidth, 0, 0, 0);
 
         int defaultOffset = seekbar.getThumbOffset();
         seekbar.setThumb(thumb);
@@ -151,7 +152,6 @@ public class UnlockScreenWidget extends RelativeLayout {
             // use ; 프로그래스바가 변할 때 세팅을 해준다.
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
-                label.setAlpha(1f - progress * 0.02f);    // 뒤의 도움말 TextView의 투명도를 조절하는 역할 (setAlpha : 투명도 조절)
             }
 
             // Method : Seekbar 터치 정지
