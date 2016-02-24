@@ -20,7 +20,6 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
@@ -59,7 +58,7 @@ public class RecordActivity extends AppCompatActivity {
     private TextView recordMaxTimeText = null;
     private TextView recordPlayTimeText = null;
     private ImageView btnPlay = null;
-    private ImageButton btnRecord = null;
+    private ImageView btnRecord = null;
     private ImageView btnRecordUp = null;
     private ImageView btnSave = null;
     //다이얼로그
@@ -83,6 +82,7 @@ public class RecordActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {     // 작업스레드 사전 처리작업
             currentRecordTimeMs = 0;
+            btnRecord.setImageResource(R.drawable.ic_stop_record_button);   // 녹음 버튼 녹음정지로 이미지 변경
             btnPlay.setEnabled(false);  // 녹음중엔 재생버튼을 누를 수 없다.
             btnSave.setEnabled(false);  // 저장버튼도
             super.onPreExecute();
@@ -99,8 +99,9 @@ public class RecordActivity extends AppCompatActivity {
                  return true;
                  }*/
                 if (isCancelled()) {  // 작업이 취소되었으면
-                    if (recordManager.isRecording())
+                    if (recordManager.isRecording()) {
                         recordManager.stop();
+                    }
                     return null;
                 }
                 try {
@@ -122,9 +123,8 @@ public class RecordActivity extends AppCompatActivity {
                     playbackBar.cancel(true);
                 }
                 recordManager.stop(); //녹음 중지
-
-
             }
+            btnRecord.setImageResource(R.drawable.ic_record_button);    // 녹음정지 이미지 녹음시작으로 변경
             btnPlay.setEnabled(true);   // 재생버튼 클릭가능
             btnSave.setEnabled(true);   // 저장버튼 클릭가능
             btnRecord.setEnabled(true); // 다시 녹음하고 싶으면 녹음클릭시 재녹음 가능
@@ -172,13 +172,13 @@ public class RecordActivity extends AppCompatActivity {
         // 저장될 디렉토리명을 app_name으로 설정
         recordManager = new RecordManager(getString(R.string.app_name));
         btnRecordUp = (ImageView) findViewById(R.id.recardActivity_btn_startRecordImg); // 녹음상태 상단 이미지
-        recordProgressBar = (SeekBar) findViewById(R.id.recordActivity_seekbar_recordSeekBar);            // 재생 바
+        recordProgressBar = (SeekBar) findViewById(R.id.recordActivity_seekbar_recordSeekBar);          // 재생 바
         recordProgressBar.setThumb(null);
-        recordMaxTimeText = (TextView) findViewById(R.id.recordActivity_textview_maxtimeAtvrecord);   // 재생할 파일 최대길이
-        recordPlayTimeText = (TextView) findViewById(R.id.recordActivity_textview_playtimeAtvrecord); // 재생하는 파일 현재시간
-        btnPlay = (ImageView) findViewById(R.id.recordActivity_btn_playAtvrecord);                // 재생버튼
-        btnRecord = (ImageButton) findViewById(R.id.recordActivity_btn_startRecord);               // 녹음시작/중지 버튼
-        btnSave = (ImageView) findViewById(R.id.recordActivity_btn_saveAtvrecord);                // 저장버튼
+        recordMaxTimeText = (TextView) findViewById(R.id.recordActivity_textview_maxtimeAtvrecord);     // 재생할 파일 최대길이
+        recordPlayTimeText = (TextView) findViewById(R.id.recordActivity_textview_playtimeAtvrecord);   // 재생하는 파일 현재시간
+        btnPlay = (ImageView) findViewById(R.id.recordActivity_btn_playAtvrecord);                      // 재생버튼
+        btnRecord = (ImageView) findViewById(R.id.recordActivity_btn_startRecord);                      // 녹음시작/중지 버튼
+        btnSave = (ImageView) findViewById(R.id.recordActivity_btn_saveAtvrecord);                      // 저장버튼
         btnPlay.setEnabled(false);  // 녹음하기전엔(녹음된 파일이 없으면) 재생버튼을 누를 수 없다.
         btnSave.setEnabled(false);  // 저장버튼도
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//화면꺼짐방지
@@ -220,6 +220,7 @@ public class RecordActivity extends AppCompatActivity {
         playbackBar.setPlayAndPauseBtn(btnPlay);
         playbackBar.execute();
     }
+
     // Method : 녹음하기 클릭
     // Return Value : void
     // Parameter : View
@@ -246,8 +247,6 @@ public class RecordActivity extends AppCompatActivity {
                                             // TODO Auto-generated method stub
                                             playbackBar.cancel(true);
                                             frameAnimation.start();
-
-//                                            btnRecordUp.setImageResource(R.drawable.btn_stoprecord_selector1);
                                             recordTask = new RecordTask();
                                             Log.i("RecordActivity", "Accept : recordAgain");
                                             recordTask.execute();   // 녹음 시작
@@ -268,33 +267,21 @@ public class RecordActivity extends AppCompatActivity {
                         }
                         // 녹음된 파일이 없다면 녹음을 시작한다.
                         else {
-                            recordStart(v);
-//                            recordTask = new RecordTask();
-//                            recordTask.execute();  // 녹음 시작
-//                            frameAnimation.start();
-//                            v.setBackgroundResource(R.drawable.btn_stoprecord_selector);// 녹음버튼의 이미지를 녹음중으로 변경
-//                            btnRecordUp.setImageResource(R.drawable.btn_stoprecord_selector1);
+                            recordTask = new RecordTask();
+                            recordTask.execute();  // 녹음 시작
+                            frameAnimation.start();
                         }
                     }
                     // 녹음 중이라면 녹음을 중지한다.
                     else {
-
                         recordManager.stop();
                         recordTask.cancel(true);
                         frameAnimation.stop();
-                        v.setBackgroundResource(R.drawable.btn_startrecord_selector);// 녹음버튼의 이미지를 녹음 준비중으로 변경
                     }
                     break;
                 }
             }
         }
-    }
-
-    public void recordStart(View v){
-     recordTask = new RecordTask();
-        recordTask.execute();
-        frameAnimation.start();
-        v.setBackgroundResource(R.drawable.btn_stoprecord_selector);
     }
 
     // Method : 재생하기
