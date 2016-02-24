@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:background="@color/mainActionBar">
+
+        <TextView
+            android:id="@+id/setting_textview_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="환경 설정"/>
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/setting_textview_locktitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"
+                android:text="잠금화면 설정"/>
+
+            <TextSwitcher
+                android:id="@+id/setting_textswitcher_locksummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+            </TextSwitcher>
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/setting_switch_lockscreenOnOff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOn="On"
+            android:textOff="Off"
+            android:thumb="@drawable/on_off_switch_selector"
+            android:track="@drawable/on_off_switch_track"
+            android:gravity="right"
+            android:layout_gravity="right"
+            android:paddingRight="10dp"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>
