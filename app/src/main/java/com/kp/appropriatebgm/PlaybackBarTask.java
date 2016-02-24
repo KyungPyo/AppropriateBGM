@@ -208,12 +208,12 @@ public class PlaybackBarTask extends AsyncTask<Void, Integer, Void> {
         if (music.isPlaying()) {
             if (playAndPause != null) {
                 // 재생버튼을 일시정지 모양으로 변경
-                playAndPause.setImageResource(R.drawable.ic_pause_circle_outline_black_48dp);
+                playAndPause.setImageResource(R.drawable.ic_pause_white_48dp);
             }
         } else {
             if (playAndPause != null) {
                 // 일시정지 버튼 재생모양으로 변경
-                playAndPause.setImageResource(R.drawable.ic_play_circle_outline_black_48dp);
+                playAndPause.setImageResource(R.drawable.ic_play_white_48dp);
             }
         }
     }
