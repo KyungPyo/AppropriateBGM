@@ -110,7 +110,7 @@
             android:id="@+id/lockscreen_btn_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_play_circle_outline_black_48dp"
+            android:src="@drawable/ic_play_glass"
             android:onClick="onClickLockerPlayToolBtn"
             android:layout_weight="2"/>
 
@@ -118,7 +118,7 @@
             android:id="@+id/lockscreen_btn_pause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_pause_circle_outline_black_48dp"
+            android:src="@drawable/ic_pause_glass"
             android:onClick="onClickLockerPlayToolBtn"
             android:layout_weight="2"/>
 
@@ -126,7 +126,7 @@
             android:id="@+id/lockscreen_btn_stop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_stop_circle_outline_black_48dp"
+            android:src="@drawable/ic_stop_glass"
             android:onClick="onClickLockerPlayToolBtn"
             android:layout_weight="2"/>
 
