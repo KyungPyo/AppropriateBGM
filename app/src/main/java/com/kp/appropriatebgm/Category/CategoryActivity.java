@@ -232,8 +232,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
             alertDig.setItems(property_items, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    //Log.e("id --------", Long.toString(itemid));
-                    //Log.e("item --------", Integer.toString(which));
+
                     final DialogInterface item_Dialog = dialog;
                     LayoutInflater inflater = getLayoutInflater();
                     switch (which) {
@@ -329,7 +328,6 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
         }
         else if(position>=2 && ctgAdapter.getCheckBoxVisibility() == true)
         {
-            Log.e("listitem click ",position+"");
             ctgAdapter.setCheckBoxChecked(position);
             ctgAdapter.notifyDataSetChanged();
         }
@@ -398,8 +396,6 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
         int check_list[];
         for(int i=0 ; i < listview.getCount() ; i++)
         {
-            Log.e("checklistname", ctgcheckList.containsKey(ctgAdapter.getlistName(i)) + "");
-            Log.e("checklist",ctgcheckList.containsValue(i)+"");
             if(ctgcheckList.containsKey(ctgAdapter.getlistName(i)))
             {
                 check_arr.add(ctgAdapter.getlistId(i));

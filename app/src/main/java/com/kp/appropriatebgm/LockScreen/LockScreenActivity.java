@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -53,11 +52,9 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        Log.d("잘왔냐~", "Activity onCreate Ok");
         dbManager=DBManager.getInstance(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         setContentView(R.layout.activity_lockscreen);
-        Log.e("Locker", " : on");
 
         ImageView background_ImageView = (ImageView) findViewById(R.id.lockscreen_image_background);
         background_ImageView.setImageDrawable(WallpaperManager.getInstance(this).getDrawable());
@@ -149,12 +146,10 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
-                Log.e("Keycode", "Menu");
                 return true;
             }
 
             if (keyCode == KeyEvent.KEYCODE_BACK) {
-                Log.e("Keycode", "back");
                 return true;
             }
         }

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 /**
  * Created by GD on 2016-02-11.
@@ -34,7 +33,6 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         if (preferences.getBoolean("LockerOn", false)) {
             if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
-                Log.e("boot complete","start");
                 Intent i = new Intent(context, LockScreenService.class);
                 context.startService(i);
             } else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF) && !phoneState) {// 통화중이 아닐때

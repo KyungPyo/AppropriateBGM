@@ -20,7 +20,6 @@ import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import com.kp.appropriatebgm.CheckPref;
 import com.kp.appropriatebgm.R;
@@ -45,7 +44,6 @@ public class LockScreenService extends Service {
             SharedPreferences preferences = getApplicationContext().getSharedPreferences("AppSetting",
                     Context.MODE_PRIVATE);
 
-            Log.e("setting", "pendingintent");
             Intent noIntent = new Intent(getApplicationContext(), SettingActivity.class);
             noIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             notificationIntent = PendingIntent.getActivity(getApplicationContext(), 0, noIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -75,7 +73,6 @@ public class LockScreenService extends Service {
 
     };
     public IBinder onBind(Intent intent) {
-        Log.e("onbind","onbind gogo");
         return binder;
     }
 
@@ -87,7 +84,6 @@ public class LockScreenService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        Log.d("잘왔냐~ ", "LockScreenService onCreate Ok");
         lockReceive = new LockScreenReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_OFF);
@@ -112,11 +108,9 @@ public class LockScreenService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         notifyStartId = startId;
-        Log.d("잘왔냐~", "onStartCommand");
         if (intent != null) {
             if (intent.getAction() == null) {
                 if (lockReceive == null) {
-                    Log.d("잘왔냐~", "onStartCommand, lockReceiver is null");
                     lockReceive = new LockScreenReceiver();
                     IntentFilter filter = new IntentFilter();
                     filter.addAction(Intent.ACTION_BOOT_COMPLETED);
@@ -146,7 +140,6 @@ public class LockScreenService extends Service {
     public void onDestroy() {
 
         if (lockReceive != null) {
-            Log.d("잘왔냐~", "Receiver Free");
             unregisterReceiver(lockReceive);
         }
         super.onDestroy();
@@ -179,7 +172,6 @@ public class LockScreenService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.e("onunbind","unbind gogo");
         return super.onUnbind(intent);
     }
 }

@@ -8,7 +8,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
@@ -68,13 +67,10 @@ public class FavoriteActivity extends AppCompatActivity {
         //       mBoolean값을 false로 하여 공유변수에 값이 저장되지 않도록 하여 값 유지
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            Log.e("favorite", " listener gogo");
             if (isChecked) {
-                Log.e("favorite", " ischecked true");
                 Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
                 startService(intent);
             } else {
-                Log.e("favorite", " ischecked false");
                 Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
                 stopService(intent);
             }
@@ -83,7 +79,6 @@ public class FavoriteActivity extends AppCompatActivity {
             }
             setBinderNotificationOnOff();
 
-            Log.e("setlocker", mPref.getLockerOnOff() + "");
         }
     };
 
@@ -93,7 +88,6 @@ public class FavoriteActivity extends AppCompatActivity {
     // Use : mBoolean값을 false로 하여 setChecked시에 리스너의 공유변수 저장이 되지 않도록 하여 뒤엉킴을 방지함
     @Override
     protected void onRestart() {
-        Log.e("onrestart", "called");
         mBoolean = false;
         onOffSwitch.setChecked(mPref.getLockerOnOff());
         super.onRestart();
@@ -105,7 +99,6 @@ public class FavoriteActivity extends AppCompatActivity {
     // Use : mBoolean값을 true로 하여 리스너가 문제없이 돌아가도록 한다.
     @Override
     protected void onResume() {
-        Log.e("onresume", "called");
         mBoolean = true;
         super.onResume();
     }
@@ -161,13 +154,11 @@ public class FavoriteActivity extends AppCompatActivity {
     private ServiceConnection lockServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.e("service", "connected");
             binder = LockNotificationInterface.Stub.asInterface(service);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.e("service", "disconnected");
         }
     };
 
