@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,14 +26,12 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.kp.appropriatebgm.DBController.Category;
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.MusicPlayer;
 import com.kp.appropriatebgm.PlaybackBarTask;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
@@ -55,8 +52,8 @@ public class RecordActivity extends AppCompatActivity {
     private TextView recordMaxTimeText = null;
     private TextView recordPlayTimeText = null;
     private ImageView btnPlay = null;
-    private ImageView btnRecord = null;
     private ImageView btnRecordUpMic = null;
+    private ImageView btnRecord = null;
     private ImageView btnRecordUpProgress = null;
     private ImageView btnSave = null;
     //다이얼로그
@@ -71,9 +68,7 @@ public class RecordActivity extends AppCompatActivity {
     DBManager dbManager = DBManager.getInstance(this);//DB
     ArrayList<Category> categoryList;
     CategoryListAdapter categoryAdapter;
-    /******
-     * 작업스레드 AsyncTask 상속받아서 클래스 생성 - 녹음 스레드
-     *****/
+    /******* 작업스레드 AsyncTask 상속받아서 클래스 생성 - 녹음 스레드 *****/
     private class RecordTask extends AsyncTask<Void, Integer, Void> {
         @Override
         protected void onPreExecute() {     // 작업스레드 사전 처리작업
@@ -140,9 +135,7 @@ public class RecordActivity extends AppCompatActivity {
     }
     /***** 녹음 스레드  *****/
 
-    /********
-     * 액티비티
-     *****/
+    /********* 액티비티*****/
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,7 +159,6 @@ public class RecordActivity extends AppCompatActivity {
             recordTask.cancel(true);
         }
     }
-
     // Method : 초기설정
     // Return Value : void
     // Parameter : void
@@ -255,7 +247,6 @@ public class RecordActivity extends AppCompatActivity {
             }
         }
     }
-
     // Method : 녹음시작
     // Return Value : void
     // Parameter : View
@@ -269,7 +260,6 @@ public class RecordActivity extends AppCompatActivity {
         btnRecordUpProgress.startAnimation(animation);
         animation.setRepeatCount(Animation.INFINITE);
     }
-
     // Method : 녹음정지
     // Return Value : void
     // Parameter : View
@@ -280,7 +270,6 @@ public class RecordActivity extends AppCompatActivity {
         animation.cancel();
         btnRecordUpProgress.setBackgroundResource(R.drawable.record_progress_first);
     }
-
     // Method : 재생하기
     // Return Value : void
     // Parameter : View
@@ -306,20 +295,17 @@ public class RecordActivity extends AppCompatActivity {
             }
         }
     }
-
-
     // Method : 저장버튼 클릭시 Dlg 출력
     // Return Value : void
     // Parameter : View
     // Use : Record Activity에서 저장버튼 클릭 하면 다이얼로그가 출력된다
+    // 팝업윈도우 출력
+    // 가운데에서 위로 120만큼 올라와서 팝업윈도우 등장.
     public void onClick_save(View v) {
         if (v.getId() == R.id.recordActivity_btn_saveAtvrecord) {
-            // 팝업윈도우 출력
-            // 가운데에서 위로 120만큼 올라와서 팝업윈도우 등장.
             mPopupWindow.showAtLocation(mPopupLayout, Gravity.CENTER, 0, -120);
         }
     }
-
     // Method : 하단부의 재생가능시간
     // Return Value : void
     // Parameter : targetView - 해당뷰 , timeMs - 해당뷰의 재생시간
@@ -331,7 +317,6 @@ public class RecordActivity extends AppCompatActivity {
         min = timeMs / 60000;
         timeMs = timeMs % 60000;
         sec = timeMs / 1000;
-
         if (min < 10)
             timeText = "0";
         timeText = timeText + min + ":";
@@ -341,7 +326,6 @@ public class RecordActivity extends AppCompatActivity {
 
         targetView.setText(timeText);
     }
-
     // Method : RecordTempFile 삭제
     // Return Value : void
     // Parameter : Void
@@ -353,7 +337,6 @@ public class RecordActivity extends AppCompatActivity {
         }
 
     }
-
     // Method : 초기설정
     // Return Value : void
     // Parameter : void
@@ -379,7 +362,6 @@ public class RecordActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedCategory = categoryList.get(position);
-                Log.d("RecordAcitivity", "CategoryId : " + selectedCategory.getCateId() + "");
             }
 
             @Override
@@ -395,24 +377,19 @@ public class RecordActivity extends AppCompatActivity {
     // Use : 저장버튼을 눌렀을 때 출력되는 팝업윈도우 설정(버튼 이벤트리스너 포함)
     public void setPopupWindow() {
        initMemberPopupWindow();
-
         // Method : Edittext 엔터 및 특수문자 입력 안되기
         // Return Value : void
         // Parameter : void
         // Use :  한글 영어 숫자말고는 아에 입력이 안됨.
         TextWatcher watcher = new TextWatcher() {
             String text;
-
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 text = s.toString();
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
-
             @Override
             public void afterTextChanged(Editable s) {
                 int length = s.toString().length();
@@ -424,7 +401,6 @@ public class RecordActivity extends AppCompatActivity {
                     }
                 }
             }
-
         };
         filenameEt.addTextChangedListener(watcher);
 
@@ -496,7 +472,6 @@ public class RecordActivity extends AppCompatActivity {
                             }
                         })
                         .setNegativeButton("아니요", new DialogInterface.OnClickListener() {
-
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                             }
@@ -518,7 +493,6 @@ public class RecordActivity extends AppCompatActivity {
                             }
                         })
                         .setNegativeButton("아니요", new DialogInterface.OnClickListener() {
-
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                             }
