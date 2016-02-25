@@ -1,7 +1,11 @@
 package com.kp.appropriatebgm.favoritebgm;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,8 +18,10 @@ import android.widget.Switch;
 import com.kp.appropriatebgm.CheckPref;
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.DBController.Favorite;
+import com.kp.appropriatebgm.LockScreen.LockNotificationInterface;
 import com.kp.appropriatebgm.LockScreen.LockScreenService;
 import com.kp.appropriatebgm.R;
+import com.kp.appropriatebgm.Setting.SettingActivity;
 
 import java.util.ArrayList;
 
@@ -31,6 +37,8 @@ public class FavoriteActivity extends AppCompatActivity {
     ArrayList<Favorite> favoriteArrayList;
     DBManager dbManager=DBManager.getInstance(this);//DB
 
+    private LockNotificationInterface binder = null;
+
     private CheckPref mPref;
 
     @Override
@@ -42,6 +50,9 @@ public class FavoriteActivity extends AppCompatActivity {
         init();
         onOffSwitch.setChecked(mPref.getLockerOnOff());
         onOffSwitch.setOnCheckedChangeListener(checkedChangeListener);
+
+        Intent serviceintent = new Intent(FavoriteActivity.this, LockScreenService.class);
+        bindService(serviceintent, lockServiceConnection, BIND_AUTO_CREATE);
 
         setSupportActionBar(toolbar);           // Toolbar를 액션바로 사용한다
         getSupportActionBar().setTitle(null);   // 액션바에 타이틀 제거
@@ -70,6 +81,8 @@ public class FavoriteActivity extends AppCompatActivity {
             if(mBoolean) {
                 mPref.setLockerOnOff();
             }
+            setBinderNotificationOnOff();
+
             Log.e("setlocker", mPref.getLockerOnOff() + "");
         }
     };
@@ -141,6 +154,47 @@ public class FavoriteActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
         }else if(resultCode==RESULT_CANCELED){//result Canceled
             //Toast.makeText(getApplicationContext(), "즐겨찾기 추가를 취소하셨습니다. ", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //Use : 서비스 연결 객체 선언
+    private ServiceConnection lockServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.e("service", "connected");
+            binder = LockNotificationInterface.Stub.asInterface(service);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.e("service", "disconnected");
+        }
+    };
+
+    // Method : 바인드 서비스 종료
+    // Return value : void
+    // parameter : void
+    // use ; 액티비티가 종료될 시기에 onCreate에서 bindService의 서비스 연결을 해제(unbind)해준다.
+    @Override
+    protected void onDestroy() {
+        unbindService(lockServiceConnection);
+        super.onDestroy();
+    }
+
+
+    // Method : 알림 on/off 설정 (SettingActivity에도 동일한 메소드)
+    // Return value : void
+    // parameter : void
+    // use ; 서비스 액티비티에서 aidl을 통해 설정해 준 알림 띄우는 함수를 서비스를 연결한 뒤에 함수를 받아온다. (통신)
+    //       remoteException 예외 처리를 꼭 해주어야 함!
+    public void setBinderNotificationOnOff()
+    {
+        try{
+            binder.setNotificationOnOff();
+        }
+        catch (RemoteException e)
+        {
+            e.printStackTrace();
         }
     }
 }

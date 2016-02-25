@@ -370,11 +370,13 @@ public class MainActivity extends AppCompatActivity {
                 if (!isVisible) {
                     editTextSearch.setVisibility(View.VISIBLE);
                     imageTitle.setVisibility(View.INVISIBLE);
+                    searchButton.setImageResource(R.drawable.ic_search_cancel_white);
                     isVisible = true;
                 } else {
                     final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                     editTextSearch.setVisibility(View.INVISIBLE);
                     imageTitle.setVisibility(View.VISIBLE);
+                    searchButton.setImageResource(R.drawable.ic_search_white_24dp);
                     listItemCheckFree();
                     bgmListView.setAdapter(null);
                     bgmListView.setAdapter(bgmAdapter);

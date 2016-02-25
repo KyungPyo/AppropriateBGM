@@ -111,7 +111,7 @@ public class UnlockScreenWidget extends RelativeLayout {
         int defaultOffset = seekbar.getThumbOffset();
         seekbar.setThumb(thumb);
         seekbar.setThumbOffset(defaultOffset);
-        // use ; 초기 seekbar 위치 10으로 설정
+        // use ; 초기 seekbar 위치 0으로 설정
         seekbar.setProgress(10);
 
 
@@ -166,7 +166,6 @@ public class UnlockScreenWidget extends RelativeLayout {
                 {
                     if(listener != null) {
                         anim.setIntValues(90);
-                        seekBar.setProgress(90);
                         anim.start();
                         listener.onUnlock();
                     }
@@ -174,7 +173,6 @@ public class UnlockScreenWidget extends RelativeLayout {
                 else{
                     // use ; 원래 처음으로 돌아가는 애니메이션
                     anim.setIntValues(10);
-                    seekBar.setProgress(10);
                     anim.start();
                 }
             /*    else {

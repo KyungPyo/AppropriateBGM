@@ -150,7 +150,6 @@ public class RecordActivity extends AppCompatActivity {
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         initMemberRecordActvity();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//화면꺼짐방지
-
         setPopupWindow();
         TempDelete();
     }
@@ -186,7 +185,7 @@ public class RecordActivity extends AppCompatActivity {
         btnRecordUpMic = (ImageView) findViewById(R.id.recardActivity_imgView_RecordMic); // 녹음상태 상단 이미지
         //animation 기능 선언
         btnRecordUpProgress = (ImageView) findViewById(R.id.recardActivity_img_statsRecord); // 녹음상태 상단 이미지
-        btnRecordUpProgress.setBackgroundResource(R.drawable.rotate_view_progressimg);
+        btnRecordUpProgress.setBackgroundResource(R.drawable.record_progress_first);
         animation = AnimationUtils.loadAnimation(this,R.anim.rotate_record_activity_progressimg);
     }
     @Override
@@ -263,6 +262,7 @@ public class RecordActivity extends AppCompatActivity {
     // Use : 녹음 버튼 클릭을 했을때 녹음된 파일이 없을 때 녹음 시작
     public void startRecord(){
         recordTask = new RecordTask();
+        btnRecordUpProgress.setBackgroundResource(R.drawable.rotate_view_progressimg);
         recordTask.execute();  // 녹음 시작
         animation.setFillAfter(false);
         animation.setRepeatMode(Animation.RESTART);
@@ -278,6 +278,7 @@ public class RecordActivity extends AppCompatActivity {
         recordManager.stop();
         recordTask.cancel(true);
         animation.cancel();
+        btnRecordUpProgress.setBackgroundResource(R.drawable.record_progress_first);
     }
 
     // Method : 재생하기
