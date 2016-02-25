@@ -119,7 +119,6 @@ public class SettingActivity extends AppCompatActivity{
                     Intent intent = new Intent(SettingActivity.this, LockScreenService.class);
                     stopService(intent);
                     setSummaryText("lockscreen", lockChecked);
-                    if(notifyOnOffSwitch.isChecked());
                 }
                 mPref.setLockerOnOff();
                 setBinderNotificationOnOff();
