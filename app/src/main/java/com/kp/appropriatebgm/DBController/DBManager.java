@@ -539,7 +539,6 @@ public class DBManager extends SQLiteOpenHelper {
         query.append(")");
 
         try {
-            Log.d("!!!!!", query.toString());
             mDataBase.execSQL(query.toString());
         } catch (SQLiteException e){
             Log.e("updateBgmCategory", e.toString());

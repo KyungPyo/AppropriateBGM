@@ -13,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -119,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        Log.d("onCreate", "Created!!");
 
         initMember();                   // 멤버변수 초기화
         initMenuLayoutSize();           // 메뉴 레이아웃 크기설정
@@ -442,7 +440,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case R.id.main_menubtn_to_setting:{
-                Log.e("setting", "환경설정 버튼 click");
                 intent.setClass(getApplicationContext(), SettingActivity.class);
                 startActivity(intent);
                 setOriginalCondition();
