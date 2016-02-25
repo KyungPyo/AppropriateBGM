@@ -35,7 +35,6 @@ public class LogoActivity extends AppCompatActivity {
         // 최초 실행이면 초기설정을 한다고 메세지를 띄운다.
         if(mPref.getFirstExcute()){
             message.setText("앱 초기 설정중입니다.");
-            Log.i("First Excute!!", "okok");
             mPref.setFirstExcute();
 
             // RecordManager 객체의 초기설정을 이용하여 기본 디렉토리가 존재하지 않으면 생성한다.
