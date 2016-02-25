@@ -1,5 +1,6 @@
 package com.kp.appropriatebgm;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,7 +11,7 @@ import android.widget.ImageView;
 public class TutorialActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private ImageAdapter adapter;
-    private ImageView startButton;
+    private FloatingActionButton startButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +19,7 @@ public class TutorialActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tutorial);
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
-        startButton=(ImageView) findViewById(R.id.tutorial_startApp);
+        startButton = (FloatingActionButton) findViewById(R.id.tutorial_button_skip);
         adapter = new ImageAdapter(this);
         viewPager.setAdapter(adapter);
 
