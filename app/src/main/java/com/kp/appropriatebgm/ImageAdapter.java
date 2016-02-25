@@ -17,10 +17,11 @@ public class ImageAdapter extends PagerAdapter {
             R.drawable.tutorial_main1,
             R.drawable.tutorial_main2,
             R.drawable.tutorial_record,
+            R.drawable.tutorial_category,
             R.drawable.tutorial_favorite_1,
             R.drawable.tutorial_favorite_2,
             R.drawable.tutorial_locker,
-            R.drawable.tutorial_category
+
     };
     ImageAdapter(Context context){
         this.context=context;
