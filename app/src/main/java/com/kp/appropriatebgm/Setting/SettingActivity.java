@@ -10,6 +10,8 @@ import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -17,6 +19,7 @@ import com.kp.appropriatebgm.CheckPref;
 import com.kp.appropriatebgm.LockScreen.LockNotificationInterface;
 import com.kp.appropriatebgm.LockScreen.LockScreenService;
 import com.kp.appropriatebgm.R;
+import com.kp.appropriatebgm.TutorialActivity;
 
 
 /**
@@ -25,11 +28,14 @@ import com.kp.appropriatebgm.R;
 public class SettingActivity extends AppCompatActivity{
 
     private CheckPref mPref;
+    private LockNotificationInterface binder = null;
+
     TextView lockSummary;
     TextView notifySummary;
     Switch lockOnOffSwitch;
     Switch notifyOnOffSwitch;
-    private LockNotificationInterface binder = null;
+    LinearLayout tutorialViewGroup;
+
 
     //Use : 서비스 연결 객체 선언
     private ServiceConnection lockServiceConnection = new ServiceConnection() {
@@ -73,7 +79,7 @@ public class SettingActivity extends AppCompatActivity{
 
 
     //Use : 스위치 클릭 리스너 설정
-    Switch.OnClickListener onClickListener = new Switch.OnClickListener()
+    View.OnClickListener onClickListener = new View.OnClickListener()
     {
         // Method : 클릭 이벤트
         // Return value : void
@@ -82,16 +88,17 @@ public class SettingActivity extends AppCompatActivity{
         //       알림 스위치 on/off에 따라 bindservice의 setBinderNotificationOnOff로 알림 띄울지 검사
         @Override
         public void onClick(View v) {
-            Switch settingSwitch = (Switch) v;
+            Intent intent = new Intent();
+            Switch settingSwitch;
             if(v.getId() == R.id.setting_switch_lockscreenOnOff) {
+                settingSwitch = (Switch) v;
                 Boolean lockChecked = settingSwitch.isChecked();
-
                 if (lockChecked) {
-                    Intent intent = new Intent(SettingActivity.this, LockScreenService.class);
+                    intent.setClass(getApplicationContext(), LockScreenService.class);
                     startService(intent);
                     setSummaryText("lockscreen", lockChecked);
                 } else {
-                    Intent intent = new Intent(SettingActivity.this, LockScreenService.class);
+                    intent.setClass(getApplicationContext(), LockScreenService.class);
                     stopService(intent);
                     setSummaryText("lockscreen", lockChecked);
                 }
@@ -100,10 +107,16 @@ public class SettingActivity extends AppCompatActivity{
             }
             else if(v.getId() == R.id.setting_switch_notificationOnOff)
             {
+                settingSwitch = (Switch) v;
                 Boolean notifyChecked = settingSwitch.isChecked();
                 mPref.setAlarmOnOff(notifyChecked);
                 setBinderNotificationOnOff();
                 setSummaryText("notification", notifyChecked);
+            }
+            else if(v.getId() == R.id.setting_viewgroup_tutorial)
+            {
+                intent.setClass(getApplicationContext(), TutorialActivity.class);
+                startActivity(intent);
             }
         }
     };
@@ -167,11 +180,15 @@ public class SettingActivity extends AppCompatActivity{
 
         lockSummary = (TextView) findViewById(R.id.setting_textview_locksummary);
         notifySummary = (TextView) findViewById(R.id.setting_textview_notificationsummary);
+
         lockOnOffSwitch = (Switch) findViewById(R.id.setting_switch_lockscreenOnOff);
         notifyOnOffSwitch = (Switch) findViewById(R.id.setting_switch_notificationOnOff);
 
+        tutorialViewGroup = (LinearLayout) findViewById(R.id.setting_viewgroup_tutorial);
+
         lockOnOffSwitch.setOnClickListener(onClickListener);
         notifyOnOffSwitch.setOnClickListener(onClickListener);
+        tutorialViewGroup.setOnClickListener(onClickListener);
 
         Intent serviceintent = new Intent(SettingActivity.this, LockScreenService.class);
         bindService(serviceintent, lockServiceConnection, BIND_AUTO_CREATE);

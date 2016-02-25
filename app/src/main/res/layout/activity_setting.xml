@@ -22,7 +22,7 @@
     <LinearLayout
         android:id="@+id/setting_viewgroup_lockscreen"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="75dp"
         android:orientation="horizontal"
         android:background="@android:color/white"
         android:padding="8dp"
@@ -32,25 +32,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_gravity="center"
             android:layout_weight="1">
 
             <TextView
                 android:id="@+id/setting_textview_locktitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:textSize="22dp"
-                android:textColor="@android:color/holo_red_dark"
+                style="@style/settingTitle"
                 android:text="잠금화면 설정"/>
 
             <TextView
                 android:id="@+id/setting_textview_locksummary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
-                android:paddingLeft="20dp"
-                android:textSize="16dp"
-                android:textColor="@android:color/darker_gray"
+                style="@style/settingSummary"
                 />
         </LinearLayout>
 
@@ -68,10 +64,15 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
     <LinearLayout
         android:id="@+id/setting_viewgroup_notification"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="75dp"
         android:orientation="horizontal"
         android:padding="8dp"
         android:background="@android:color/white"
@@ -81,25 +82,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_gravity="center"
             android:layout_weight="1">
 
             <TextView
                 android:id="@+id/setting_textview_notificationtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:textSize="22dp"
-                android:textColor="@android:color/holo_red_dark"
+                style="@style/settingTitle"
                 android:text="알림 설정"/>
 
             <TextView
                 android:id="@+id/setting_textview_notificationsummary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
-                android:paddingLeft="20dp"
-                android:textSize="16dp"
-                android:textColor="@android:color/darker_gray"
+                style="@style/settingSummary"
                 />
         </LinearLayout>
 
@@ -116,5 +113,38 @@
             />
 
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <LinearLayout
+        android:id="@+id/setting_viewgroup_tutorial"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:background="@android:color/white"
+        >
+
+        <TextView
+            android:id="@+id/setting_textview_tutorialtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/settingTitle"
+            android:text="튜토리얼 보기"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            />
+                />
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
 
 </LinearLayout>
