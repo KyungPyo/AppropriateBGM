@@ -218,10 +218,10 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         }
     }
 
-    // Method :
+    // Method : 잠금화면 재생관리툴 버튼 이벤트
     // Return value : void
     // paremeter : v(클릭한 뷰)
-    // Use :
+    // Use : 재생버튼, 일시정지버튼, 정지버튼 각각 해당되는 이벤트를 처리한다.
     public void onClickLockerPlayToolBtn(View v){
         if (musicPlayer != null) {  // 재생할 수 있는 파일이 등록된 경우에만
             switch (v.getId()) {

@@ -15,6 +15,7 @@
         android:progressDrawable="@drawable/locker_unlockbar"
         android:thumb="@drawable/ic_lock_selector"
         android:layout_marginTop="2dp"
+        android:layout_marginLeft="10dp"
         />
 
     <ImageView
@@ -23,7 +24,7 @@
         android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingRight="30dp"
+        android:paddingRight="60dp"
         android:src="@drawable/ic_unlock_white"
         />
 </merge>

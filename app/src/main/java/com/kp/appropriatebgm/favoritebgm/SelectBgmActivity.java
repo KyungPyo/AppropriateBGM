@@ -184,10 +184,12 @@ public class SelectBgmActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!isVisible) {
                     editSearch.setVisibility(View.VISIBLE);
+                    searchButton.setImageResource(R.drawable.ic_search_cancel_white);
                     isVisible = true;
                 } else {
                     final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                     editSearch.setVisibility(View.INVISIBLE);
+                    searchButton.setImageResource(R.drawable.ic_search_white_24dp);
                     isVisible = false;
                     editSearch.setText("");
 
