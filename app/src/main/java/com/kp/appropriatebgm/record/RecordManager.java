@@ -2,7 +2,6 @@ package com.kp.appropriatebgm.record;
 
 import android.media.MediaRecorder;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,20 +37,17 @@ public class RecordManager {
     // Use :   외장메모리 기본경로/어플명 에 녹음한 파일을 저장한다.
     private void init() {
         path = Environment.getExternalStorageDirectory() + File.separator + dirName;
-        Log.i("dir_path", path);
         File file = new File(path);
         filename = "record_temp.mp3";   // 임시 파일명
         // Use :  디렉토리가 존재하지 않으면 생성
         if ( !file.exists() ) {
             file.mkdirs();
-            Log.i("make dir", "excuted : " + file.exists());
         }
     }
 
     //Use : 녹음 시작
     public void start() {
 
-        Log.i("Rec", "prepare to recording(RecordManager)");
         // 처음 녹음을 시작하면 MediaRecorder 객체 생성
         if (mr == null)
             mr = new MediaRecorder();
@@ -64,7 +60,6 @@ public class RecordManager {
 
         try {
             isRecording = true;  // 녹음시작
-            Log.i("Rec", "start to recording(RecordManager)");
             mr.prepare();
             mr.start();
         } catch (IOException e) {
@@ -75,15 +70,12 @@ public class RecordManager {
 
     //Use:  녹음 중지
     public void stop() {
-        Log.i("Rec", "stop recording(RecordManager)");
         isRecording = false;
         if (mr == null) return;
         try {
-            Log.i("Rec", "stop method(RecordManager)");
             mr.stop();
         } catch (Exception e) {
         } finally {
-            Log.i("Rec", "release method(RecordManager)");
             mr.release();
             mr = null;
         }
