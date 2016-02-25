@@ -45,6 +45,7 @@ public class LockScreenService extends Service {
             SharedPreferences preferences = getApplicationContext().getSharedPreferences("AppSetting",
                     Context.MODE_PRIVATE);
 
+            Log.e("setting","pendingintent");
             Intent noIntent = new Intent(getApplicationContext(), SettingActivity.class);
             noIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             notificationIntent = PendingIntent.getActivity(getApplicationContext(), 0, noIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -117,11 +118,12 @@ public class LockScreenService extends Service {
                     filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
                     filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
                     registerReceiver(lockReceive, filter);
+
+                    // Use : 알림 기능의 클릭 이벤트에는 PendingIntent 사용하여 SettingActivity로 인텐트 넘김
+                    //       NO_HISTORY 플래그를 설정하고 Manifest에 기능 추가하여 알림 눌렀을 때 액티비티 새로 뜨는 것 방지
                 }
             }
         }
-        // Use : 알림 기능의 클릭 이벤트에는 PendingIntent 사용하여 SettingActivity로 인텐트 넘김
-        //       NO_HISTORY 플래그를 설정하고 Manifest에 기능 추가하여 알림 눌렀을 때 액티비티 새로 뜨는 것 방지
 
 
         /* 알림 내용 구현 부분 */
