@@ -67,11 +67,6 @@ public class MainActivity extends AppCompatActivity {
     private RelativeLayout mainLayout;
     private LinearLayout menuLayout;
 
-    private View btnMoveToRecord;
-    private View btnMoveToFavorite;
-    private View btnMoveToCategory;
-    private View btnMoveToSetting;
-
     private ListView bgmListView;
     private CategoryListAdapterForMain categoryAdapter;
     private DBManager dbManager;
@@ -93,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView btnPlayMusic;
     private ImageView btnStopMusic;
     private ImageView btnPauseMusic;
+    private ImageView btnLoopMusic;
     private TextView txtPlayTime;
     private TextView txtMaxTime;
 
@@ -172,11 +168,6 @@ public class MainActivity extends AppCompatActivity {
         mainLayout = (RelativeLayout) findViewById(R.id.main_layout_main);
         menuLayout = (LinearLayout) findViewById(R.id.main_layout_menu);
 
-        btnMoveToRecord = findViewById(R.id.main_menubtn_to_record);
-        btnMoveToFavorite = findViewById(R.id.main_menubtn_to_favorite);
-        btnMoveToCategory = findViewById(R.id.main_menubtn_to_category);
-        btnMoveToSetting = findViewById(R.id.main_menubtn_to_setting);
-
         bgmListView = (ListView) findViewById(R.id.main_list_soundlist);
         categorySpinner = (Spinner) findViewById(R.id.main_spinner_category);
 
@@ -195,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
         btnPlayMusic = (ImageView)findViewById(R.id.main_btn_play);
         btnStopMusic = (ImageView)findViewById(R.id.main_btn_stop);
         btnPauseMusic = (ImageView)findViewById(R.id.main_btn_pause);
+        btnLoopMusic = (ImageView)findViewById(R.id.main_btn_loop);
         txtMaxTime = (TextView)findViewById(R.id.main_text_maxtime);
         txtPlayTime = (TextView)findViewById(R.id.main_text_playtime);
 
@@ -211,6 +203,12 @@ public class MainActivity extends AppCompatActivity {
         favoriteList=dbManager.getFavoriteList();
         checkPref=new CheckPref(this);
 
+        // 반복재생 on/off에 따라 아이콘 변경
+        if (checkPref.getLoopPlay()) {
+            btnLoopMusic.setImageResource(R.drawable.ic_loop_white_48dp);
+        } else {
+            btnLoopMusic.setImageResource(R.drawable.ic_loop_off);
+        }
         // 이전에 마지막으로 재생했던 정보가 있다면 파일 재생준비
         if (checkPref.getLastPlayedBgm() != null) {
             if(checkPref.getLastPlayedBgmIsInnerfile())
@@ -722,9 +720,16 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
                 case R.id.main_btn_loop:{
-                    checkPref.setLoopPlay();
-                    if (musicPlayer != null)
+                    if (musicPlayer != null) {
+                        checkPref.setLoopPlay();
                         musicPlayer.setLooping(checkPref.getLoopPlay());
+
+                        if (checkPref.getLoopPlay()) {
+                            btnLoopMusic.setImageResource(R.drawable.ic_loop_white_48dp);
+                        } else {
+                            btnLoopMusic.setImageResource(R.drawable.ic_loop_off);
+                        }
+                    }
                     break;
                 }
             }
