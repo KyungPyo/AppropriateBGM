@@ -51,6 +51,7 @@ public class RecordActivity extends AppCompatActivity {
     private SeekBar recordProgressBar = null;
     private TextView recordMaxTimeText = null;
     private TextView recordPlayTimeText = null;
+    private TextView recordReadyText =null;
     private ImageView btnPlay = null;
     private ImageView btnRecordUpMic = null;
     private ImageView btnRecord = null;
@@ -169,6 +170,7 @@ public class RecordActivity extends AppCompatActivity {
         recordProgressBar.setThumb(null);
         recordMaxTimeText = (TextView) findViewById(R.id.recordActivity_textview_maxtimeAtvrecord);     // 재생할 파일 최대길이
         recordPlayTimeText = (TextView) findViewById(R.id.recordActivity_textview_playtimeAtvrecord);   // 재생하는 파일 현재시간
+        recordReadyText = (TextView)findViewById(R.id.recordActivity_recordReady_text);
         btnPlay = (ImageView) findViewById(R.id.recordActivity_btn_playAtvrecord);                      // 재생버튼
         btnRecord = (ImageView) findViewById(R.id.recordActivity_btn_startRecord);                      // 녹음시작/중지 버튼
         btnSave = (ImageView) findViewById(R.id.recordActivity_btn_saveAtvrecord);                      // 저장버튼
@@ -254,6 +256,7 @@ public class RecordActivity extends AppCompatActivity {
     public void startRecord(){
         recordTask = new RecordTask();
         btnRecordUpProgress.setBackgroundResource(R.drawable.rotate_view_progressimg);
+        recordReadyText.setText(R.string.recordactivity_record_stop);
         recordTask.execute();  // 녹음 시작
         animation.setFillAfter(false);
         animation.setRepeatMode(Animation.RESTART);
@@ -269,6 +272,7 @@ public class RecordActivity extends AppCompatActivity {
         recordTask.cancel(true);
         animation.cancel();
         btnRecordUpProgress.setBackgroundResource(R.drawable.record_progress_first);
+        recordReadyText.setText(R.string.recordactivity_record_ready);
     }
     // Method : 재생하기
     // Return Value : void
