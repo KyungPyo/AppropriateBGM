@@ -133,6 +133,14 @@ public class MainActivity extends AppCompatActivity {
         initListener();                 // 리스너 정의
         settingDeleteDialog();          // 삭제 시 뜨는 다이얼로그 초기 구성
         settingUpdateCategoryDialog();  // 카테고리 변경 시 뜨는 다이얼로그 초기 구성
+
+        // 첫 실행 이라면 튜토리얼 액티비티로 넘겨줌
+        if(checkPref.getFirstTutorial()){
+            checkPref.setFirstTutorial(false);
+            Intent intent=new Intent();
+            intent.setClass(getApplicationContext(),TutorialActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override

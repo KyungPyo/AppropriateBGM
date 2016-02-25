@@ -153,4 +153,22 @@ public class CheckPref {
     public boolean  getAlarmOnOff(){
         return settingPref.getBoolean("alarmOnOff", false);
     }
+
+    // Method : 알람의 on off 여부를 저장한다.
+    // Return Value : void
+    // Parameter : boolean (on이면 true, off 이면 false)
+    // Use : 알람의 on off를 저장하여 락스크린 서비스에서 사용
+    public void setFirstTutorial(boolean isOn){
+        SharedPreferences.Editor prefEditor = settingPref.edit();
+        prefEditor.putBoolean("firstTutorial",isOn);
+        prefEditor.apply();
+    }
+
+    // Method : 알람이 on인지 off인지 가져온다.
+    // Return Value : boolean (on이면 true, off 이면 false)
+    // Parameter : void
+    // Use : 알람의 on off 여부를 받아 notification 보여줄지 말지 결정함.
+    public boolean  getFirstTutorial(){
+        return settingPref.getBoolean("firstTutorial", true);
+    }
 }
