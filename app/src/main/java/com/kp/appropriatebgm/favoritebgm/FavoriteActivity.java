@@ -157,6 +157,7 @@ public class FavoriteActivity extends AppCompatActivity {
         }
     }
 
+    //Use : 서비스 연결 객체 선언
     private ServiceConnection lockServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -170,12 +171,22 @@ public class FavoriteActivity extends AppCompatActivity {
         }
     };
 
+    // Method : 바인드 서비스 종료
+    // Return value : void
+    // parameter : void
+    // use ; 액티비티가 종료될 시기에 onCreate에서 bindService의 서비스 연결을 해제(unbind)해준다.
     @Override
     protected void onDestroy() {
         unbindService(lockServiceConnection);
         super.onDestroy();
     }
 
+
+    // Method : 알림 on/off 설정 (SettingActivity에도 동일한 메소드)
+    // Return value : void
+    // parameter : void
+    // use ; 서비스 액티비티에서 aidl을 통해 설정해 준 알림 띄우는 함수를 서비스를 연결한 뒤에 함수를 받아온다. (통신)
+    //       remoteException 예외 처리를 꼭 해주어야 함!
     public void setBinderNotificationOnOff()
     {
         try{
