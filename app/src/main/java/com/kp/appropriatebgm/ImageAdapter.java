@@ -14,9 +14,13 @@ public class ImageAdapter extends PagerAdapter {
     Context context;
     // 스와이프 할 이미지 추가. ID 입력
     private int[] GalImages = new int[] {
-            R.drawable.ic_delete_black_18dp,
-            R.drawable.ic_delete_wine_18dp,
-            R.drawable.ic_delete_white_24dp
+            R.drawable.tutorial_main1,
+            R.drawable.tutorial_main2,
+            R.drawable.tutorial_record,
+            R.drawable.tutorial_favorite_1,
+            R.drawable.tutorial_favorite_2,
+            R.drawable.tutorial_locker,
+            R.drawable.tutorial_category
     };
     ImageAdapter(Context context){
         this.context=context;
