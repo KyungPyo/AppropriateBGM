@@ -293,6 +293,13 @@
                 android:divider="@color/listViewDivider"
                 android:dividerHeight="1dp"></ListView>
 
+            <ImageView
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:src="@drawable/background_note"
+                android:layout_above="@id/main_group_playtool"
+                android:layout_alignParentRight="true"/>
+
         </RelativeLayout>
         <!-- 메인화면 -->
 
