@@ -34,6 +34,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         if (preferences.getBoolean("LockerOn", false)) {
             if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+                Log.e("boot complete","start");
                 Intent i = new Intent(context, LockScreenService.class);
                 context.startService(i);
             } else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF) && !phoneState) {// 통화중이 아닐때

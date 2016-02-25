@@ -45,7 +45,7 @@ public class LockScreenService extends Service {
             SharedPreferences preferences = getApplicationContext().getSharedPreferences("AppSetting",
                     Context.MODE_PRIVATE);
 
-            Log.e("setting","pendingintent");
+            Log.e("setting", "pendingintent");
             Intent noIntent = new Intent(getApplicationContext(), SettingActivity.class);
             noIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             notificationIntent = PendingIntent.getActivity(getApplicationContext(), 0, noIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -95,7 +95,13 @@ public class LockScreenService extends Service {
         filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
         filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
         registerReceiver(lockReceive, filter);
-
+        try{
+            binder.setNotificationOnOff();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     // Method : 서비스 시작 초기화
