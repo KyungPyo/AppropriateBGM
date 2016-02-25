@@ -53,7 +53,7 @@ public class LockScreenService extends Service {
             notification = new NotificationCompat.Builder(getApplicationContext())
                     .setContentTitle("적절한브금")
                     .setContentText("빠른 재생이 실행중입니다.")
-                    .setSmallIcon(R.drawable.ic_queue_music_black_24dp)
+                    .setSmallIcon(R.mipmap.ic_launcher)
                     .setAutoCancel(true)
                     .setContentIntent(notificationIntent)
                     .build();
