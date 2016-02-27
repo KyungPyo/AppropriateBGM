@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class DBManager extends SQLiteOpenHelper {
 
     static final String DB_NAME = "AppropriateBGM_DB";
-    static final int DB_VERSION = 2;
+    static final int DB_VERSION = 3;
 
     Context mContext = null;
     private static DBManager mDBManager = null;
@@ -54,7 +54,6 @@ public class DBManager extends SQLiteOpenHelper {
     // DB 최초 생성 이벤트
     @Override
     public void onCreate(SQLiteDatabase db) {
-        mDataBase = db;
         String[] SQLquery = null;
         // raw 에 있는 테이블 생성 SQL문이 저장되어있는 Text파일 불러오기(sqlite_create.txt)
         InputStream inputStream = mContext.getResources().openRawResource(R.raw.sqlite_create);
@@ -129,6 +128,7 @@ public class DBManager extends SQLiteOpenHelper {
     // Use : 기본적으로 사용할 수 있는 카테고리 세가지 추가 및 내장 BGM에 카테고리 업데이트
     //       InnerBgmRegister 클래스에 해당되는 정보가 전부 저장되어 있다.
     private void insertBasicCategory(SQLiteDatabase db){
+        mDataBase = db;
         String[] basicCategories = {"웃긴", "슬픈", "공포", "기쁜"};
         InnerBgmRegister innerBgmRegister = new InnerBgmRegister();
 
@@ -514,9 +514,18 @@ public class DBManager extends SQLiteOpenHelper {
     // Use : CategoryActivity에서 변경할 카테고리의 ID와 카테고리명을 받아서 DB에 갱신한다.
     public void updateCategory(int categoryId, String categoryName){
         String query;
-        query = "UPDATE Category SET category_name = '"+categoryName+"' WHERE category_id = "+categoryId;
+        Cursor cursor;
+
         try {
-            mDataBase.execSQL(query);
+            query = "SELECT COUNT(*) FROM Category WHERE category_name='"+categoryName+"'";
+            cursor = mDataBase.rawQuery(query, null);
+            cursor.moveToNext();
+            if (cursor.getInt(0) == 0) {    // 중복되는 카테고리명이 없는 경우에만 변경
+                query = "UPDATE Category SET category_name = '" + categoryName + "' WHERE category_id = " + categoryId;
+                mDataBase.execSQL(query);
+            } else {
+                Log.i("insertCategory", "카테고리명 중복");
+            }
         } catch (SQLiteException e){
             Log.e("updateCategory", e.toString());
         }
