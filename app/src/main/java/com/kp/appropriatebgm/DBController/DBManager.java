@@ -621,7 +621,8 @@ public class DBManager extends SQLiteOpenHelper {
         for(int i=0; i<bgmPath.length; i++){
             try {
                 file = new File(bgmPath[i]);
-                file.delete();
+                if (file.isFile())
+                    file.delete();
             } catch (Exception e){
                 Log.e("deleteBGMFile 파일삭제", e.toString());
             }
