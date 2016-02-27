@@ -129,7 +129,7 @@ public class DBManager extends SQLiteOpenHelper {
     // Use : 기본적으로 사용할 수 있는 카테고리 세가지 추가 및 내장 BGM에 카테고리 업데이트
     //       InnerBgmRegister 클래스에 해당되는 정보가 전부 저장되어 있다.
     private void insertBasicCategory(SQLiteDatabase db){
-        String[] basicCategories = {"웃긴", "슬픈", "공포"};
+        String[] basicCategories = {"웃긴", "슬픈", "공포", "기쁜"};
         InnerBgmRegister innerBgmRegister = new InnerBgmRegister();
 
         for (int i=0; i<basicCategories.length; i++) {
