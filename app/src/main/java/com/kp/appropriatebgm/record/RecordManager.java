@@ -17,7 +17,7 @@ public class RecordManager {
     private boolean isRecording = false;
 
     public RecordManager(){
-        dirName = "AppropriteBGM";
+        dirName = "브금술사";
         init();
     }
 

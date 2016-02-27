@@ -42,7 +42,7 @@ public class InnerBgmRegister {
         innerBgmList.add(new InnerBgmInfo("공포브금", R.raw.horror, 5));
         innerBgmList.add(new InnerBgmInfo("나는 행복합니다", R.raw.im_happy, 6));
         innerBgmList.add(new InnerBgmInfo("절규", R.raw.scream, 4));
-        innerBgmList.add(new InnerBgmInfo("샷건", R.raw.shotgun, 2));
+        innerBgmList.add(new InnerBgmInfo("총소리", R.raw.shotgun, 2));
         innerBgmList.add(new InnerBgmInfo("기상나팔", R.raw.soldier_alarm, 2));
         innerBgmList.add(new InnerBgmInfo("뚜-뚜루-뚜", R.raw.ssum, 2));
         innerBgmList.add(new InnerBgmInfo("짜잔", R.raw.tada, 2));
