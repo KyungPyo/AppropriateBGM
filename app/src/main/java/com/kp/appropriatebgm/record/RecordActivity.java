@@ -43,7 +43,7 @@ public class RecordActivity extends AppCompatActivity {
     // 재생 관련
     private MusicPlayer musicPlayer;
     private final int PROGRESS_INTERVAL = 50;     // 재생 progress바 갱신주기
-    private int maxTime = 0;    // 현재 녹음된 파일 재생길이
+    private final int RECORD_MAXTIME = 5*60*1000 + 100;    // 녹음 최대길이
     // 화면 출력 관련
     private PlaybackBarTask playbackBar;
     private Animation animation;
@@ -77,12 +77,18 @@ public class RecordActivity extends AppCompatActivity {
             btnRecord.setImageResource(R.drawable.ic_stop_record_button);   // 녹음 버튼 녹음정지로 이미지 변경
             btnPlay.setEnabled(false);  // 녹음중엔 재생버튼을 누를 수 없다.
             btnSave.setEnabled(false);  // 저장버튼도
+            recordProgressBar.setMax(RECORD_MAXTIME);   // 재생바 최대 녹음가능 길이 설정
+            setTimeText(recordMaxTimeText, RECORD_MAXTIME);
             super.onPreExecute();
         }
         @Override
         protected Void doInBackground(Void... params) {      // 실제 작업스레드 동작
             recordManager.start(); //레코드매니저 실행
             while (true) {
+                if (!recordManager.isRecording() || currentRecordTimeMs > RECORD_MAXTIME ) {  // 녹음 제한시간
+                    recordManager.stop();
+                    return null;
+                }
                 if (isCancelled()) {  // 작업이 취소되었으면
                     if (recordManager.isRecording()) {
                         recordManager.stop();
@@ -113,20 +119,24 @@ public class RecordActivity extends AppCompatActivity {
             btnSave.setEnabled(true);   // 저장버튼 클릭가능
             btnRecord.setEnabled(true); // 다시 녹음하고 싶으면 녹음클릭시 재녹음 가능
             prepareRecordFileToPlay();  // 녹음한 파일을 Temp로 만들어 재생할 준비.
+
             super.onCancelled();
         }
         @Override
         protected void onProgressUpdate(Integer... values) {
             int currentTime = values[0];
             // Seekbar 설정
-            recordProgressBar.setMax(currentTime);
             recordProgressBar.setProgress(currentTime);
-            setTimeText(recordMaxTimeText, currentTime);
             setTimeText(recordPlayTimeText, currentTime);
             super.onProgressUpdate(values);
         }
         @Override
         protected void onPostExecute(Void aVoid) {
+            animation.cancel();     // 녹음중을 표현하는 애니메이션 정지
+            btnRecordUpProgress.setBackgroundResource(R.drawable.record_progress_first);
+            recordReadyText.setText(R.string.recordactivity_record_ready);
+            btnRecord.setImageResource(R.drawable.ic_record_button);
+
             btnPlay.setEnabled(true);   // 재생버튼 클릭가능
             prepareRecordFileToPlay();
             super.onPostExecute(aVoid);
@@ -182,12 +192,14 @@ public class RecordActivity extends AppCompatActivity {
         btnRecordUpProgress.setBackgroundResource(R.drawable.record_progress_first);
         animation = AnimationUtils.loadAnimation(this,R.anim.rotate_record_activity_progressimg);
     }
+
     @Override
     protected void onStop() {
         super.onStop();
         if (playbackBar != null)
             playbackBar.cancel(true);
     }
+
     // Method : 녹음이후 Temp폴더에서 임시저장된 음원을가지고와서 재생을 준비
     // Return Value : void
     // Parameter : void
@@ -199,6 +211,7 @@ public class RecordActivity extends AppCompatActivity {
         playbackBar.setPlayAndPauseBtn(btnPlay);
         playbackBar.execute();
     }
+
     // Method : 녹음하기 클릭
     // Return Value : void
     // Parameter : View
@@ -249,9 +262,10 @@ public class RecordActivity extends AppCompatActivity {
             }
         }
     }
+
     // Method : 녹음시작
     // Return Value : void
-    // Parameter : View
+    // Parameter : void
     // Use : 녹음 버튼 클릭을 했을때 녹음된 파일이 없을 때 녹음 시작
     public void startRecord(){
         recordTask = new RecordTask();
@@ -263,9 +277,10 @@ public class RecordActivity extends AppCompatActivity {
         btnRecordUpProgress.startAnimation(animation);
         animation.setRepeatCount(Animation.INFINITE);
     }
+
     // Method : 녹음정지
     // Return Value : void
-    // Parameter : View
+    // Parameter : void
     // Use : 녹음 중일때 녹음 정지
     public void stopRecord(){
         recordManager.stop();
@@ -274,6 +289,7 @@ public class RecordActivity extends AppCompatActivity {
         btnRecordUpProgress.setBackgroundResource(R.drawable.record_progress_first);
         recordReadyText.setText(R.string.recordactivity_record_ready);
     }
+
     // Method : 재생하기
     // Return Value : void
     // Parameter : View

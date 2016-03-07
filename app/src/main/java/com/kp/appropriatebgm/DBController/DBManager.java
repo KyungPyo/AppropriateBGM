@@ -6,12 +6,14 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.util.Log;
 
 import com.kp.appropriatebgm.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -21,7 +23,8 @@ import java.util.ArrayList;
 public class DBManager extends SQLiteOpenHelper {
 
     static final String DB_NAME = "AppropriateBGM_DB";
-    static final int DB_VERSION = 3;
+    static final int DB_VERSION = 4;
+    final String recordtempFilePath = Environment.getExternalStorageDirectory() + File.separator + R.string.app_name + File.separator + "record_temp.mp3";
 
     Context mContext = null;
     private static DBManager mDBManager = null;
@@ -54,57 +57,110 @@ public class DBManager extends SQLiteOpenHelper {
     // DB 최초 생성 이벤트
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String[] SQLquery = null;
+        mDataBase = db;
+
+        SQLiteCreateQuery();
+        SQLiteInsertQuery();
+
+        // 내장 BGM 파일, 기본 카테고리 DB 등록
+        insertInnerBGM();
+        insertBasicCategory();
+
+        // 임시 녹음파일은 추가되지 않도록 미리 추가 (없으면)
+        insertBanList(recordtempFilePath);
+
+        Log.i("DB Created", "init success");
+    }
+
+    // Method : DB Table 생성
+    // Return Value : void
+    // Parameter : void
+    // Use : raw에 저장되어있는 파일(sqlite_create.txt)을 읽어서 테이블 생성 쿼리문을 실행한다.
+    public void SQLiteCreateQuery(){
+        String[] SQLqueryCreate = null;
+        ByteArrayOutputStream osCreate = new ByteArrayOutputStream();
+
         // raw 에 있는 테이블 생성 SQL문이 저장되어있는 Text파일 불러오기(sqlite_create.txt)
         InputStream inputStream = mContext.getResources().openRawResource(R.raw.sqlite_create);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
+        // 파일 내용을 읽어서 byte스트림에 저장
         int i;
         try {
-            // 파일 내용을 읽어서 byte스트림에 저장
             i = inputStream.read();
             while (i != -1) {
-                byteArrayOutputStream.write(i);
+                osCreate.write(i);
                 i = inputStream.read();
             }
+            inputStream.close();
 
             // 파일을 읽어서 String형으로 저장한 후 ; 를 기준으로 문장을 나눠 저장한다.
-            String temp = new String(byteArrayOutputStream.toByteArray(), "UTF-8");
-            SQLquery = temp.split(";");
-            inputStream.close();
-        } catch (Exception e) {
+            String temp = new String(osCreate.toByteArray(), "UTF-8");
+            SQLqueryCreate = temp.split(";");
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         // 파일 내용이 있으면 쿼리문 실행
-        if (SQLquery != null) {
-            // 초기 설정파일 sqlite_create.txt 파일 읽어온 내용을 실행
-            for( int n=0; n<SQLquery.length-1; n++) // split 후 맨 뒤에 아무내용없는 값 제외 -1
-                db.execSQL(SQLquery[n]);
+        if (SQLqueryCreate != null) {
+            // 초기 설정파일 sqlite_create.txt, sqlite_insert.txt 파일 읽어온 내용을 실행
+            for (int n = 0; n < SQLqueryCreate.length; n++) // split 개수만큼 반복
+                mDataBase.execSQL(SQLqueryCreate[n]);
+        }
+    }
 
-            // 내장 BGM 파일, 기본 카테고리 DB 등록
-            insertInnerBGM(db);
-            insertBasicCategory(db);
+    // Method : DB에 최초 값 입력
+    // Return Value : void
+    // Parameter : void
+    // Use : raw에 저장되어있는 파일(sqlite_insert.txt)을 읽어서 최초에 입력되어야 하는 값들을 입력해 놓는다.
+    //       기본 카테고리 및 즐겨찾기 최대 개수만큼 null값으로 추가
+    public void SQLiteInsertQuery(){
+        String[] SQLqueryInsert = null;
+        ByteArrayOutputStream osInsert = new ByteArrayOutputStream();
 
-            Log.i("query!!", "init success");
+        // Insert 문이 저장되어있는 Text파일 불러오기(sqlite_insert.txt)
+        InputStream inputStream = mContext.getResources().openRawResource(R.raw.sqlite_insert);
 
-        } else {
-            // 파일 내용이 없으면 종료
-            Log.e("query!!", "SQLquery is null");
-            android.os.Process.killProcess(android.os.Process.myPid());
+        int i;
+        try {
+            i = inputStream.read();
+            while (i != -1) {
+                osInsert.write(i);
+                i = inputStream.read();
+            }
+            inputStream.close();
+
+            // 파일을 읽어서 String형으로 저장한 후 ; 를 기준으로 문장을 나눠 저장한다.
+            String temp = new String(osInsert.toByteArray(), "UTF-8");
+            SQLqueryInsert = temp.split(";");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 파일 내용이 있으면 쿼리문 실행
+        if (SQLqueryInsert != null) {
+            // 초기 설정파일 sqlite_create.txt, sqlite_insert.txt 파일 읽어온 내용을 실행
+            for (int n = 0; n < SQLqueryInsert.length; n++) // split 개수만큼 반복
+                mDataBase.execSQL(SQLqueryInsert[n]);
         }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        insertInnerBGM(db);
+        mDataBase = db;
+        SQLiteCreateQuery();    // 테이블 생성 안된것이 있으면 생성
+        insertInnerBGM();
+        // 임시 녹음파일은 추가되지 않도록 미리 추가 (없으면)
+        insertBanList(recordtempFilePath);
+        if (oldVersion < 3) {
+            insertBasicCategory();
+        }
     }
 
     // Method : 내장 음악파일추가
     // Return Value : void
     // Parameter : SQLiteDatabase(앱에서 사용하는 DB)
     // Use : 내장음악파일의 정보를 처음 실행할 때 DB에 입력하는 역할
-    private void insertInnerBGM(SQLiteDatabase db){
+    private void insertInnerBGM(){
         InnerBgmRegister innerBgmRegister = new InnerBgmRegister();
         StringBuffer query = new StringBuffer();
 
@@ -113,10 +169,10 @@ public class DBManager extends SQLiteOpenHelper {
                 query.append("INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('");
                 query.append(innerBgmRegister.getInnerBgmName(i));
                 query.append("', '#', #)");
-                db.execSQL(query.toString().replace("#", innerBgmRegister.getInnerBgmCode(i)));
+                mDataBase.execSQL(query.toString().replace("#", innerBgmRegister.getInnerBgmCode(i)));
                 query.delete(0, query.length());
             } catch (SQLiteConstraintException e) {
-                Log.i("SQLite Error", "내장BGM 이미 DB에 존재함 : " + e.toString());
+                // 이미 DB에 같은 값이 존재하는경우
                 query.delete(0, query.length());
             }
         }
@@ -125,11 +181,10 @@ public class DBManager extends SQLiteOpenHelper {
     // Method : 기본 카테고리 추가
     // Return Value : void
     // Parameter : SQLiteDatabase(앱에서 사용하는 DB)
-    // Use : 기본적으로 사용할 수 있는 카테고리 세가지 추가 및 내장 BGM에 카테고리 업데이트
+    // Use : 기본적으로 사용할 수 있는 카테고리 몇가지 추가 및 내장 BGM에 카테고리 업데이트
     //       InnerBgmRegister 클래스에 해당되는 정보가 전부 저장되어 있다.
-    private void insertBasicCategory(SQLiteDatabase db){
-        mDataBase = db;
-        String[] basicCategories = {"웃긴", "슬픈", "공포", "기쁜"};
+    private void insertBasicCategory(){
+        String[] basicCategories = {"웃긴", "슬픈", "공포", "기쁜", "웅장"};
         InnerBgmRegister innerBgmRegister = new InnerBgmRegister();
 
         for (int i=0; i<basicCategories.length; i++) {
@@ -207,6 +262,7 @@ public class DBManager extends SQLiteOpenHelper {
                 query.append(")");
 
                 mDataBase.execSQL(query.toString());
+                mDataBase.execSQL("VACUUM");
             }
         } catch (SQLiteException e){
             Log.e("checkBGMFileExist", e.toString());
@@ -222,18 +278,20 @@ public class DBManager extends SQLiteOpenHelper {
         int fileCount = fileList.size();
         StringBuffer query;
         String[] bannedExtend = {"3gp", "avi", "mp4", "mpg", "mpeg", "mpe", "wmv", "asf", "asx", "flv", "mov"};
-        boolean isVideoFile, isTempFile;
+        boolean isVideoFile;
 
         for (int i = 0; i < fileCount; i++) {
             isVideoFile = false;
-            isTempFile = false;
             String filepath = fileList.get(i)[0];
             String filename = fileList.get(i)[1];
             String[] splitFileName = filename.split("\\.");
             String fileExtend = splitFileName[splitFileName.length-1];     // 파일 확장자
+            Log.d(filename, filepath);
 
-            if (filename.equals("record_temp.mp3")){
-                isTempFile = true;
+            if(filename.equals("record_temp.mp3")){ // 임시 녹음파일이면 다음파일로
+                continue;
+            }else if(isBannedFile(filepath)){      // 등록금지된 파일이면 다음파일로
+                continue;
             } else {
                 for (int j = 0; j < bannedExtend.length; j++) {
                     // 금지된 동영상 확장자들과 현재 파일의 확장자를 소문자로 변환한것을 비교하여 해당되는지 확인
@@ -244,7 +302,7 @@ public class DBManager extends SQLiteOpenHelper {
                 }
             }
 
-            if (isVideoFile || isTempFile) {  // 파일이 동영상이거나 임시 녹음파일이면 다음파일로
+            if (isVideoFile) {  // 파일이 동영상이면 다음파일로
                 continue;
             } else {            // 동영상파일이 아니면 DB에 추가
                 // 파일명에서 확장자 빼고 저장. 파일명 문자열의 처음부터(0) ~ 파일명 문자열 길이 - [파일확장자 길이+1(.때문에 1더)]
@@ -440,6 +498,31 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
+    // Method : 리스트에 출력 금지된 파일인지 확인
+    // Return Value : boolean(DB등록 금지된 파일이면 true, 아니면 false)
+    // Parameter : path(DB에서 내장파일 여부 확인하려는 음악의 path[PrimaryKey])
+    // Use : 메인화면의 리스트에서 파일삭제를 할 경우에 등록금지 리스트에 추가되는데
+    //       현재 확인하려는 파일이 등록금지 리스트에 추가되었는지 확인
+    public boolean isBannedFile(String path){
+        String query;
+        Cursor cursor;
+
+        query = "SELECT COUNT(*) FROM BanList WHERE bgm_path = '"+path+"'";
+        try {
+            cursor = mDataBase.rawQuery(query, null);
+
+            cursor.moveToNext();
+            if (cursor.getInt(0) == 0) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (SQLiteException e){
+            // 오류가 난 경우는 일단 금지되지 않았다고 반환한다.
+            Log.e("isBannedFile", e.toString());
+            return false;
+        }
+    }
     /*****  DB 결과 요청(select)  *****/
 
 
@@ -559,6 +642,25 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
+    // Method : DB 등록되지 않게 BanList에 추가
+    // Return Value : void
+    // Parameter : banPath(등록금지시킬 파일의 경로)
+    // Use : BGMList 테이블에 등록되지 않도록 BanList에 추가한다. 여기에 추가되어 있으면 파일 검색 시 DB에 추가하지 않는다.
+    public void insertBanList(String banPath){
+        String query;
+        Cursor cursor;
+        try {
+            query = "SELECT COUNT(*) FROM BanList WHERE bgm_path='"+banPath+"'";
+            cursor = mDataBase.rawQuery(query, null);
+            cursor.moveToNext();
+            if (cursor.getInt(0) == 0) {    // 중복되는 레코드가 없는 경우에만 추가
+                query = "INSERT INTO BanList(bgm_path) VALUES ('" + banPath + "')";
+                mDataBase.execSQL(query);
+            }
+        } catch (SQLiteException e){
+            Log.e("insertCategory", e.toString());
+        }
+    }
     /*****  DB 등록 요청(insert/update)  *****/
 
 
@@ -589,15 +691,18 @@ public class DBManager extends SQLiteOpenHelper {
         try {
             mDataBase.execSQL(updateQuery.toString());
             mDataBase.execSQL(deleteQuery.toString());
+            mDataBase.execSQL("VACUUM");
         } catch (SQLiteException e) {
             Log.e("deleteCategory", e.toString());
         }
     }
 
-    // Method : BGM파일 및 DB 삭제
+    // Method : BGMList에서 레코드 삭제 후 BanList 등록
     // Return Value : void
     // Parameter : bgmPath(삭제할 음악파일 경로. 여러개 가능)
     // Use : MainActivity에서 삭제할 음악파일을 여러개 선택해서 삭제할 때 사용한다. 한개도 삭제 가능하다.
+    //       파일삭제를 실행하면 실제 파일은 삭제되지 않고 선택된 파일들이 등록금지 리스트에 추가되어
+    //       다시 리스트에 나타나지 않는다.
     public void deleteBGMFile(String[] bgmPath){
         // DB 레코드 삭제
         StringBuffer query = new StringBuffer();
@@ -612,8 +717,38 @@ public class DBManager extends SQLiteOpenHelper {
 
         try {
             mDataBase.execSQL(query.toString());
+            mDataBase.execSQL("VACUUM");
         } catch (SQLiteException e) {
             Log.e("deleteBGMFile 레코드삭제", e.toString());
+        }
+
+        // BanList에 레코드 추가
+        for (int j = 0; j < bgmPath.length; j++) {
+            insertBanList(bgmPath[j]);
+        }
+    }
+
+    // Method : BGM파일 및 DB 삭제(파일 진짜 삭제)
+    // Return Value : void
+    // Parameter : bgmPath(삭제할 음악파일 경로. 여러개 가능)
+    // Use : MainActivity에서 삭제할 음악파일을 여러개 선택해서 삭제할 때 사용한다. 한개도 삭제 가능하다.
+    public void removeBGMFile_Old(String[] bgmPath){
+        // DB 레코드 삭제
+        StringBuffer query = new StringBuffer();
+
+        query.append("DELETE FROM BGMList WHERE bgm_path in(");
+        for(int i=0; i<bgmPath.length; i++){
+            query.append("'"+bgmPath[i]+"'");
+            if(i+1 < bgmPath.length)
+                query.append(",");
+        }
+        query.append(")");
+
+        try {
+            mDataBase.execSQL(query.toString());
+            mDataBase.execSQL("VACUUM");
+        } catch (SQLiteException e) {
+            Log.e("removeBGMFile_Old 레코드삭제", e.toString());
         }
 
         // 파일 삭제
@@ -628,6 +763,7 @@ public class DBManager extends SQLiteOpenHelper {
             }
         }
     }
+
     /*****  DB 레코드 삭제(delete)  *****/
     // Method : 파일 삭제 시 삭제된 파일 Favorite update
     // Return Value : void
@@ -652,4 +788,9 @@ public class DBManager extends SQLiteOpenHelper {
             Log.e("파일 삭제 시 Favorite update", e.toString());
         }
     }
+
+    /*****  DB 레코드 삭제(delete)  *****/
+
+    /*****  DB 초기화 (truncate)  *****/
+    /*****  DB 초기화 (truncate)  *****/
 }

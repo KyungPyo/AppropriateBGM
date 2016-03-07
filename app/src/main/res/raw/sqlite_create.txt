@@ -14,17 +14,6 @@ CREATE TABLE IF NOT EXISTS Favorite (
   bgm_path VARCHAR(255) NULL,
   CONSTRAINT fk_Favorite_BGMList1 FOREIGN KEY (bgm_path) REFERENCES BGMList (bgm_path));
 
-INSERT INTO Category VALUES (1, '[전체]');
-INSERT INTO Category VALUES (2, '[분류안됨]');
-INSERT INTO Favorite VALUES (0, null);
-INSERT INTO Favorite VALUES (1, null);
-INSERT INTO Favorite VALUES (2, null);
-INSERT INTO Favorite VALUES (3, null);
-INSERT INTO Favorite VALUES (4, null);
-INSERT INTO Favorite VALUES (5, null);
-INSERT INTO Favorite VALUES (6, null);
-INSERT INTO Favorite VALUES (7, null);
-INSERT INTO Favorite VALUES (8, null);
-INSERT INTO Favorite VALUES (9, null);
-INSERT INTO Favorite VALUES (10, null);
-INSERT INTO Favorite VALUES (11, null);
+CREATE TABLE IF NOT EXISTS BanList (
+  ban_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  bgm_path VARCHAR(255) NOT NULL);

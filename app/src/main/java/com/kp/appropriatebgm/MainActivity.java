@@ -619,7 +619,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder deleteDialogBuilder = new AlertDialog.Builder(MainActivity.this,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         deleteDialogBuilder.setTitle("파일 삭제");
         deleteDialogBuilder.setView(delete_dialog_view);
-        deleteDialogBuilder.setMessage("선택하신 파일은 영구 삭제됩니다. 계속 진행하시겠습니까?");
+        deleteDialogBuilder.setMessage("리스트에서만 제외되고 파일은 삭제되지 않습니다. 계속 진행하시겠습니까?");
 
         Button file_delete_btn = (Button) delete_dialog_view.findViewById(R.id.category_btn_delete);
         Button file_deleteCancel_btn = (Button) delete_dialog_view.findViewById(R.id.category_btn_deletecancel);
