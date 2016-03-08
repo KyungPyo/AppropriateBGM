@@ -151,29 +151,35 @@ public class DBManager extends SQLiteOpenHelper {
         insertInnerBGM();
         // 임시 녹음파일은 추가되지 않도록 미리 추가 (없으면)
         insertBanList(recordtempFilePath);
-        if (oldVersion < 3) {
-            insertBasicCategory();
-        }
     }
 
     // Method : 내장 음악파일추가
     // Return Value : void
     // Parameter : SQLiteDatabase(앱에서 사용하는 DB)
-    // Use : 내장음악파일의 정보를 처음 실행할 때 DB에 입력하는 역할
+    // Use : 내장음악파일의 정보를 처음 실행할 때 DB에 입력하는 역할(이미 들어있는 내장파일 지웠다 다시입력)
     private void insertInnerBGM(){
         InnerBgmRegister innerBgmRegister = new InnerBgmRegister();
         StringBuffer query = new StringBuffer();
 
         for (int i=0; i<innerBgmRegister.getListSize(); i++) {
             try {
+                query.append("DELETE FROM BGMList WHERE bgm_name = '");
+                query.append(innerBgmRegister.getInnerBgmName(i));
+                query.append("'");
+                mDataBase.execSQL(query.toString());
+                mDataBase.execSQL("VACUUM");
+                query.delete(0, query.length());
+
                 query.append("INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('");
                 query.append(innerBgmRegister.getInnerBgmName(i));
-                query.append("', '#', #)");
+                query.append("', '#', 1)");
                 mDataBase.execSQL(query.toString().replace("#", innerBgmRegister.getInnerBgmCode(i)));
                 query.delete(0, query.length());
             } catch (SQLiteConstraintException e) {
                 // 이미 DB에 같은 값이 존재하는경우
                 query.delete(0, query.length());
+            } catch (SQLiteException e) {
+                e.printStackTrace();
             }
         }
     }

@@ -27,10 +27,10 @@ public class InnerBgmRegister {
     }
 
     private void initBgmList(){
-        // category = (2:분류안됨, 3:웃긴, 4:슬픈, 5:공포, 6:기쁜)
+        // category = (2:분류안됨, 3:웃긴, 4:슬픈, 5:공포, 6:기쁜, 7:웅장)
         innerBgmList.add(new InnerBgmInfo("인간극장", R.raw.human_cinema, 4));
         innerBgmList.add(new InnerBgmInfo("함정카드", R.raw.trapcard, 3));
-        innerBgmList.add(new InnerBgmInfo("사나이 눈물", R.raw.boycry, 2));
+        innerBgmList.add(new InnerBgmInfo("사나이 눈물", R.raw.boycry, 7));
         innerBgmList.add(new InnerBgmInfo("숨겨왔던 나의", R.raw.hidden_my_heart, 2));
         innerBgmList.add(new InnerBgmInfo("美味", R.raw.mimi, 6));
         innerBgmList.add(new InnerBgmInfo("야외취침확정", R.raw.misson_failed, 4));
