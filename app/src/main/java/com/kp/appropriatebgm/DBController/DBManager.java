@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class DBManager extends SQLiteOpenHelper {
 
     static final String DB_NAME = "AppropriateBGM_DB";
-    static final int DB_VERSION = 5;
+    static final int DB_VERSION = 4;
     final String recordtempFilePath = Environment.getExternalStorageDirectory() + File.separator + R.string.app_name + File.separator + "record_temp.mp3";
 
     Context mContext = null;
@@ -149,6 +149,8 @@ public class DBManager extends SQLiteOpenHelper {
         mDataBase = db;
         SQLiteCreateQuery();    // 테이블 생성 안된것이 있으면 생성
         insertInnerBGM();
+        if(oldVersion < 4)
+            insertBasicCategory();
         // 임시 녹음파일은 추가되지 않도록 미리 추가 (없으면)
         insertBanList(recordtempFilePath);
     }
@@ -177,7 +179,7 @@ public class DBManager extends SQLiteOpenHelper {
             try {
                 query.append("INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('");
                 query.append(innerBgmRegister.getInnerBgmName(i));
-                query.append("', '#', 1)");
+                query.append("', '#', '#')");
                 mDataBase.execSQL(query.toString().replace("#", innerBgmRegister.getInnerBgmCode(i)));
                 query.delete(0, query.length());
             } catch (SQLiteConstraintException e) {

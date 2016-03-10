@@ -48,6 +48,14 @@ public class InnerBgmRegister {
         innerBgmList.add(new InnerBgmInfo("짜잔", R.raw.tada, 2));
         innerBgmList.add(new InnerBgmInfo("축하합니다", R.raw.congretulation, 6));
         innerBgmList.add(new InnerBgmInfo("카페B.N.", R.raw.cafebn, 2));
+        innerBgmList.add(new InnerBgmInfo("명탐정코난", R.raw.conan, 2));
+        innerBgmList.add(new InnerBgmInfo("굿모닝", R.raw.goodmorning, 5));
+        innerBgmList.add(new InnerBgmInfo("한번만 안아보자", R.raw.hug, 2));
+        innerBgmList.add(new InnerBgmInfo("질풍가도", R.raw.jilpoong, 7));
+        innerBgmList.add(new InnerBgmInfo("하지말아야 했는데", R.raw.regret, 4));
+        innerBgmList.add(new InnerBgmInfo("삼대장", R.raw.samdaejang, 7));
+        innerBgmList.add(new InnerBgmInfo("초고속카메라", R.raw.slow_motion, 2));
+        innerBgmList.add(new InnerBgmInfo("여기까지가 끝인가보오", R.raw.this_is_end, 4));
     }
 
     public int getListSize(){
