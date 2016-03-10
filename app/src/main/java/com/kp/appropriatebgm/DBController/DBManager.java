@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class DBManager extends SQLiteOpenHelper {
 
     static final String DB_NAME = "AppropriateBGM_DB";
-    static final int DB_VERSION = 4;
+    static final int DB_VERSION = 5;
     final String recordtempFilePath = Environment.getExternalStorageDirectory() + File.separator + R.string.app_name + File.separator + "record_temp.mp3";
 
     Context mContext = null;
@@ -169,7 +169,12 @@ public class DBManager extends SQLiteOpenHelper {
                 mDataBase.execSQL(query.toString());
                 mDataBase.execSQL("VACUUM");
                 query.delete(0, query.length());
+            } catch (SQLiteException e) {
+                Log.i("InnerFileDB_delete", "내장파일이 아직 추가되지 않았음");
+                query.delete(0, query.length());
+            }
 
+            try {
                 query.append("INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('");
                 query.append(innerBgmRegister.getInnerBgmName(i));
                 query.append("', '#', 1)");
@@ -178,8 +183,6 @@ public class DBManager extends SQLiteOpenHelper {
             } catch (SQLiteConstraintException e) {
                 // 이미 DB에 같은 값이 존재하는경우
                 query.delete(0, query.length());
-            } catch (SQLiteException e) {
-                e.printStackTrace();
             }
         }
     }
