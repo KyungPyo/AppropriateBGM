@@ -147,10 +147,11 @@ public class DBManager extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         mDataBase = db;
+        dropTableDB();           // 테이블 삭제
         SQLiteCreateQuery();    // 테이블 생성 안된것이 있으면 생성
+        SQLiteInsertQuery();
         insertInnerBGM();
-        if(oldVersion < 4)
-            insertBasicCategory();
+        insertBasicCategory();
         // 임시 녹음파일은 추가되지 않도록 미리 추가 (없으면)
         insertBanList(recordtempFilePath);
     }
@@ -165,18 +166,6 @@ public class DBManager extends SQLiteOpenHelper {
 
         for (int i=0; i<innerBgmRegister.getListSize(); i++) {
             try {
-                query.append("DELETE FROM BGMList WHERE bgm_name = '");
-                query.append(innerBgmRegister.getInnerBgmName(i));
-                query.append("'");
-                mDataBase.execSQL(query.toString());
-                mDataBase.execSQL("VACUUM");
-                query.delete(0, query.length());
-            } catch (SQLiteException e) {
-                Log.i("InnerFileDB_delete", "내장파일이 아직 추가되지 않았음");
-                query.delete(0, query.length());
-            }
-
-            try {
                 query.append("INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('");
                 query.append(innerBgmRegister.getInnerBgmName(i));
                 query.append("', '#', '#')");
@@ -184,8 +173,51 @@ public class DBManager extends SQLiteOpenHelper {
                 query.delete(0, query.length());
             } catch (SQLiteConstraintException e) {
                 // 이미 DB에 같은 값이 존재하는경우
+                Log.i("InnerFileDB_insert", "내장파일이 이미 추가되었음");
                 query.delete(0, query.length());
             }
+        }
+    }
+
+    private void deleteInnerBGM(){
+        Cursor cursor;
+        String query;
+        StringBuffer deleteQuery = new StringBuffer();
+        ArrayList<String> deleteList = new ArrayList<>();
+
+        query = "SELECT bgm_path FROM BGMList";
+
+        try {
+            cursor = mDataBase.rawQuery(query, null);
+
+            while(cursor.moveToNext()){
+                if(isNumber(cursor.getString(0))){
+                    deleteList.add(cursor.getString(0));
+                }
+            }
+
+            deleteQuery.append("DELETE FROM BGMList WHERE bgm_path in (");
+            for (int i=0; i<deleteList.size(); i++) {
+                Log.d("delete!!", deleteList.get(i));
+                deleteQuery.append("'"+deleteList.get(i)+"'");
+                if(i<deleteList.size()-1)
+                    deleteQuery.append(",");
+            }
+            deleteQuery.append(")");
+            mDataBase.execSQL(query.toString());
+            mDataBase.execSQL("VACUUM");
+
+        } catch (SQLiteException e){
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isNumber(String str){
+        try{
+            Double.parseDouble(str) ;
+            return true ;
+        }catch(NumberFormatException e){
+            return false;
         }
     }
 
@@ -803,5 +835,34 @@ public class DBManager extends SQLiteOpenHelper {
     /*****  DB 레코드 삭제(delete)  *****/
 
     /*****  DB 초기화 (truncate)  *****/
+    public void dropTableDB(){
+        String query;
+
+        try {
+            query = "DROP TABLE BanList";
+            mDataBase.execSQL(query);
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        }
+        try {
+            query = "DROP TABLE Favorite";
+            mDataBase.execSQL(query);
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        }
+        try {
+            query = "DROP TABLE BGMList";
+            mDataBase.execSQL(query);
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        }
+        try {
+            query = "DROP TABLE Category";
+            mDataBase.execSQL(query);
+            mDataBase.execSQL("VACUUM");
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        }
+    }
     /*****  DB 초기화 (truncate)  *****/
 }
