@@ -147,9 +147,11 @@ public class DBManager extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         mDataBase = db;
-        dropTableDB();           // 테이블 삭제
-        SQLiteCreateQuery();    // 테이블 생성 안된것이 있으면 생성
-        SQLiteInsertQuery();
+        if (oldVersion  < 4) {
+            dropTableDB();           // 테이블 삭제
+            SQLiteCreateQuery();    // 테이블 생성 안된것이 있으면 생성
+            SQLiteInsertQuery();
+        }
         insertInnerBGM();
         insertBasicCategory();
         // 임시 녹음파일은 추가되지 않도록 미리 추가 (없으면)
@@ -161,6 +163,7 @@ public class DBManager extends SQLiteOpenHelper {
     // Parameter : SQLiteDatabase(앱에서 사용하는 DB)
     // Use : 내장음악파일의 정보를 처음 실행할 때 DB에 입력하는 역할(이미 들어있는 내장파일 지웠다 다시입력)
     private void insertInnerBGM(){
+        Log.i("asdf", "insert");
         InnerBgmRegister innerBgmRegister = new InnerBgmRegister();
         StringBuffer query = new StringBuffer();
 

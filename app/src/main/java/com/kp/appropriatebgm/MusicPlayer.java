@@ -101,13 +101,15 @@ public class MusicPlayer {
     // Parameter : void
     // Use : 재생 상태에 따른 리스너를 등록한다. setOnCompletionListener로 재생완료됐을 때 이벤트를 처리한다.
     private void setMusicListeners(){
-        music.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                if (wakeLock.isHeld())     // 화면꺼짐방지가 켜져있으면 해제
-                    wakeLock.release();
-            }
-        });
+        if (music != null) {
+            music.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    if (wakeLock.isHeld())     // 화면꺼짐방지가 켜져있으면 해제
+                        wakeLock.release();
+                }
+            });
+        }
     }
 
     // Method : 등록된 음악재생정보 release

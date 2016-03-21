@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -86,14 +87,16 @@ public class RecordActivity extends AppCompatActivity {
             recordManager.start(); //레코드매니저 실행
             while (true) {
                 if (!recordManager.isRecording() || currentRecordTimeMs > RECORD_MAXTIME ) {  // 녹음 제한시간
+                    Log.i("end3", "??");
                     recordManager.stop();
-                    return null;
+                    break;
                 }
                 if (isCancelled()) {  // 작업이 취소되었으면
+                    Log.i("end2", "??");
                     if (recordManager.isRecording()) {
                         recordManager.stop();
                     }
-                    return null;
+                    break;
                 }
                 try {
                     Thread.sleep(PROGRESS_INTERVAL);// cancel되면 이부분에서 Exception이 발생해 catch로 넘어간다
@@ -102,18 +105,21 @@ public class RecordActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     if (recordManager.isRecording())
                         recordManager.stop();
-                    return null;
+                    Log.i("end", "??");
+                    break;
                 }
             }
+            return null;
         }
         @Override
         protected void onCancelled() { // 녹음이 취소 된다면
-            if (recordManager.isRecording()) {// 녹음이였다면
+            if (recordManager.isRecording()) {// 녹음중이였다면
                 if (playbackBar != null) {
                     playbackBar.cancel(true);
                 }
                 recordManager.stop(); //녹음 중지
             }
+            Log.i("gggg", "sdsd");
             btnRecord.setImageResource(R.drawable.ic_record_button);    // 녹음정지 이미지 녹음시작으로 변경
             btnPlay.setEnabled(true);   // 재생버튼 클릭가능
             btnSave.setEnabled(true);   // 저장버튼 클릭가능
@@ -136,6 +142,7 @@ public class RecordActivity extends AppCompatActivity {
             btnRecordUpProgress.setBackgroundResource(R.drawable.record_progress_first);
             recordReadyText.setText(R.string.recordactivity_record_ready);
             btnRecord.setImageResource(R.drawable.ic_record_button);
+            Log.i("gggg","wwww");
 
             btnPlay.setEnabled(true);   // 재생버튼 클릭가능
             prepareRecordFileToPlay();
@@ -283,7 +290,6 @@ public class RecordActivity extends AppCompatActivity {
     // Parameter : void
     // Use : 녹음 중일때 녹음 정지
     public void stopRecord(){
-        recordManager.stop();
         recordTask.cancel(true);
         animation.cancel();
         btnRecordUpProgress.setBackgroundResource(R.drawable.record_progress_first);
