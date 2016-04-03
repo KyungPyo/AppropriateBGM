@@ -8,9 +8,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -32,8 +30,12 @@ public class SettingActivity extends AppCompatActivity{
 
     TextView lockSummary;
     TextView notifySummary;
+    TextView screenPlaySummary;
+    TextView differentTaskSummary;
     Switch lockOnOffSwitch;
     Switch notifyOnOffSwitch;
+    Switch screenPlayOnOffSwitch;
+    Switch differentTaskOnOffSwitch;
     LinearLayout tutorialViewGroup;
 
 
@@ -46,7 +48,6 @@ public class SettingActivity extends AppCompatActivity{
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             binder = LockNotificationInterface.Stub.asInterface(service);
-            Log.e("name", name.toString());
         }
 
         @Override
@@ -72,8 +73,12 @@ public class SettingActivity extends AppCompatActivity{
     public void onResume() {
         lockOnOffSwitch.setChecked(mPref.getLockerOnOff());
         notifyOnOffSwitch.setChecked(mPref.getAlarmOnOff());
+        screenPlayOnOffSwitch.setChecked(mPref.getScreenOffPlayOnOff());
+        differentTaskOnOffSwitch.setChecked(mPref.getDifferentTaskPlayOnOff());
         setSummaryText("lockscreen", mPref.getLockerOnOff());
         setSummaryText("notification", mPref.getAlarmOnOff());
+        setSummaryText("screenoffplay", mPref.getScreenOffPlayOnOff());
+        setSummaryText("differenttaskplay", mPref.getDifferentTaskPlayOnOff());
         super.onResume();
     }
 
@@ -86,6 +91,7 @@ public class SettingActivity extends AppCompatActivity{
         // parameter : View(클릭된 뷰 = 여기서는 스위치)
         // use ; 아이디를 비교하여 스위치를 분류하고 세부적으로 잠금화면 스위치가 on/off됨에 따라 서비스 시작/정지
         //       알림 스위치 on/off에 따라 bindservice의 setBinderNotificationOnOff로 알림 띄울지 검사
+        //       재생관련 알림 스위치 on/off에 따라 화면 꺼짐 시, 다른 작업 수행 시 종료할지 말지를 검사
         @Override
         public void onClick(View v) {
             Intent intent = new Intent();
@@ -112,6 +118,20 @@ public class SettingActivity extends AppCompatActivity{
                 mPref.setAlarmOnOff(notifyChecked);
                 setBinderNotificationOnOff();
                 setSummaryText("notification", notifyChecked);
+            }
+            else if(v.getId() == R.id.setting_switch_screenOffPlayOnOff)
+            {
+                settingSwitch = (Switch) v;
+                Boolean notifyChecked = settingSwitch.isChecked();
+                mPref.setScreenOffPlayOnOff(notifyChecked);
+                setSummaryText("screenoffplay", notifyChecked);
+            }
+            else if(v.getId() == R.id.setting_switch_differenttaskPlayOnOff)
+            {
+                settingSwitch = (Switch) v;
+                Boolean notifyChecked = settingSwitch.isChecked();
+                mPref.setDifferentTaskPlayOnOff(notifyChecked);
+                setSummaryText("differenttaskplay", notifyChecked);
             }
             else if(v.getId() == R.id.setting_viewgroup_tutorial)
             {
@@ -140,6 +160,22 @@ public class SettingActivity extends AppCompatActivity{
                 notifySummary.setText("알림을 사용합니다.");
             } else {
                 notifySummary.setText("알림을 해제합니다.");
+            }
+        }
+        else if(title.equals("screenoffplay"))
+        {
+            if (checked) {
+                screenPlaySummary.setText("화면이 꺼졌을 시에도 재생합니다.");
+            } else {
+                screenPlaySummary.setText("화면이 꺼졌을 시에 재생하지 않습니다.");
+            }
+        }
+        else if(title.equals("differenttaskplay"))
+        {
+            if (checked) {
+                differentTaskSummary.setText("다른 작업 수행 시 재생합니다.");
+            } else {
+                differentTaskSummary.setText("다른 작업 수행 시 재생하지 않습니다.");
             }
         }
     }
@@ -180,15 +216,21 @@ public class SettingActivity extends AppCompatActivity{
 
         lockSummary = (TextView) findViewById(R.id.setting_textview_locksummary);
         notifySummary = (TextView) findViewById(R.id.setting_textview_notificationsummary);
+        screenPlaySummary = (TextView) findViewById(R.id.setting_textview_screenOffPlaysummary);
+        differentTaskSummary = (TextView) findViewById(R.id.setting_textview_differenttaskPlaysummary);
 
         lockOnOffSwitch = (Switch) findViewById(R.id.setting_switch_lockscreenOnOff);
         notifyOnOffSwitch = (Switch) findViewById(R.id.setting_switch_notificationOnOff);
+        screenPlayOnOffSwitch = (Switch) findViewById(R.id.setting_switch_screenOffPlayOnOff);
+        differentTaskOnOffSwitch = (Switch) findViewById(R.id.setting_switch_differenttaskPlayOnOff);
 
         tutorialViewGroup = (LinearLayout) findViewById(R.id.setting_viewgroup_tutorial);
 
         lockOnOffSwitch.setOnClickListener(onClickListener);
         notifyOnOffSwitch.setOnClickListener(onClickListener);
+        screenPlayOnOffSwitch.setOnClickListener(onClickListener);
         tutorialViewGroup.setOnClickListener(onClickListener);
+        differentTaskOnOffSwitch.setOnClickListener(onClickListener);
 
         Intent serviceintent = new Intent(SettingActivity.this, LockScreenService.class);
         bindService(serviceintent, lockServiceConnection, BIND_AUTO_CREATE);

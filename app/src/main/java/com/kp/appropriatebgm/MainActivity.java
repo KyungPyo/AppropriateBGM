@@ -2,10 +2,12 @@ package com.kp.appropriatebgm;
 
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -107,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
     private CheckPref checkPref;
     private boolean isCategoryExist;
     private int lastSelectedCategoryPosition;
+    private CheckPref mPref;
+    private PowerManager pm;
 
     /**** 멤버 선언 ****/
 
@@ -118,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
         initMember();                   // 멤버변수 초기화
         initMenuLayoutSize();           // 메뉴 레이아웃 크기설정
@@ -140,9 +145,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // 액티비티에서 벗어나면 재생중인 브금 정지
+        // 재생 중 상태
         if (musicPlayer != null && musicPlayer.isPlaying()) {
-            musicPlayer.pauseBgm();
+            // 화면이 off되지 않고 설정이 화면이 꺼졌을시에 재생하지 않을 경우 or
+            // 액티비티에서 벗어나면 재생중인 브금 정지(isScreenOn = true)
+            if(pm.isScreenOn() == false && mPref.getScreenOffPlayOnOff() == false || pm.isScreenOn() == true && mPref.getDifferentTaskPlayOnOff() == false)
+            {
+                musicPlayer.pauseBgm();
+            }
         }
     }
 
@@ -158,6 +168,8 @@ public class MainActivity extends AppCompatActivity {
     // Parameter : void
     // Use : 초기에 현재 액티비티에서 뷰나 뷰그룹들의 인스턴스들을 실제 객체들과 연결시키고, 초기 설정값을 입력한다. onCreate에서 호출.
     private void initMember() {
+
+        mPref = new CheckPref(this);
         toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         btnFileManage = (ViewGroup) findViewById(R.id.main_group_filemanage);
         groupFileManage = (ViewGroup) findViewById(R.id.main_group_filemanagegroup);
