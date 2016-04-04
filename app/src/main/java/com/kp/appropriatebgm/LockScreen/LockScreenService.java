@@ -14,6 +14,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -33,7 +35,10 @@ public class LockScreenService extends Service {
     private LockScreenReceiver lockReceive;
     private Notification notification;
     private PendingIntent notificationIntent;
+    private Context context;
+    private NotificationManager nm;
     private static int notifyStartId;
+
 
     LockNotificationInterface.Stub binder = new LockNotificationInterface.Stub()
     {
@@ -48,10 +53,12 @@ public class LockScreenService extends Service {
             noIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             notificationIntent = PendingIntent.getActivity(getApplicationContext(), 0, noIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+            Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             notification = new NotificationCompat.Builder(getApplicationContext())
-                    .setContentTitle("적절한브금")
+                    .setContentTitle("브금술사")
                     .setContentText("빠른 재생이 실행중입니다.")
                     .setSmallIcon(R.mipmap.ic_launcher)
+                    .setLargeIcon(largeIcon)
                     .setAutoCancel(true)
                     .setContentIntent(notificationIntent)
                     .build();
@@ -62,7 +69,7 @@ public class LockScreenService extends Service {
 
             if (!preferences.getBoolean("alarmOnOff", false) | !preferences.getBoolean("LockerOn", false)) {
                 stopForeground(true);
-                NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
                 notification = new Notification(0, "", System.currentTimeMillis());
 
