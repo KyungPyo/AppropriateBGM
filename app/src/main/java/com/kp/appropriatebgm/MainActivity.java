@@ -149,10 +149,10 @@ public class MainActivity extends AppCompatActivity {
         if (musicPlayer != null && musicPlayer.isPlaying()) {
             // 화면이 off되지 않고 설정이 화면이 꺼졌을시에 재생하지 않을 경우 or
             // 액티비티에서 벗어나면 재생중인 브금 정지(isScreenOn = true)
-            if(pm.isScreenOn() == false && mPref.getScreenOffPlayOnOff() == false || pm.isScreenOn() == true && mPref.getDifferentTaskPlayOnOff() == false)
-            {
+            //if(pm.isScreenOn() == false && mPref.getScreenOffPlayOnOff() == false || pm.isScreenOn() == true && mPref.getDifferentTaskPlayOnOff() == false)
+            //{
                 musicPlayer.pauseBgm();
-            }
+            //}
         }
     }
 
