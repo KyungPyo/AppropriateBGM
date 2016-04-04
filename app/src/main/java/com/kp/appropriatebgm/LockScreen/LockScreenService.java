@@ -22,6 +22,8 @@ import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 import android.telephony.TelephonyManager;
+import android.view.View;
+import android.widget.RemoteViews;
 
 import com.kp.appropriatebgm.CheckPref;
 import com.kp.appropriatebgm.R;
@@ -52,8 +54,24 @@ public class LockScreenService extends Service {
             Intent noIntent = new Intent(getApplicationContext(), SettingActivity.class);
             noIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             notificationIntent = PendingIntent.getActivity(getApplicationContext(), 0, noIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
             Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+
+           /* Notification.Builder builder = new Notification.Builder(getApplicationContext());
+
+            notification = builder.getNotification();
+            notification.when = System.currentTimeMillis();
+            notification.tickerText = "빠른 재생 실행 중";
+            notification.icon = R.mipmap.ic_launcher;
+
+            RemoteViews contentView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.notification_lockscreenplay);
+
+            setListeners(contentView);
+
+            notification.contentView = contentView;
+            notification.flags = Notification.FLAG_ONGOING_EVENT;
+            nm.notify(123456, notification);*/
             notification = new NotificationCompat.Builder(getApplicationContext())
                     .setContentTitle("브금술사")
                     .setContentText("빠른 재생이 실행중입니다.")
@@ -69,9 +87,8 @@ public class LockScreenService extends Service {
 
             if (!preferences.getBoolean("alarmOnOff", false) | !preferences.getBoolean("LockerOn", false)) {
                 stopForeground(true);
-                nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-                notification = new Notification(0, "", System.currentTimeMillis());
+                //notification = new Notification(0, "", System.currentTimeMillis());
 
                 nm.notify(notifyStartId, notification);
                 nm.cancel(notifyStartId);
@@ -79,6 +96,24 @@ public class LockScreenService extends Service {
         }
 
     };
+    public void setListeners(RemoteViews view)
+    {
+        Intent back = new Intent(getApplicationContext(), LockScreenActivity.class);
+        back.putExtra("bgm","back");
+        PendingIntent pBack = PendingIntent.getActivity(getApplicationContext(), 0, back, 0);
+        view.setOnClickPendingIntent(R.id.notification_bgmbackbtn, pBack);
+
+        Intent play = new Intent(getApplicationContext(), LockScreenActivity.class);
+        back.putExtra("bgm","play");
+        PendingIntent pPlay = PendingIntent.getActivity(getApplicationContext(), 0, play, 0);
+        view.setOnClickPendingIntent(R.id.notification_bgmplaybtn, pPlay);
+
+        Intent next = new Intent(getApplicationContext(), LockScreenActivity.class);
+        back.putExtra("bgm","next");
+        PendingIntent pNext = PendingIntent.getActivity(getApplicationContext(), 0, next, 0);
+        view.setOnClickPendingIntent(R.id.notification_bgmplaybtn, pNext);
+    }
+
     public IBinder onBind(Intent intent) {
         return binder;
     }
