@@ -169,9 +169,9 @@ public class DBManager extends SQLiteOpenHelper {
 
         for (int i=0; i<innerBgmRegister.getListSize(); i++) {
             try {
-                query.append("INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES ('");
+                query.append("INSERT INTO BGMList(bgm_name, bgm_path, innerfile) VALUES (\"");
                 query.append(innerBgmRegister.getInnerBgmName(i));
-                query.append("', '#', '#')");
+                query.append("\", \"#\", \"#\")");
                 mDataBase.execSQL(query.toString().replace("#", innerBgmRegister.getInnerBgmCode(i)));
                 query.delete(0, query.length());
             } catch (SQLiteConstraintException e) {
@@ -202,7 +202,7 @@ public class DBManager extends SQLiteOpenHelper {
             deleteQuery.append("DELETE FROM BGMList WHERE bgm_path in (");
             for (int i=0; i<deleteList.size(); i++) {
                 Log.d("delete!!", deleteList.get(i));
-                deleteQuery.append("'"+deleteList.get(i)+"'");
+                deleteQuery.append("\""+deleteList.get(i)+"\"");
                 if(i<deleteList.size()-1)
                     deleteQuery.append(",");
             }
@@ -266,9 +266,9 @@ public class DBManager extends SQLiteOpenHelper {
         try {
             query.append("SELECT bgm_path FROM BGMList WHERE innerfile=0 AND bgm_path NOT IN (");
             for (int i = 0; i < fileCount; i++) {
-                query.append("'");
+                query.append("\"");
                 query.append(fileList.get(i)[0]);
-                query.append("'");
+                query.append("\"");
                 if (i + 1 != fileCount)
                     query.append(",");
             }
@@ -285,7 +285,7 @@ public class DBManager extends SQLiteOpenHelper {
                 // 해당 파일이 정말 존재하지 않으면(미디어풀 DB에 아직 등록되지 않았을 수도 있기 때문에 한번 더 체크)
                 if ( !existCheck.isFile() ) {
                     // 삭제 리스트에 추가
-                    deleteList.append("'"+notExistList.getString(0)+"'");
+                    deleteList.append("\""+notExistList.getString(0)+"\"");
                     if (!notExistList.isLast()) {
                         deleteList.append(",");
                     }
@@ -356,8 +356,8 @@ public class DBManager extends SQLiteOpenHelper {
                     filename = filename.substring(0, filename.length() - (fileExtend.length()+1) );
                     query = new StringBuffer();
                     query.append("INSERT INTO BGMList(bgm_path, bgm_name) VALUES(");
-                    query.append("'" + filepath + "',");
-                    query.append("'" + filename + "')");
+                    query.append("\"" + filepath + "\",");
+                    query.append("\"" + filename + "\")");
                     mDataBase.execSQL(query.toString());
                 } catch (SQLiteConstraintException e) {
                     Log.i("SQLite Error", "이미 DB에 존재함 : " + e.toString());
@@ -477,7 +477,7 @@ public class DBManager extends SQLiteOpenHelper {
         String query;
         Cursor cursor;
 
-        query = "SELECT COUNT(*) FROM Category WHERE category_name = '"+categoryName+"'";
+        query = "SELECT COUNT(*) FROM Category WHERE category_name = \""+categoryName+"\"";
         try {
             cursor = mDataBase.rawQuery(query, null);
 
@@ -502,7 +502,7 @@ public class DBManager extends SQLiteOpenHelper {
         String query;
         Cursor cursor;
 
-        query = "SELECT COUNT(*) FROM BGMList WHERE bgm_name = '"+fileName+"'";
+        query = "SELECT COUNT(*) FROM BGMList WHERE bgm_name = \""+fileName+"\"";
         try {
             cursor = mDataBase.rawQuery(query, null);
 
@@ -527,7 +527,7 @@ public class DBManager extends SQLiteOpenHelper {
         String query;
         Cursor cursor;
 
-        query = "SELECT innerfile FROM BGMList WHERE bgm_path = '"+path+"'";
+        query = "SELECT innerfile FROM BGMList WHERE bgm_path = \""+path+"\"";
         try {
             cursor = mDataBase.rawQuery(query, null);
 
@@ -553,7 +553,7 @@ public class DBManager extends SQLiteOpenHelper {
         String query;
         Cursor cursor;
 
-        query = "SELECT COUNT(*) FROM BanList WHERE bgm_path = '"+path+"'";
+        query = "SELECT COUNT(*) FROM BanList WHERE bgm_path = \""+path+"\"";
         try {
             cursor = mDataBase.rawQuery(query, null);
 
@@ -582,8 +582,8 @@ public class DBManager extends SQLiteOpenHelper {
         StringBuffer query = new StringBuffer();
 
         if (bgmPath != null){   // Favorite 등록
-            query.append("UPDATE favorite SET bgm_path='");
-            query.append(bgmPath + "'");
+            query.append("UPDATE favorite SET bgm_path=\"");
+            query.append(bgmPath + "\"");
         } else {                // Favorite 삭제
             query.append("UPDATE favorite SET bgm_path=null");
         }
@@ -604,11 +604,11 @@ public class DBManager extends SQLiteOpenHelper {
     public void insertBGM(String bgmPath, String bgmName, int categoryId){
         StringBuffer query = new StringBuffer();
 
-        query.append("INSERT INTO BGMList(bgm_path, bgm_name, category_id) VALUES ('");
+        query.append("INSERT INTO BGMList(bgm_path, bgm_name, category_id) VALUES (\"");
         query.append(bgmPath);
-        query.append("', '");
+        query.append("\", \"");
         query.append(bgmName);
-        query.append("', ");
+        query.append("\", ");
         query.append(categoryId);
         query.append(")");
 
@@ -628,11 +628,11 @@ public class DBManager extends SQLiteOpenHelper {
         String query;
         Cursor cursor;
         try {
-            query = "SELECT COUNT(*) FROM Category WHERE category_name='"+categoryName+"'";
+            query = "SELECT COUNT(*) FROM Category WHERE category_name=\""+categoryName+"\"";
             cursor = mDataBase.rawQuery(query, null);
             cursor.moveToNext();
             if (cursor.getInt(0) == 0) {    // 중복되는 카테고리명이 없는 경우에만 추가
-                query = "INSERT INTO Category(category_name) VALUES ('"+categoryName+"')";
+                query = "INSERT INTO Category(category_name) VALUES (\""+categoryName+"\")";
                 mDataBase.execSQL(query);
             } else {
                 Log.i("insertCategory", "카테고리명 중복");
@@ -651,11 +651,11 @@ public class DBManager extends SQLiteOpenHelper {
         Cursor cursor;
 
         try {
-            query = "SELECT COUNT(*) FROM Category WHERE category_name='"+categoryName+"'";
+            query = "SELECT COUNT(*) FROM Category WHERE category_name=\""+categoryName+"\"";
             cursor = mDataBase.rawQuery(query, null);
             cursor.moveToNext();
             if (cursor.getInt(0) == 0) {    // 중복되는 카테고리명이 없는 경우에만 변경
-                query = "UPDATE Category SET category_name = '" + categoryName + "' WHERE category_id = " + categoryId;
+                query = "UPDATE Category SET category_name = \"" + categoryName + "\" WHERE category_id = " + categoryId;
                 mDataBase.execSQL(query);
             } else {
                 Log.i("insertCategory", "카테고리명 중복");
@@ -675,7 +675,7 @@ public class DBManager extends SQLiteOpenHelper {
         query.append(categoryId);
         query.append(" WHERE bgm_path in(");
         for(int i=0; i<bgmPath.length; i++) {
-            query.append("'"+bgmPath[i]+"'");
+            query.append("\""+bgmPath[i]+"\"");
             if(i+1 < bgmPath.length)   // 마지막이 아니면
                 query.append(",");
         }
@@ -696,11 +696,11 @@ public class DBManager extends SQLiteOpenHelper {
         String query;
         Cursor cursor;
         try {
-            query = "SELECT COUNT(*) FROM BanList WHERE bgm_path='"+banPath+"'";
+            query = "SELECT COUNT(*) FROM BanList WHERE bgm_path=\""+banPath+"\"";
             cursor = mDataBase.rawQuery(query, null);
             cursor.moveToNext();
             if (cursor.getInt(0) == 0) {    // 중복되는 레코드가 없는 경우에만 추가
-                query = "INSERT INTO BanList(bgm_path) VALUES ('" + banPath + "')";
+                query = "INSERT INTO BanList(bgm_path) VALUES (\"" + banPath + "\")";
                 mDataBase.execSQL(query);
             }
         } catch (SQLiteException e){
@@ -755,7 +755,7 @@ public class DBManager extends SQLiteOpenHelper {
 
         query.append("DELETE FROM BGMList WHERE bgm_path in(");
         for(int i=0; i<bgmPath.length; i++){
-            query.append("'"+bgmPath[i]+"'");
+            query.append("\""+bgmPath[i]+"\"");
             if(i+1 < bgmPath.length)
                 query.append(",");
         }
@@ -784,7 +784,7 @@ public class DBManager extends SQLiteOpenHelper {
 
         query.append("DELETE FROM BGMList WHERE bgm_path in(");
         for(int i=0; i<bgmPath.length; i++){
-            query.append("'"+bgmPath[i]+"'");
+            query.append("\""+bgmPath[i]+"\"");
             if(i+1 < bgmPath.length)
                 query.append(",");
         }
@@ -822,7 +822,7 @@ public class DBManager extends SQLiteOpenHelper {
 
         query.append("UPDATE favorite SET bgm_path=null WHERE bgm_path in(");
         for (int i = 0; i < bgmPath.length; i++) {
-            query.append("'" + bgmPath[i] + "'");
+            query.append("\"" + bgmPath[i] + "\"");
             if (i + 1 < bgmPath.length)
                 query.append(",");
         }
