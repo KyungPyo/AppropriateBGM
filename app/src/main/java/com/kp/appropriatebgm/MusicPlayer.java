@@ -93,7 +93,7 @@ public class MusicPlayer {
     //       화면이 꺼지지 않기를 원하면 wakeLock.acquire(), 해제하려면 wakeLock.release()를 사용한다.
     private void screenSleepLocker(){
         PowerManager powerManager = (PowerManager)targetContext.getSystemService(Context.POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK,"SleepLock while play");
+        wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "SleepLock while play");
     }
 
     // Method : 음악재생 리스너 등록
@@ -215,6 +215,18 @@ public class MusicPlayer {
             return false;
     }
 
+    // Method : 재생준비여부 확인
+    // Return Value : boolean
+    // Parameter : void
+    // Use : 재생할 파일이 등록되었으면 true, 아니면 false
+    public boolean isPrepared(){
+        if (music == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     // Method : 전체 재생길이 받아오기
     // Return Value : int(재생길이 milisecond)
     // Parameter : void
@@ -248,6 +260,8 @@ public class MusicPlayer {
     }
 
     public void setLooping(boolean loopSet){
-        music.setLooping(loopSet);
+        if (music != null) {
+            music.setLooping(loopSet);
+        }
     }
 }

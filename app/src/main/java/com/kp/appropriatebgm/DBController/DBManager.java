@@ -249,7 +249,7 @@ public class DBManager extends SQLiteOpenHelper {
     // Parameter : fileList(단말기에 저장되어있는 음악파일목록 - [0]파일경로, [1]파일명)
     // Use : LogoActivity에서 앱이 실행될 때마다 SQLite에 저장된 외장 BGM 목록과 실제 가지고 있는 파일의 목록이 일치하는지 확인한다.
     public void checkBGMList(ArrayList<String[]> fileList){
-        if(fileList.size() != 0) {
+        if(fileList.size() > 0) {
             checkBGMFileExist(fileList);
             checkBGMRecordExist(fileList);
         }

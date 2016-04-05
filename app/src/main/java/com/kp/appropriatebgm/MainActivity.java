@@ -729,7 +729,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
                 case R.id.main_btn_loop:{
-                    if (musicPlayer != null) {
+                    if (musicPlayer != null && musicPlayer.isPrepared()) {
                         checkPref.setLoopPlay();
                         musicPlayer.setLooping(checkPref.getLoopPlay());
 
