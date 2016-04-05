@@ -39,10 +39,9 @@ public class LogoActivity extends AppCompatActivity {
 
         message = (TextView)findViewById(R.id.logo_text_message);   // 현재 진행상황 표시 텍스트
 
-        Log.e("!!!!!!!!!!!", "????????????");
         int versionCode = Build.VERSION.SDK_INT;
         // Marshmellow 이상 권한부여 확인
-        if (versionCode > Build.VERSION_CODES.LOLLIPOP_MR1) {
+        if (versionCode >= Build.VERSION_CODES.M) {
             int grantedInteger = PackageManager.PERMISSION_GRANTED;
             boolean permissionCheck = (ContextCompat.checkSelfPermission(this, Manifest.permission.WAKE_LOCK) == grantedInteger)
                     && (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == grantedInteger)
