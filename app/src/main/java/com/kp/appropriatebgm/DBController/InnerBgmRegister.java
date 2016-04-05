@@ -56,7 +56,6 @@ public class InnerBgmRegister {
         innerBgmList.add(new InnerBgmInfo("삼대장", R.raw.samdaejang, 7));
         innerBgmList.add(new InnerBgmInfo("초고속카메라", R.raw.slow_motion, 2));
         innerBgmList.add(new InnerBgmInfo("여기까지가 끝인가보오", R.raw.this_is_end, 4));
-        innerBgmList.add(new InnerBgmInfo("어이가 없네", R.raw.no_uhee, 2));
     }
 
     public int getListSize(){
