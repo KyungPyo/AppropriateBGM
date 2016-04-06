@@ -9,6 +9,7 @@ import java.io.File;
 public class CheckPref {
 
     private SharedPreferences settingPref = null;
+    private int defaultIndex = 0;
 
     public CheckPref(AppCompatActivity activity){
 

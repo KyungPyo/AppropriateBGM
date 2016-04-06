@@ -37,23 +37,8 @@ public class SettingActivity extends AppCompatActivity{
     Switch screenPlayOnOffSwitch;
     Switch differentTaskOnOffSwitch;
     LinearLayout tutorialViewGroup;
-
-
     //Use : 서비스 연결 객체 선언
-    private ServiceConnection lockServiceConnection = new ServiceConnection() {
-
-        // Return Value : void
-        // Parameter : ComponentName(컴포넌트 이름(패키지)), service(서비스)
-        // Use : 서비스 연결 되었을 경우 aidl의 인터페이스를 통해 서비스 객체를 받는다.
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            binder = LockNotificationInterface.Stub.asInterface(service);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    };
+    private ServiceConnection lockServiceConnection;
 
     // Return Value : void
     // Parameter : savedInstateState
@@ -63,6 +48,51 @@ public class SettingActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         settingInit();
+    }
+
+    // Method : 세팅 액티비티 초기 설정
+    // Return value : void
+    // parameter : void
+    // use ; 기본 설정을 해준다. (공유변수 객체 선언 및 스위치, 텍스트뷰등의 구성요소를 받아오고 클릭리스너 등록 및 bind서비스 시작)
+    public void settingInit()
+    {
+        mPref = new CheckPref(this);        // 공유 프레퍼런스 객체
+
+        lockSummary = (TextView) findViewById(R.id.setting_textview_locksummary);
+        notifySummary = (TextView) findViewById(R.id.setting_textview_notificationsummary);
+        screenPlaySummary = (TextView) findViewById(R.id.setting_textview_screenOffPlaysummary);
+        differentTaskSummary = (TextView) findViewById(R.id.setting_textview_differenttaskPlaysummary);
+
+        lockOnOffSwitch = (Switch) findViewById(R.id.setting_switch_lockscreenOnOff);
+        notifyOnOffSwitch = (Switch) findViewById(R.id.setting_switch_notificationOnOff);
+        screenPlayOnOffSwitch = (Switch) findViewById(R.id.setting_switch_screenOffPlayOnOff);
+        differentTaskOnOffSwitch = (Switch) findViewById(R.id.setting_switch_differenttaskPlayOnOff);
+
+        tutorialViewGroup = (LinearLayout) findViewById(R.id.setting_viewgroup_tutorial);
+
+        lockOnOffSwitch.setOnClickListener(onClickListener);
+        notifyOnOffSwitch.setOnClickListener(onClickListener);
+        screenPlayOnOffSwitch.setOnClickListener(onClickListener);
+        tutorialViewGroup.setOnClickListener(onClickListener);
+        differentTaskOnOffSwitch.setOnClickListener(onClickListener);
+
+        lockServiceConnection = new ServiceConnection() {
+
+            // Return Value : void
+            // Parameter : ComponentName(컴포넌트 이름(패키지)), service(서비스)
+            // Use : 서비스 연결 되었을 경우 aidl의 인터페이스를 통해 서비스 객체를 받는다.
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                binder = LockNotificationInterface.Stub.asInterface(service);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+            }
+        };
+
+        Intent serviceintent = new Intent(SettingActivity.this, LockScreenService.class);
+        bindService(serviceintent, lockServiceConnection, BIND_AUTO_CREATE);
     }
 
     // Method : onResume (일시정지 후 시작)
@@ -206,33 +236,4 @@ public class SettingActivity extends AppCompatActivity{
         }
     }
 
-    // Method : 세팅 액티비티 초기 설정
-    // Return value : void
-    // parameter : void
-    // use ; 기본 설정을 해준다. (공유변수 객체 선언 및 스위치, 텍스트뷰등의 구성요소를 받아오고 클릭리스너 등록 및 bind서비스 시작)
-    public void settingInit()
-    {
-        mPref = new CheckPref(this);        // 공유 프레퍼런스 객체
-
-        lockSummary = (TextView) findViewById(R.id.setting_textview_locksummary);
-        notifySummary = (TextView) findViewById(R.id.setting_textview_notificationsummary);
-        screenPlaySummary = (TextView) findViewById(R.id.setting_textview_screenOffPlaysummary);
-        differentTaskSummary = (TextView) findViewById(R.id.setting_textview_differenttaskPlaysummary);
-
-        lockOnOffSwitch = (Switch) findViewById(R.id.setting_switch_lockscreenOnOff);
-        notifyOnOffSwitch = (Switch) findViewById(R.id.setting_switch_notificationOnOff);
-        screenPlayOnOffSwitch = (Switch) findViewById(R.id.setting_switch_screenOffPlayOnOff);
-        differentTaskOnOffSwitch = (Switch) findViewById(R.id.setting_switch_differenttaskPlayOnOff);
-
-        tutorialViewGroup = (LinearLayout) findViewById(R.id.setting_viewgroup_tutorial);
-
-        lockOnOffSwitch.setOnClickListener(onClickListener);
-        notifyOnOffSwitch.setOnClickListener(onClickListener);
-        screenPlayOnOffSwitch.setOnClickListener(onClickListener);
-        tutorialViewGroup.setOnClickListener(onClickListener);
-        differentTaskOnOffSwitch.setOnClickListener(onClickListener);
-
-        Intent serviceintent = new Intent(SettingActivity.this, LockScreenService.class);
-        bindService(serviceintent, lockServiceConnection, BIND_AUTO_CREATE);
-    }
 }
