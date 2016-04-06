@@ -67,7 +67,8 @@ public class LockScreenService extends Service {
         @Override
         public void setNotificationOnOff() throws RemoteException {
 
-            SharedPreferences preferences = getApplicationContext().getSharedPreferences("AppSetting", Context.MODE_PRIVATE);
+            //SharedPreferences preferences = getApplicationContext().getSharedPreferences("AppSetting", Context.MODE_PRIVATE);//
+            CheckPref checkPref = new CheckPref(getApplicationContext());
 
 //            dbManager = DBManager.getInstance(getApplicationContext());
 
@@ -156,27 +157,24 @@ public class LockScreenService extends Service {
 //
 //            notification.contentView = contentView;
 //            notification.flags = Notification.FLAG_ONGOING_EVENT;
-            notification = new NotificationCompat.Builder(getApplicationContext())
-                    .setContentTitle("브금술사")
-                    .setContentText("빠른 재생이 실행중입니다.")
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                    .setAutoCancel(true)
-                    .setContentIntent(notificationIntent)
-                    .build();
-
+            if(checkPref.getAlarmOnOff() && checkPref.getLockerOnOff()){
+                notification = new NotificationCompat.Builder(getApplicationContext())
+                        .setContentTitle("브금술사")
+                        .setContentText("빠른 재생이 실행중입니다.")
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                        .setAutoCancel(true)
+                        .setContentIntent(notificationIntent)
+                        .build();
+                startForeground(1, notification);
+            } else {
+                if(notification != null) {
+                    stopForeground(true);
+                }
+            }
 
             //이게 음악 어플처럼 Task Killer 작동해도 살아있게 해주는 거, Foreground 에서 돌리겠다는 뜻
-            startForeground(1, notification);
 
-            if (!preferences.getBoolean("alarmOnOff", false) | !preferences.getBoolean("LockerOn", false)) {
-                stopForeground(true);
-
-                //notification = new Notification(0, "", System.currentTimeMillis());
-
-                nm.notify(notifyStartId, notification);
-                nm.cancel(notifyStartId);
-            }
         }
 
     };

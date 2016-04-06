@@ -11,9 +11,9 @@ public class CheckPref {
     private SharedPreferences settingPref = null;
     private int defaultIndex = 0;
 
-    public CheckPref(AppCompatActivity activity){
+    public CheckPref(Context context){
 
-        settingPref = activity.getSharedPreferences("AppSetting", Context.MODE_PRIVATE);
+        settingPref = context.getSharedPreferences("AppSetting", Context.MODE_PRIVATE);
     }
 
     // Method : 최초실행여부 저장
@@ -170,7 +170,7 @@ public class CheckPref {
     // Parameter : void
     // Use : 알람의 on off 여부를 받아 notification 보여줄지 말지 결정함.
     public boolean  getAlarmOnOff(){
-        return settingPref.getBoolean("alarmOnOff", false);
+        return settingPref.getBoolean("alarmOnOff", true);
     }
 
     // Method : 알람의 on off 여부를 저장한다.

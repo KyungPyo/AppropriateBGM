@@ -60,21 +60,21 @@ public class SettingActivity extends AppCompatActivity{
 
         lockSummary = (TextView) findViewById(R.id.setting_textview_locksummary);
         notifySummary = (TextView) findViewById(R.id.setting_textview_notificationsummary);
-        screenPlaySummary = (TextView) findViewById(R.id.setting_textview_screenOffPlaysummary);
-        differentTaskSummary = (TextView) findViewById(R.id.setting_textview_differenttaskPlaysummary);
+        //screenPlaySummary = (TextView) findViewById(R.id.setting_textview_screenOffPlaysummary);
+//        differentTaskSummary = (TextView) findViewById(R.id.setting_textview_differenttaskPlaysummary);
 
         lockOnOffSwitch = (Switch) findViewById(R.id.setting_switch_lockscreenOnOff);
         notifyOnOffSwitch = (Switch) findViewById(R.id.setting_switch_notificationOnOff);
-        screenPlayOnOffSwitch = (Switch) findViewById(R.id.setting_switch_screenOffPlayOnOff);
-        differentTaskOnOffSwitch = (Switch) findViewById(R.id.setting_switch_differenttaskPlayOnOff);
+//        screenPlayOnOffSwitch = (Switch) findViewById(R.id.setting_switch_screenOffPlayOnOff);
+//        differentTaskOnOffSwitch = (Switch) findViewById(R.id.setting_switch_differenttaskPlayOnOff);
 
         tutorialViewGroup = (LinearLayout) findViewById(R.id.setting_viewgroup_tutorial);
 
         lockOnOffSwitch.setOnClickListener(onClickListener);
         notifyOnOffSwitch.setOnClickListener(onClickListener);
-        screenPlayOnOffSwitch.setOnClickListener(onClickListener);
+//        screenPlayOnOffSwitch.setOnClickListener(onClickListener);
         tutorialViewGroup.setOnClickListener(onClickListener);
-        differentTaskOnOffSwitch.setOnClickListener(onClickListener);
+//        differentTaskOnOffSwitch.setOnClickListener(onClickListener);
 
         lockServiceConnection = new ServiceConnection() {
 
@@ -103,12 +103,12 @@ public class SettingActivity extends AppCompatActivity{
     public void onResume() {
         lockOnOffSwitch.setChecked(mPref.getLockerOnOff());
         notifyOnOffSwitch.setChecked(mPref.getAlarmOnOff());
-        screenPlayOnOffSwitch.setChecked(mPref.getScreenOffPlayOnOff());
-        differentTaskOnOffSwitch.setChecked(mPref.getDifferentTaskPlayOnOff());
+//        screenPlayOnOffSwitch.setChecked(mPref.getScreenOffPlayOnOff());
+//        differentTaskOnOffSwitch.setChecked(mPref.getDifferentTaskPlayOnOff());
         setSummaryText("lockscreen", mPref.getLockerOnOff());
         setSummaryText("notification", mPref.getAlarmOnOff());
-        setSummaryText("screenoffplay", mPref.getScreenOffPlayOnOff());
-        setSummaryText("differenttaskplay", mPref.getDifferentTaskPlayOnOff());
+//        setSummaryText("screenoffplay", mPref.getScreenOffPlayOnOff());
+//        setSummaryText("differenttaskplay", mPref.getDifferentTaskPlayOnOff());
         super.onResume();
     }
 
@@ -149,20 +149,20 @@ public class SettingActivity extends AppCompatActivity{
                 setBinderNotificationOnOff();
                 setSummaryText("notification", notifyChecked);
             }
-            else if(v.getId() == R.id.setting_switch_screenOffPlayOnOff)
-            {
-                settingSwitch = (Switch) v;
-                Boolean notifyChecked = settingSwitch.isChecked();
-                mPref.setScreenOffPlayOnOff(notifyChecked);
-                setSummaryText("screenoffplay", notifyChecked);
-            }
-            else if(v.getId() == R.id.setting_switch_differenttaskPlayOnOff)
-            {
-                settingSwitch = (Switch) v;
-                Boolean notifyChecked = settingSwitch.isChecked();
-                mPref.setDifferentTaskPlayOnOff(notifyChecked);
-                setSummaryText("differenttaskplay", notifyChecked);
-            }
+//            else if(v.getId() == R.id.setting_switch_screenOffPlayOnOff)
+//            {
+//                settingSwitch = (Switch) v;
+//                Boolean notifyChecked = settingSwitch.isChecked();
+//                mPref.setScreenOffPlayOnOff(notifyChecked);
+//                setSummaryText("screenoffplay", notifyChecked);
+//            }
+//            else if(v.getId() == R.id.setting_switch_differenttaskPlayOnOff)
+//            {
+//                settingSwitch = (Switch) v;
+//                Boolean notifyChecked = settingSwitch.isChecked();
+//                mPref.setDifferentTaskPlayOnOff(notifyChecked);
+//                setSummaryText("differenttaskplay", notifyChecked);
+//            }
             else if(v.getId() == R.id.setting_viewgroup_tutorial)
             {
                 intent.setClass(getApplicationContext(), TutorialActivity.class);
@@ -187,27 +187,27 @@ public class SettingActivity extends AppCompatActivity{
         else if(title.equals("notification"))
         {
             if (checked) {
-                notifySummary.setText("알림을 사용합니다.");
+                notifySummary.setText("사용중입니다.");
             } else {
-                notifySummary.setText("알림을 해제합니다.");
+                notifySummary.setText("사용중이 아닙니다");
             }
         }
-        else if(title.equals("screenoffplay"))
-        {
-            if (checked) {
-                screenPlaySummary.setText("화면이 꺼졌을 시에도 재생합니다.");
-            } else {
-                screenPlaySummary.setText("화면이 꺼졌을 시에 재생하지 않습니다.");
-            }
-        }
-        else if(title.equals("differenttaskplay"))
-        {
-            if (checked) {
-                differentTaskSummary.setText("다른 작업 수행 시 재생합니다.");
-            } else {
-                differentTaskSummary.setText("다른 작업 수행 시 재생하지 않습니다.");
-            }
-        }
+//        else if(title.equals("screenoffplay"))
+//        {
+//            if (checked) {
+//                screenPlaySummary.setText("화면이 꺼졌을 시에도 재생합니다.");
+//            } else {
+//                screenPlaySummary.setText("화면이 꺼졌을 시에 재생하지 않습니다.");
+//            }
+//        }
+//        else if(title.equals("differenttaskplay"))
+//        {
+//            if (checked) {
+//                differentTaskSummary.setText("다른 작업 수행 시 재생합니다.");
+//            } else {
+//                differentTaskSummary.setText("다른 작업 수행 시 재생하지 않습니다.");
+//            }
+//        }
     }
 
     // Method : 바인드 서비스 종료
