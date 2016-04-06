@@ -1,6 +1,5 @@
 package com.kp.appropriatebgm.Category;
 
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.media.AudioManager;
@@ -9,7 +8,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,10 +26,8 @@ import com.kp.appropriatebgm.favoritebgm.CategoryListAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
 //카테고리 액티비티
 public class CategoryActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
-
 
     FloatingActionButton fab;
     DBManager dbManager=DBManager.getInstance(this);//DB
@@ -122,6 +118,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
             }
         }
     };
+
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.actionbar_category_menu, menu);

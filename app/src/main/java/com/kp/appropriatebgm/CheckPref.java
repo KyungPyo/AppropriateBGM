@@ -29,9 +29,27 @@ public class CheckPref {
     // Method : 최초실행여부 받아오기
     // Return Value : boolean(첫실행이면 true, 아니면 false)
     // Parameter : void
-    // Use : 최초실행여부 저장여부 받아오기. 기본 설정값은 true.
+    // Use : 최초실행여부 받아오기. 기본 설정값은 true.
     public boolean getFirstExcute(){
         return settingPref.getBoolean("FirstExcute", true);
+    }
+
+    // Method : 권한허용여부 저장
+    // Return Value : void
+    // Parameter : granted(권한 허용여부. 허용이면 true, 아니면 false)
+    // Use : 권한허용여부를 받아온 값으로 저장한다.
+    public void setPermissionsGrant(boolean granted){
+        SharedPreferences.Editor prefEditor = settingPref.edit();
+        prefEditor.putBoolean("PermissionsGrant", granted);
+        prefEditor.apply();
+    }
+
+    // Method : 권한허용여부 받아오기
+    // Return Value : boolean(허용이면 true, 아니면 false)
+    // Parameter : void
+    // Use : 권한허용여부 받아오기. 기본값은 false.
+    public boolean getPermissionsGrant(){
+        return settingPref.getBoolean("PermissionsGrant", false);
     }
 
     // Method : 잠금화면기능 설정여부 변경

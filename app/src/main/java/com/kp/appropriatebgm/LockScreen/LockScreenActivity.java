@@ -38,15 +38,15 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
     private final SimpleDateFormat apm_format = new SimpleDateFormat("aa");
     private final SimpleDateFormat time_format = new SimpleDateFormat("h:mm");
     private final SimpleDateFormat day_format = new SimpleDateFormat("M월 d일 E요일");
-    private UnlockScreenWidget slide_widget;
+//    private UnlockScreenWidget slide_widget;
     TextView apm_clock;
     TextView time_clock;
     TextView day_clock;
     HorizontalScrollView bgmFavoriteScroll;
     LockScreenBgmButton bgmListButton;
+    ImageView unlockButton;
 
     MusicPlayer musicPlayer;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +64,16 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         apm_clock = (TextView) findViewById(R.id.lockscreen_textview_apmclock);
         time_clock = (TextView) findViewById(R.id.lockscreen_textview_timeclock);
         day_clock = (TextView) findViewById(R.id.lockscreen_textview_dayclock);
+        unlockButton = (ImageView) findViewById(R.id.lockscreen_btn_unlock);
+        unlockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
-        slide_widget = (UnlockScreenWidget) findViewById(R.id.lockscreen_widget_unlock);
-        slide_widget.setOnUnlockListener(this);
+//        slide_widget = (UnlockScreenWidget) findViewById(R.id.lockscreen_widget_unlock);
+//        slide_widget.setOnUnlockListener(this);
         timeInit();
 
         // 가로 listView 설정
