@@ -18,6 +18,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
@@ -53,123 +54,88 @@ public class LockScreenService extends Service {
     private PendingIntent notificationIntent;
     private Context context;
     private NotificationManager nm;
-    private static int notifyStartId;
+    private static int notifyStartId = 1;
     private DBManager dbManager;
-    private int indexNum = 0;
-    private TextView notiMusicTitle;
+    private int indexNum = 0;           // 실제 즐겨찾기 목록 index 설정
+    private Boolean playCheck = false;  //play 유무 (false 시에 재생버튼 / true시에 일시정지 버튼 보이기 위해서)
     private ArrayList<Favorite> realBgmNameList;
+    private RemoteViews contentView;
+    private BroadcastReceiver backReceiver;
+    private BroadcastReceiver playReceiver;
+    private BroadcastReceiver nextReceiver;
     ArrayList<Favorite> bgmfavoriteArrayList;
 
 
-    LockNotificationInterface.Stub binder = new LockNotificationInterface.Stub()
-    {
+    LockNotificationInterface.Stub binder = new LockNotificationInterface.Stub() {
 
         @Override
         public void setNotificationOnOff() throws RemoteException {
 
-            //SharedPreferences preferences = getApplicationContext().getSharedPreferences("AppSetting", Context.MODE_PRIVATE);//
             CheckPref checkPref = new CheckPref(getApplicationContext());
 
-//            dbManager = DBManager.getInstance(getApplicationContext());
+            dbManager = DBManager.getInstance(getApplicationContext());
 
-            Intent noIntent = new Intent(getApplicationContext(), SettingActivity.class);
-            noIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            notificationIntent = PendingIntent.getActivity(getApplicationContext(), 0, noIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            // 원래 노티피케이션 누르면 settingActivity로 넘어가는 부분인데, 지금 커스텀 노티피케이션이라 작동 안됨
+            //Intent noIntent = new Intent(getApplicationContext(), SettingActivity.class);
+            //noIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            //notificationIntent = PendingIntent.getActivity(getApplicationContext(), 0, noIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
             nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-//            Notification.Builder builder = new Notification.Builder(getApplicationContext());
+            Notification.Builder builder = new Notification.Builder(getApplicationContext());
 
-//            notification = builder.getNotification();
-//            notification.when = System.currentTimeMillis();
-//            notification.tickerText = "빠른 재생 실행 중";
-//            notification.icon = R.mipmap.ic_launcher;
-//
-//            RemoteViews contentView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.notification_lockscreenplay);
-//            contentView.setTextViewText(R.id.notification_bgmtitle,"멍청이");
+            notification = builder.build();
+            notification.when = System.currentTimeMillis();
+            notification.tickerText = "빠른 재생을 실행합니다";
+            notification.icon = R.mipmap.ic_launcher;
 
-//            bgmfavoriteArrayList=dbManager.getFavoriteList();   //DB
-//            realBgmNameList = new ArrayList<>();
-//            for(int i=0; i < bgmfavoriteArrayList.size() ; i++) {
-//                if (bgmfavoriteArrayList.get(i).getBgmPath() != null) {
-//                    realBgmNameList.add(bgmfavoriteArrayList.get(i));
-//                }
-//            }
-//            if(realBgmNameList.size() == 0)
-//            {
-//                contentView.setTextViewText(R.id.notification_bgmtitle,"즐겨찾기 목록이 존재하지 않습니다.");
-//            }
-//            else
-//            {
-//                contentView.setTextViewText(R.id.notification_bgmtitle,realBgmNameList.get(0).getBgmName());
-//                Log.e("getconvertid", contentView.getLayoutId() + "");
-//            }
+//
+            contentView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.notification_lockscreenplay);
 
-            //LayoutInflater layoutInflater = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            //LinearLayout notiPlayer = (LinearLayout)layoutInflater.inflate(R.layout.notification_lockscreenplay, null);
-//            LinearLayout innernotiPlayer = (LinearLayout) notiPlayer.getChildAt(1);
-//            notiMusicTitle = (TextView) innernotiPlayer.getChildAt(0);
-//            bgmfavoriteArrayList = dbManager.getFavoriteList();
-//            realBgmNameList = new ArrayList();
-//            for(int i=0; i < bgmfavoriteArrayList.size() ; i++) {
-//                if (bgmfavoriteArrayList.get(i).getBgmPath() != null) {
-//                    realBgmNameList.add(bgmfavoriteArrayList.get(i));
-//                }
-//            }
-//            if(realBgmNameList.size() == 0)
-//            {
-//                notiMusicTitle.setText("즐겨찾기 목록이 존재하지 않습니다!");
-//            }
-//            else
-//            {
-//                notiMusicTitle.setText(/*realBgmNameList.get(0).getBgmName()*/"ddddddd");
-//            }
-//                notiPlayer.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        switch (v.getId()) {
-//                            case R.id.notification_bgmplaybtn: {
-//                                Toast.makeText(getApplicationContext(), realBgmNameList.get(0).getBgmName(), Toast.LENGTH_LONG).show();
-//                                notiMusicTitle.setText(realBgmNameList.get(0).getBgmName());
-//                                break;
-//                            }
-//                            case R.id.notification_bgmbackbtn: {
-//                                if (indexNum == 0) {
-//                                    indexNum = realBgmNameList.size() - 1;
-//                                }
-//                                notiMusicTitle.setText(realBgmNameList.get(indexNum).toString());
-//                                Toast.makeText(getApplicationContext(), "Back Button", Toast.LENGTH_LONG).show();
-//                                break;
-//                            }
-//                            case R.id.notification_bgmnextbtn: {
-//                                if(indexNum >= realBgmNameList.size() - 1)
-//                                {
-//                                    indexNum = 0;
-//                                }
-//                                notiMusicTitle.setText(realBgmNameList.get(indexNum).toString());
-//                                Toast.makeText(getApplicationContext(), "Next Button", Toast.LENGTH_LONG).show();
-//                                break;
-//                            }
-//                        }
-//                    }
-//                });
+            bgmfavoriteArrayList=dbManager.getFavoriteList();   //DB
+            realBgmNameList = new ArrayList<>();
+            for(int i=0; i < bgmfavoriteArrayList.size() ; i++) {
+                if (bgmfavoriteArrayList.get(i).getBgmPath() != null) {
+                    realBgmNameList.add(bgmfavoriteArrayList.get(i));
+                }
+            }
+            if(realBgmNameList.size() == 0)
+            {
+                contentView.setTextViewText(R.id.notification_bgmtitle,"즐겨찾기 목록이 존재하지 않습니다.");
+            }
+            else
+            {
+                contentView.setTextViewText(R.id.notification_bgmtitle,realBgmNameList.get(0).getBgmName());
+                Log.e("getconvertid", contentView.getLayoutId() + "");
+            }
 //
-//            setListeners(contentView);
-//
-//            notification.contentView = contentView;
-//            notification.flags = Notification.FLAG_ONGOING_EVENT;
+            notification.contentView = contentView;
+            notification.flags = Notification.FLAG_ONGOING_EVENT;
             if(checkPref.getAlarmOnOff() && checkPref.getLockerOnOff()){
-                notification = new NotificationCompat.Builder(getApplicationContext())
-                        .setContentTitle("브금술사")
-                        .setContentText("빠른 재생이 실행중입니다.")
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                        .setAutoCancel(true)
-                        .setContentIntent(notificationIntent)
-                        .build();
+                setListeners(contentView);
+                indexNum = 0;
+                nm.notify(1,notification);
                 startForeground(1, notification);
+                Log.e("startforeground","start");
             } else {
                 if(notification != null) {
                     stopForeground(true);
+                    nm.cancel(notifyStartId);
+                    //리시버 해제 안하면 브로드캐스트가 쌓이기 시작해서 목록 넘어가는게 제대로 작동이 안됩니다.
+                    //근데 이 경우가 버튼 아무거나 하나 off됬을 때 리시버 해제하는 건데 버튼을 2개 연속으로 해제 했을 시에
+                    //이미 첫번째에서 리시버 해제했는데 두번째 것도 off를 해서 이 코드가 돌아가면 에러가 나서 receiver 없을시에 해제하는 경우를
+                    //illegalargumentException으로 일단 처리해서 동작하지 않도록 했습니다.
+                    try {
+                        unregisterReceiver(backReceiver);
+                        unregisterReceiver(playReceiver);
+                        unregisterReceiver(nextReceiver);
+                    }catch(IllegalArgumentException e){}
+                    catch(Exception e)
+                    {
+                        Log.e("Log name",e.getMessage());
+                    }
+                    Log.e("stopforeground", "stop");
+                    //nm.cancel(1); //cancel 코드를 실행시키면 버튼이 제대로 작동하지가 않는다...
                 }
             }
 
@@ -181,61 +147,75 @@ public class LockScreenService extends Service {
 
     public void setListeners(RemoteViews view)
     {
-//        final RemoteViews mView = view;
-//        // BackButton
-//        this.registerReceiver(new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                Toast.makeText(getApplicationContext(), "Back Button", Toast.LENGTH_SHORT).show();
-//                Log.e("indexnum", indexNum + "");
-//                if(indexNum == 0) {
-//                    indexNum = realBgmNameList.size() - 1;
-//                    mView.setTextViewText(R.id.notification_bgmtitle, realBgmNameList.get(indexNum).getBgmName());
-//                    Log.e("indexnum==0",indexNum+"");
-//                }
-//                else
-//                {
-//                    indexNum--;
-//                    mView.setTextViewText(R.id.notification_bgmtitle, realBgmNameList.get(indexNum).getBgmName());
-//                    Log.e("indexnum!=0",indexNum+"");
-//                }
-//
-//                mView.setTextViewText(R.id.notification_bgmtitle, realBgmNameList.get(indexNum).getBgmName());
-//                Log.e("indexnum", realBgmNameList.get(indexNum).getBgmName());
-//                Log.e("indexnum", (mView==null)+"");
-//                Log.e("indexnum", mView.getLayoutId()+"");
-//            }
-//        }, new IntentFilter("RemoteBack"));
-//        PendingIntent pBack = PendingIntent.getBroadcast(this, 0, new Intent("RemoteBack"), 0);
-//        view.setOnClickPendingIntent(R.id.notification_bgmbackbtn, pBack);
-//
-//        // PlayButton
-//        this.registerReceiver(new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                Toast.makeText(getApplicationContext(), "Play Button", Toast.LENGTH_SHORT).show();
-//            }
-//        }, new IntentFilter("RemotePlay"));
-//        PendingIntent pPlay = PendingIntent.getBroadcast(this, 0, new Intent("RemotePlay"), 0);
-//        view.setOnClickPendingIntent(R.id.notification_bgmplaybtn, pPlay);
-//
-//        // NextButton
-//        this.registerReceiver(new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                Toast.makeText(getApplicationContext(), "Next Button", Toast.LENGTH_SHORT).show();
-//                if(indexNum == realBgmNameList.size() - 1) {
-//                    indexNum = 0;
-//                }
-//                else
-//                {
-//                    indexNum++;
-//                }
-//                mView.setTextViewText(R.id.notification_bgmtitle, realBgmNameList.get(indexNum).getBgmName());
-//            }
-//        }, new IntentFilter("RemoteNext"));
-//        PendingIntent pNext = PendingIntent.getBroadcast(this, 0, new Intent("RemoteNext"), 0);
-//        view.setOnClickPendingIntent(R.id.notification_bgmnextbtn, pNext);
+        final RemoteViews mView = view;
+        // BackButton
+        this.registerReceiver(backReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Toast.makeText(getApplicationContext(), "Back Button", Toast.LENGTH_SHORT).show();
+                if(indexNum == 0) {
+                    indexNum = realBgmNameList.size() - 1;
+                    Log.e("indexloof<<", "-");
+                }
+                else
+                {
+                    indexNum--;
+                }
+                Log.e("indexnum back", indexNum + "");
+                mView.setTextViewText(R.id.notification_bgmtitle, realBgmNameList.get(indexNum).getBgmName());
+                mView.setImageViewResource(R.id.notification_bgmplaybtn, R.drawable.ic_play_circle_outline_white_24dp);
+                playCheck = false;          //play유무 검사 변수인데 나중에 preference 공유변수로 받아와야 될 것 같다.
+                nm.notify(notifyStartId,notification);  // 노티피케이션의 텍스트를 업데이트 하고 싶을 경우에는 setTextviewText를 한다고 해도 노티피케이션이 바로 업데이트 되는 것이 아니라
+                // 다시 띄워주는 형식을 반복해야 한다. 즉, 노티피케이션 자체를 다시 띄워 업데이트 하는 형식이다.
+            }
+        }, new IntentFilter("RemoteBack"));
+        PendingIntent pBack = PendingIntent.getBroadcast(this, 0, new Intent("RemoteBack"), 0);
+        view.setOnClickPendingIntent(R.id.notification_bgmbackbtn, pBack);
+
+        // PlayButton
+        this.registerReceiver(playReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Toast.makeText(getApplicationContext(), "Play Button", Toast.LENGTH_SHORT).show();
+                if(playCheck == false)
+                {
+                    mView.setImageViewResource(R.id.notification_bgmplaybtn, R.drawable.ic_pause_circle_outline_white_24dp);
+                    playCheck = true;
+                }
+                else
+                {
+                    mView.setImageViewResource(R.id.notification_bgmplaybtn, R.drawable.ic_play_circle_outline_white_24dp);
+                    playCheck = false;
+                }
+                nm.notify(notifyStartId,notification);  // 노티피케이션의 텍스트를 업데이트 하고 싶을 경우에는 setTextviewText를 한다고 해도 노티피케이션이 바로 업데이트 되는 것이 아니라
+                                                // 다시 띄워주는 형식을 반복해야 한다. 즉, 노티피케이션 자체를 다시 띄워 업데이트 하는 형식이다.
+            }
+        }, new IntentFilter("RemotePlay"));
+        PendingIntent pPlay = PendingIntent.getBroadcast(this, 0, new Intent("RemotePlay"), 0);
+        view.setOnClickPendingIntent(R.id.notification_bgmplaybtn, pPlay);
+
+        // NextButton
+        this.registerReceiver(nextReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Toast.makeText(getApplicationContext(), "Next Button", Toast.LENGTH_SHORT).show();
+                if(indexNum == realBgmNameList.size() - 1) {
+                    indexNum = 0;
+                    Log.e("indexloof>>", "- ");
+                }
+                else
+                {
+                    indexNum++;
+                }
+                Log.e("indexnum next", indexNum + "");
+                mView.setTextViewText(R.id.notification_bgmtitle, realBgmNameList.get(indexNum).getBgmName());
+                mView.setImageViewResource(R.id.notification_bgmplaybtn, R.drawable.ic_play_circle_outline_white_24dp);
+                playCheck = false;
+                nm.notify(notifyStartId,notification);
+            }
+        }, new IntentFilter("RemoteNext"));
+        PendingIntent pNext = PendingIntent.getBroadcast(this, 0, new Intent("RemoteNext"), 0);
+        view.setOnClickPendingIntent(R.id.notification_bgmnextbtn, pNext);
 
     }
 
@@ -258,11 +238,9 @@ public class LockScreenService extends Service {
         filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
         filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
         registerReceiver(lockReceive, filter);
-        try{
+        try {
             binder.setNotificationOnOff();
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -309,9 +287,12 @@ public class LockScreenService extends Service {
         if (lockReceive != null) {
             unregisterReceiver(lockReceive);
         }
+        if (this != null) {
+            unregisterComponentCallbacks(this);
+        }
         super.onDestroy();
 
-     }
+    }
 
     public void setNotificationOnOff(int startId, SharedPreferences preferences) {
         notification = new NotificationCompat.Builder(getApplicationContext())

@@ -2,30 +2,42 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:background="@android:color/black"
+    android:minHeight="150dp"
     android:padding="5dp"
     android:layout_height="100dp">
 
     <ImageView
+        android:id="@+id/notification_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:scaleType="fitXY"
         android:src="@mipmap/ic_launcher"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <TextView
-        android:id="@+id/notification_bgmtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="15dp"
-        android:text="노래 제목입니다."
-        android:textColor="@android:color/white"
-        android:textSize="17dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/notification_bgmtitle"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="15dp"
+                android:text="노래 제목입니다."
+                android:textColor="@android:color/white"
+                android:textSize="17dp"/>
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
             android:orientation="horizontal">
 
             <ImageButton
@@ -33,22 +45,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_fast_rewind_white_48dp"
-                android:layout_weight="1"/>
+                android:src="@drawable/ic_fast_rewind_white_24dp"
+                android:layout_weight="1"
+
+                />
             <ImageButton
                 android:id="@+id/notification_bgmplaybtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_play_white_48dp"
-                android:layout_weight="1"/>
+                android:src="@drawable/ic_play_circle_outline_white_24dp"
+                android:layout_weight="1"
+                />
             <ImageButton
                 android:id="@+id/notification_bgmnextbtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_fast_forward_white_48dp"
-                android:layout_weight="1"/>
+                android:src="@drawable/ic_fast_forward_white_24dp"
+                android:layout_weight="1"
+                />
+            <ImageButton
+                android:id="@+id/notification_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_close_white_24dp"
+                android:layout_marginLeft="20dp"
+                android:layout_weight="1"
+                />
 
 
         </LinearLayout>
