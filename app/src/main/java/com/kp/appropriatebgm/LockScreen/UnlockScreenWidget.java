@@ -60,11 +60,6 @@ public class UnlockScreenWidget extends RelativeLayout {
     private ImageView unlockImage;
     private int thumbWidth;
 
-    public void setOnUnlockListener(OnUnlockListener listener)
-    {
-        this.listener = listener;
-    }
-
     // Method : 잠금화면 해제 위젯 정의
     // Return value : void
     // parameter : context(액티비티), 애트리뷰트 Set (말 그대로 모음)

@@ -88,20 +88,21 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <com.kp.appropriatebgm.LockScreen.UnlockScreenWidget
-        android:id="@+id/lockscreen_widget_unlock"
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/lockscreen_btn_unlock"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:padding="15dp"
         android:background="@android:color/transparent"
+        android:src="@drawable/ic_unlock_button"
+        android:onClick="onUnlock"
         />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/lockscreen_widget_unlock"
+        android:layout_above="@id/lockscreen_btn_unlock"
         android:orientation="horizontal"
         android:gravity="center">
 
