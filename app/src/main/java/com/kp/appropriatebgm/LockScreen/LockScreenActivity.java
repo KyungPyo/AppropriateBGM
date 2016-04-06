@@ -65,6 +65,12 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
         time_clock = (TextView) findViewById(R.id.lockscreen_textview_timeclock);
         day_clock = (TextView) findViewById(R.id.lockscreen_textview_dayclock);
         unlockButton = (ImageView) findViewById(R.id.lockscreen_btn_unlock);
+        unlockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
 //        slide_widget = (UnlockScreenWidget) findViewById(R.id.lockscreen_widget_unlock);
 //        slide_widget.setOnUnlockListener(this);

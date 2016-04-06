@@ -96,7 +96,7 @@
         android:layout_centerHorizontal="true"
         android:background="@android:color/transparent"
         android:src="@drawable/ic_unlock_button"
-        android:onClick="onUnlock"
+        android:paddingTop="16dp"
         />
 
     <LinearLayout

@@ -14,6 +14,18 @@
         android:layout_alignParentTop="true"
         android:background="@color/mainActionBar"
         android:minHeight="?attr/actionBarSize">
+        <RelativeLayout
+            android:id="@+id/selectbgm_group_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/selectbgm_textView_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="18dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"/>
 
         <ImageView
             android:id="@+id/favorite_btn_search"
@@ -21,14 +33,19 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:paddingRight="10dp"
-            android:src="@drawable/ic_search_white_24dp" />
+            android:src="@drawable/ic_search_white_24dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"/>
 
         <EditText
             android:id="@+id/favorite_editText_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:visibility="invisible" />
+            android:visibility="invisible"
+            android:layout_toLeftOf="@id/favorite_btn_search"
+            android:layout_centerInParent="true"
+            />
+        </RelativeLayout>
 
 
     </android.support.v7.widget.Toolbar>

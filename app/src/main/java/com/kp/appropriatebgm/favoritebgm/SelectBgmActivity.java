@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kp.appropriatebgm.DBController.BGMInfo;
@@ -50,6 +51,7 @@ public class SelectBgmActivity extends AppCompatActivity {
     Button clear_favorite;
     Spinner cateSpinner;
 
+    TextView selectTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,11 +186,13 @@ public class SelectBgmActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!isVisible) {
                     editSearch.setVisibility(View.VISIBLE);
+                    selectTextView.setVisibility(View.INVISIBLE);
                     searchButton.setImageResource(R.drawable.ic_search_cancel_white);
                     isVisible = true;
                 } else {
                     final InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                     editSearch.setVisibility(View.INVISIBLE);
+                    selectTextView.setVisibility(View.VISIBLE);
                     searchButton.setImageResource(R.drawable.ic_search_white_24dp);
                     isVisible = false;
                     editSearch.setText("");
@@ -254,12 +258,18 @@ public class SelectBgmActivity extends AppCompatActivity {
         searchButton = (ImageView) findViewById(R.id.favorite_btn_search);
         editSearch = (EditText) findViewById(R.id.favorite_editText_search);
         toolbar = (Toolbar) findViewById(R.id.favorite_toolbar);
+        selectTextView=(TextView)findViewById(R.id.selectbgm_textView_select);
         list = (ListView) findViewById(R.id.musicList);
         bgms = dbManager.getBGMList(1);
 
         adapter = new BGMListAdapter(this, bgms);
         save = (Button) findViewById(R.id.favorite_btn_save);
         cancel = (Button) findViewById(R.id.favorite_btn_cancel);
+
+        // Position에 따라 툴바 TextView 변경
+        Intent intent = getIntent();
+        position = intent.getIntExtra("position", 0);
+        selectTextView.setText((position+1)+"번째 즐겨찾기에 등록");
 
     }
 }
