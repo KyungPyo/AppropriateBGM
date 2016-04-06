@@ -72,7 +72,7 @@ public class LogoActivity extends AppCompatActivity {
         }
         // 권한이 없을 경우 권한을 허용해 달라고 출력한다.
         else {
-            message.setText("권한을 허용해야 앱이 실행됩니다.");
+            message.setText("권한을 획득하는 중");
         }
     }
 
@@ -106,7 +106,7 @@ public class LogoActivity extends AppCompatActivity {
                 super.run();
                 try {
                     if (isAvailable) {
-                        sleep(1000);
+                        sleep(300);
                         Intent intent = new Intent();
                         ComponentName componentName = new ComponentName("com.kp.appropriatebgm", "com.kp.appropriatebgm.MainActivity");
                         intent.setComponent(componentName);
@@ -174,13 +174,20 @@ public class LogoActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean isAllGranted = true;
+        for (int i=0; i<grantResults.length; i++) {
+            if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
+                isAllGranted = false;
+            }
+        }
 
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST : {
-                if (grantResults.length > 0  && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (isAllGranted) {
 
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
+                    message.setText("권한 획득 성공\n데이터 수집중");
                     mPref.setPermissionsGrant(true);
                     appStartSetting();
 
@@ -189,6 +196,7 @@ public class LogoActivity extends AppCompatActivity {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     mPref.setPermissionsGrant(false);
+                    message.setText("권한을 허용해야 앱이 실행됩니다.");
                 }
                 return;
             }
