@@ -1,7 +1,9 @@
 package com.kp.appropriatebgm.Setting;
 
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -14,10 +16,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.kp.appropriatebgm.CheckPref;
+import com.kp.appropriatebgm.DBController.DBManager;
+import com.kp.appropriatebgm.DBController.Favorite;
 import com.kp.appropriatebgm.LockScreen.LockNotificationInterface;
 import com.kp.appropriatebgm.LockScreen.LockScreenService;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.TutorialActivity;
+
+import java.util.ArrayList;
 
 
 /**
@@ -28,15 +34,18 @@ public class SettingActivity extends AppCompatActivity{
     private CheckPref mPref;
     private LockNotificationInterface binder = null;
 
-    TextView lockSummary;
-    TextView notifySummary;
-    TextView screenPlaySummary;
-    TextView differentTaskSummary;
-    Switch lockOnOffSwitch;
-    Switch notifyOnOffSwitch;
-    Switch screenPlayOnOffSwitch;
-    Switch differentTaskOnOffSwitch;
-    LinearLayout tutorialViewGroup;
+    private TextView lockSummary;
+    private TextView notifySummary;
+    private TextView screenPlaySummary;
+    private TextView differentTaskSummary;
+    private Switch lockOnOffSwitch;
+    private Switch notifyOnOffSwitch;
+    private Switch screenPlayOnOffSwitch;
+    private Switch differentTaskOnOffSwitch;
+    private LinearLayout tutorialViewGroup;
+    private ArrayList<Favorite> bgmfavoriteArrayList;
+    private ArrayList<Favorite> realBgmNameList;
+    private DBManager dbManager;
     //Use : 서비스 연결 객체 선언
     private ServiceConnection lockServiceConnection;
 
@@ -47,6 +56,7 @@ public class SettingActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+        dbManager = DBManager.getInstance(getApplicationContext());
         settingInit();
     }
 
@@ -130,9 +140,25 @@ public class SettingActivity extends AppCompatActivity{
                 settingSwitch = (Switch) v;
                 Boolean lockChecked = settingSwitch.isChecked();
                 if (lockChecked) {
-                    intent.setClass(getApplicationContext(), LockScreenService.class);
-                    startService(intent);
-                    setSummaryText("lockscreen", lockChecked);
+                    if(favoriteRealListCheck()) {
+                        intent.setClass(getApplicationContext(), LockScreenService.class);
+                        startService(intent);
+                        setSummaryText("lockscreen", lockChecked);
+                    }
+                    else
+                    {
+                        AlertDialog.Builder noLocker_Dig = new AlertDialog.Builder(SettingActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+                        noLocker_Dig.setTitle("즐겨찾기 목록이 존재하지 않습니다!")
+                                .setNegativeButton(R.string.ctgdialog_checkbtn_text, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface indialog, int which) {
+                                        indialog.cancel();
+                                    }
+                                });
+                        noLocker_Dig.show();
+                        settingSwitch.setChecked(!lockChecked);
+                        mPref.setLockerOnOff();
+                    }
                 } else {
                     intent.setClass(getApplicationContext(), LockScreenService.class);
                     stopService(intent);
@@ -236,4 +262,22 @@ public class SettingActivity extends AppCompatActivity{
         }
     }
 
+    public boolean favoriteRealListCheck()
+    {
+        bgmfavoriteArrayList = dbManager.getFavoriteList();
+        realBgmNameList = new ArrayList<>();
+        for(int i=0; i < bgmfavoriteArrayList.size() ; i++) {
+            if (bgmfavoriteArrayList.get(i).getBgmPath() != null) {
+                realBgmNameList.add(bgmfavoriteArrayList.get(i));
+            }
+        }
+        if(realBgmNameList.size() == 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 }

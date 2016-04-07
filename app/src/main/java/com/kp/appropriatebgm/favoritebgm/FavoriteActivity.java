@@ -1,5 +1,7 @@
 package com.kp.appropriatebgm.favoritebgm;
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.AudioManager;
@@ -40,6 +42,8 @@ public class FavoriteActivity extends AppCompatActivity {
 
     private CheckPref mPref;
 
+    ArrayList<Favorite> realBgmNameList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +72,24 @@ public class FavoriteActivity extends AppCompatActivity {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (isChecked) {
-                Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
-                startService(intent);
+                if(favoriteRealListCheck()) {
+                    Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
+                    startService(intent);
+                }
+                else
+                {
+                    AlertDialog.Builder noLocker_Dig = new AlertDialog.Builder(FavoriteActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+                    noLocker_Dig.setTitle("즐겨찾기 목록이 존재하지 않습니다!")
+                            .setNegativeButton(R.string.ctgdialog_checkbtn_text, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface indialog, int which) {
+                                    indialog.cancel();
+                                }
+                            });
+                    noLocker_Dig.show();
+                    buttonView.setChecked(!isChecked);
+                    mPref.setLockerOnOff();
+                }
             } else {
                 Intent intent = new Intent(FavoriteActivity.this, LockScreenService.class);
                 stopService(intent);
@@ -186,6 +206,24 @@ public class FavoriteActivity extends AppCompatActivity {
         catch (RemoteException e)
         {
             e.printStackTrace();
+        }
+    }
+
+    public boolean favoriteRealListCheck()
+    {
+        realBgmNameList = new ArrayList<>();
+        for(int i=0; i < favoriteArrayList.size() ; i++) {
+            if (favoriteArrayList.get(i).getBgmPath() != null) {
+                realBgmNameList.add(favoriteArrayList.get(i));
+            }
+        }
+        if(realBgmNameList.size() == 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
         }
     }
 }
