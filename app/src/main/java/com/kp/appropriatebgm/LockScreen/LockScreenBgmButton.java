@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.DBController.Favorite;
-import com.kp.appropriatebgm.MusicPlayer;
+import com.kp.appropriatebgm.Music.MusicPlayer;
 import com.kp.appropriatebgm.R;
 
 /**

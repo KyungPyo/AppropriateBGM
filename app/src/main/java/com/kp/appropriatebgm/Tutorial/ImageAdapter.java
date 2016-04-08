@@ -1,4 +1,4 @@
-package com.kp.appropriatebgm;
+package com.kp.appropriatebgm.Tutorial;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
@@ -6,6 +6,8 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.kp.appropriatebgm.R;
 
 /**
  * Created by Choi on 2016-02-25.

@@ -1,4 +1,4 @@
-package com.kp.appropriatebgm;
+package com.kp.appropriatebgm.Music;
 
 import android.content.Context;
 import android.media.MediaPlayer;
