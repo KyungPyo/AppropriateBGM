@@ -4,8 +4,6 @@ package com.kp.appropriatebgm.LockScreen;
  * Created by GD on 2016-02-11.
  */
 
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -19,18 +17,13 @@ import android.os.RemoteException;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.kp.appropriatebgm.CheckPref;
-import com.kp.appropriatebgm.DBController.BGMInfo;
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.DBController.Favorite;
-import com.kp.appropriatebgm.MusicPlayer;
+import com.kp.appropriatebgm.Music.MusicPlayer;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.Setting.SettingActivity;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -178,7 +171,8 @@ public class LockScreenService extends Service {
                 mView.setImageViewResource(R.id.notification_bgmplaybtn, R.drawable.ic_play_circle_outline_white_24dp);
                 playCheck = false;
 
-                nm.notify(notifyStartId, notification);  // 노티피케이션의 텍스트를 업데이트 하고 싶을 경우에는 setTextviewText를 한다고 해도 노티피케이션이 바로 업데이트 되는 것이 아니라
+                nm.notify(notifyStartId, notification);
+                // 노티피케이션의 텍스트를 업데이트 하고 싶을 경우에는 setTextviewText를 한다고 해도 노티피케이션이 바로 업데이트 되는 것이 아니라
                 // 다시 띄워주는 형식을 반복해야 한다. 즉, 노티피케이션 자체를 다시 띄워 업데이트 하는 형식이다.
             }
         }, new IntentFilter("RemoteBack"));

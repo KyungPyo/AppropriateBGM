@@ -75,7 +75,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".TutorialActivity"
+        <activity android:name=".Tutorial.TutorialActivity"
             android:screenOrientation="portrait"/>
     </application>
 

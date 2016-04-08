@@ -1,4 +1,4 @@
-package com.kp.appropriatebgm;
+package com.kp.appropriatebgm.Music;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -6,6 +6,8 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.kp.appropriatebgm.R;
 
 /**
  * Created by KP on 2016-02-04.

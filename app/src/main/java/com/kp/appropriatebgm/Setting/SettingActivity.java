@@ -21,7 +21,7 @@ import com.kp.appropriatebgm.DBController.Favorite;
 import com.kp.appropriatebgm.LockScreen.LockNotificationInterface;
 import com.kp.appropriatebgm.LockScreen.LockScreenService;
 import com.kp.appropriatebgm.R;
-import com.kp.appropriatebgm.TutorialActivity;
+import com.kp.appropriatebgm.Tutorial.TutorialActivity;
 
 import java.util.ArrayList;
 
