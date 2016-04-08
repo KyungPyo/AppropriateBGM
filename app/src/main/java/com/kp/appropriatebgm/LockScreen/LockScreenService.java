@@ -75,16 +75,6 @@ public class LockScreenService extends Service {
 
             Notification.Builder builder = new Notification.Builder(getApplicationContext());
 
-            notification = builder.build();
-            notification.when = System.currentTimeMillis();
-            notification.tickerText = "빠른 재생을 실행합니다";
-            notification.icon = R.mipmap.ic_launcher;
-
-            contentView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.notification_lockscreenplay);
-
-            notification.contentView = contentView;
-            notification.flags = Notification.FLAG_ONGOING_EVENT;
-            notification.contentIntent = notifyIntent;
 
             bgmfavoriteArrayList=dbManager.getFavoriteList();   //DB
             realBgmNameList = new ArrayList<>();
