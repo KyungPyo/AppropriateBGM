@@ -3,6 +3,7 @@ package com.kp.appropriatebgm.Setting;
 
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -20,6 +21,7 @@ import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.DBController.Favorite;
 import com.kp.appropriatebgm.LockScreen.LockNotificationInterface;
 import com.kp.appropriatebgm.LockScreen.LockScreenService;
+import com.kp.appropriatebgm.NotiPlayer;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.Tutorial.TutorialActivity;
 
@@ -33,15 +35,14 @@ public class SettingActivity extends AppCompatActivity{
 
     private CheckPref mPref;
     private LockNotificationInterface binder = null;
+    public static Context mContext;
 
     private TextView lockSummary;
     private TextView notifySummary;
-    private TextView screenPlaySummary;
-    private TextView differentTaskSummary;
+    private TextView notiplayerSummary;
     private Switch lockOnOffSwitch;
     private Switch notifyOnOffSwitch;
-    private Switch screenPlayOnOffSwitch;
-    private Switch differentTaskOnOffSwitch;
+    private Switch notiplayerOnOffSwitch;
     private LinearLayout tutorialViewGroup;
     private ArrayList<Favorite> bgmfavoriteArrayList;
     private ArrayList<Favorite> realBgmNameList;
@@ -66,25 +67,23 @@ public class SettingActivity extends AppCompatActivity{
     // use ; 기본 설정을 해준다. (공유변수 객체 선언 및 스위치, 텍스트뷰등의 구성요소를 받아오고 클릭리스너 등록 및 bind서비스 시작)
     public void settingInit()
     {
+        mContext = this;
         mPref = new CheckPref(this);        // 공유 프레퍼런스 객체
 
         lockSummary = (TextView) findViewById(R.id.setting_textview_locksummary);
         notifySummary = (TextView) findViewById(R.id.setting_textview_notificationsummary);
-        //screenPlaySummary = (TextView) findViewById(R.id.setting_textview_screenOffPlaysummary);
-//        differentTaskSummary = (TextView) findViewById(R.id.setting_textview_differenttaskPlaysummary);
+        notiplayerSummary = (TextView) findViewById(R.id.setting_textview_notiplayersummary);
 
         lockOnOffSwitch = (Switch) findViewById(R.id.setting_switch_lockscreenOnOff);
         notifyOnOffSwitch = (Switch) findViewById(R.id.setting_switch_notificationOnOff);
-//        screenPlayOnOffSwitch = (Switch) findViewById(R.id.setting_switch_screenOffPlayOnOff);
-//        differentTaskOnOffSwitch = (Switch) findViewById(R.id.setting_switch_differenttaskPlayOnOff);
+        notiplayerOnOffSwitch = (Switch) findViewById(R.id.setting_switch_notiplayerOnOff);
 
         tutorialViewGroup = (LinearLayout) findViewById(R.id.setting_viewgroup_tutorial);
 
         lockOnOffSwitch.setOnClickListener(onClickListener);
         notifyOnOffSwitch.setOnClickListener(onClickListener);
-//        screenPlayOnOffSwitch.setOnClickListener(onClickListener);
+        notiplayerOnOffSwitch.setOnClickListener(onClickListener);
         tutorialViewGroup.setOnClickListener(onClickListener);
-//        differentTaskOnOffSwitch.setOnClickListener(onClickListener);
 
         lockServiceConnection = new ServiceConnection() {
 
@@ -111,15 +110,18 @@ public class SettingActivity extends AppCompatActivity{
     // Use : 공유변수를 받아와 체크유무를 갱신해주고 이에 따른 상세 설명도 설정해준다.
     @Override
     public void onResume() {
-        lockOnOffSwitch.setChecked(mPref.getLockerOnOff());
-        notifyOnOffSwitch.setChecked(mPref.getAlarmOnOff());
-//        screenPlayOnOffSwitch.setChecked(mPref.getScreenOffPlayOnOff());
-//        differentTaskOnOffSwitch.setChecked(mPref.getDifferentTaskPlayOnOff());
-        setSummaryText("lockscreen", mPref.getLockerOnOff());
-        setSummaryText("notification", mPref.getAlarmOnOff());
-//        setSummaryText("screenoffplay", mPref.getScreenOffPlayOnOff());
+        try {
+            lockOnOffSwitch.setChecked(mPref.getLockerOnOff());
+            notifyOnOffSwitch.setChecked(mPref.getAlarmOnOff());
+            notiplayerOnOffSwitch.setChecked(mPref.getNotiplayerOnOff());
+            setSummaryText("lockscreen", mPref.getLockerOnOff());
+            setSummaryText("notification", mPref.getAlarmOnOff());
+            setSummaryText("notiplayer", mPref.getNotiplayerOnOff());
 //        setSummaryText("differenttaskplay", mPref.getDifferentTaskPlayOnOff());
-        super.onResume();
+            super.onResume();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -175,20 +177,23 @@ public class SettingActivity extends AppCompatActivity{
                 setBinderNotificationOnOff();
                 setSummaryText("notification", notifyChecked);
             }
-//            else if(v.getId() == R.id.setting_switch_screenOffPlayOnOff)
-//            {
-//                settingSwitch = (Switch) v;
-//                Boolean notifyChecked = settingSwitch.isChecked();
-//                mPref.setScreenOffPlayOnOff(notifyChecked);
-//                setSummaryText("screenoffplay", notifyChecked);
-//            }
-//            else if(v.getId() == R.id.setting_switch_differenttaskPlayOnOff)
-//            {
-//                settingSwitch = (Switch) v;
-//                Boolean notifyChecked = settingSwitch.isChecked();
-//                mPref.setDifferentTaskPlayOnOff(notifyChecked);
-//                setSummaryText("differenttaskplay", notifyChecked);
-//            }
+            else if(v.getId() == R.id.setting_switch_notiplayerOnOff)
+            {
+                settingSwitch = (Switch) v;
+                Boolean notifyChecked = settingSwitch.isChecked();
+                mPref.setNotiplayerOnOff(notifyChecked);
+                if(notifyChecked) {
+                    intent.setClass(getApplicationContext(), NotiPlayer.class);
+                    startService(intent);
+                    setSummaryText("notiplayer", notifyChecked);
+                }
+                else
+                {
+                    intent.setClass(getApplicationContext(), NotiPlayer.class);
+                    stopService(intent);
+                    setSummaryText("notiplayer", notifyChecked);
+                }
+            }
             else if(v.getId() == R.id.setting_viewgroup_tutorial)
             {
                 intent.setClass(getApplicationContext(), TutorialActivity.class);
@@ -218,22 +223,15 @@ public class SettingActivity extends AppCompatActivity{
                 notifySummary.setText("사용중이 아닙니다");
             }
         }
-//        else if(title.equals("screenoffplay"))
-//        {
-//            if (checked) {
-//                screenPlaySummary.setText("화면이 꺼졌을 시에도 재생합니다.");
-//            } else {
-//                screenPlaySummary.setText("화면이 꺼졌을 시에 재생하지 않습니다.");
-//            }
-//        }
-//        else if(title.equals("differenttaskplay"))
-//        {
-//            if (checked) {
-//                differentTaskSummary.setText("다른 작업 수행 시 재생합니다.");
-//            } else {
-//                differentTaskSummary.setText("다른 작업 수행 시 재생하지 않습니다.");
-//            }
-//        }
+        else if(title.equals("notiplayer"))
+        {
+            if (checked) {
+                notiplayerSummary.setText("사용합니다.");
+            } else {
+                notiplayerSummary.setText("사용하지 않습니다.");
+            }
+        }
+
     }
 
     // Method : 바인드 서비스 종료

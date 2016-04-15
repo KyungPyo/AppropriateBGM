@@ -130,7 +130,7 @@
             />
 
     </LinearLayout>
-    <!--
+
 
     <ImageView
         android:layout_width="match_parent"
@@ -153,7 +153,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/setting_viewgroup_screenOffPlay"
+        android:id="@+id/setting_viewgroup_notiplayer"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:orientation="horizontal"
@@ -169,14 +169,14 @@
             android:layout_weight="1">
 
             <TextView
-                android:id="@+id/setting_textview_backgroundPlayTitle"
+                android:id="@+id/setting_textview_notiplayertitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/settingTitle"
-                android:text="화면 꺼짐 재생"/>
+                android:text="재생 알림 설정"/>
 
             <TextView
-                android:id="@+id/setting_textview_screenOffPlaysummary"
+                android:id="@+id/setting_textview_notiplayersummary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/settingSummary"
@@ -184,7 +184,7 @@
         </LinearLayout>
 
         <Switch
-            android:id="@+id/setting_switch_screenOffPlayOnOff"
+            android:id="@+id/setting_switch_notiplayerOnOff"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textOn="On"
@@ -197,56 +197,6 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
-
-    <LinearLayout
-        android:id="@+id/setting_viewgroup_differenttaskPlay"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:background="@android:color/white"
-        >
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/setting_textview_differenttaskPlayTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/settingTitle"
-                android:text="다른 작업 시 재생"/>
-
-            <TextView
-                android:id="@+id/setting_textview_differenttaskPlaysummary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/settingSummary"
-                />
-        </LinearLayout>
-
-        <Switch
-            android:id="@+id/setting_switch_differenttaskPlayOnOff"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textOn="On"
-            android:textOff="Off"
-            android:thumb="@drawable/on_off_switch_selector"
-            android:track="@drawable/on_off_switch_track"
-            android:layout_gravity="center"
-            android:paddingRight="10dp"
-            />
-
-    </LinearLayout>
--->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="25dp"

@@ -8,8 +8,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
@@ -17,13 +15,8 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v7.app.NotificationCompat;
 import android.telephony.TelephonyManager;
-import android.util.Log;
-import android.widget.RemoteViews;
 
 import com.kp.appropriatebgm.CheckPref;
-import com.kp.appropriatebgm.DBController.DBManager;
-import com.kp.appropriatebgm.DBController.Favorite;
-import com.kp.appropriatebgm.Music.MusicPlayer;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.Setting.SettingActivity;
 

@@ -54,6 +54,9 @@
         <service android:name=".LockScreen.LockScreenService"
             android:screenOrientation="portrait" />
 
+        <service android:name=".NotiPlayer"
+            android:screenOrientation="portrait" />
+
         <receiver
             android:name=".LockScreen.LockScreenReceiver"
             android:enabled="true"
@@ -64,6 +67,7 @@
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".LockScreen.PackageUpdateReceiver"
             android:enabled="true"

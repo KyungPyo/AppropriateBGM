@@ -194,8 +194,8 @@ public class CheckPref {
     // Method : 알람이 on인지 off인지 저장한다.
     // Return Value : boolean (on이면 true, off 이면 false)
     // Parameter : void
-    // Use : 알람의 on off를 저장하여 메인액티비티 재생에서 사용
-    public void setScreenOffPlayOnOff(boolean isOn){
+    // Use : 노티피케이션 뮤직플레이어의 on off를 저장하여 노티피케이션 여부를 확인
+    public void setNotiplayerOnOff(boolean isOn){
         SharedPreferences.Editor prefEditor = settingPref.edit();
         prefEditor.putBoolean("screenOffPlay",isOn);
         prefEditor.apply();
@@ -204,26 +204,9 @@ public class CheckPref {
     // Method : 알람이 on인지 off인지 가져온다.
     // Return Value : boolean (on이면 true, off 이면 false)
     // Parameter : void
-    // Use : 알람의 on off 여부를 받아 화면 꺼졌을 시에 재생할지 말지 결정함.
-    public boolean getScreenOffPlayOnOff(){
+    // Use : 알람의 on off 여부를 받아 노티피케이션 뮤직 플레이어가 실행할 지 결정함.
+    public boolean getNotiplayerOnOff(){
         return settingPref.getBoolean("screenOffPlay", true);
     }
 
-    // Method : 알람이 on인지 off인지 저장한다.
-    // Return Value : boolean (on이면 true, off 이면 false)
-    // Parameter : void
-    // Use : 알람의 on off를 저장하여 메인액티비티 재생 다른 작업 수행 시에 사용
-    public void setDifferentTaskPlayOnOff(boolean isOn){
-        SharedPreferences.Editor prefEditor = settingPref.edit();
-        prefEditor.putBoolean("differentTaskPlay",isOn);
-        prefEditor.apply();
-    }
-
-    // Method : 알람이 on인지 off인지 가져온다.
-    // Return Value : boolean (on이면 true, off 이면 false)
-    // Parameter : void
-    // Use : 알람의 on off 여부를 받아 다른 작업 수행 시(다른 앱 사용, 인텐트 전환)에 재생할지 말지 결정함.
-    public boolean getDifferentTaskPlayOnOff(){
-        return settingPref.getBoolean("differentTaskPlay", true);
-    }
 }
