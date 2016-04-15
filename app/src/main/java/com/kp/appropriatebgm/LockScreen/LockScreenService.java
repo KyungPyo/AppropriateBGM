@@ -30,7 +30,7 @@ public class LockScreenService extends Service {
     private LockScreenReceiver lockReceive;
     private Notification notification;
     private NotificationManager nm;
-    private static int notifyStartId = 1;
+    private static int LOCKSCREENNOTIFYSTARTID = 2;
 
 
     LockNotificationInterface.Stub binder = new LockNotificationInterface.Stub() {
@@ -47,7 +47,7 @@ public class LockScreenService extends Service {
 
             nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-            if(checkPref.getAlarmOnOff() && checkPref.getLockerOnOff()){
+            if(checkPref.getLockerOnOff()){
 
                     notification = new NotificationCompat.Builder(getApplicationContext())
                             .setContentTitle("브금술사")
@@ -57,12 +57,12 @@ public class LockScreenService extends Service {
                             .setContentIntent(notificationIntent)
                             .build();
 
-                    nm.notify(notifyStartId, notification);
+                    nm.notify(LOCKSCREENNOTIFYSTARTID, notification);
                     //startForeground(notifyStartId, notification);
             } else {
                 if(notification != null) {
                     //stopForeground(true);
-                    nm.cancel(notifyStartId);   //nm.cancel(1); //cancel 코드를 실행시키면 버튼이 제대로 작동하지가 않는다...
+                    nm.cancel(LOCKSCREENNOTIFYSTARTID);   //nm.cancel(1); //cancel 코드를 실행시키면 버튼이 제대로 작동하지가 않는다...
                 }
             }
 
@@ -105,7 +105,6 @@ public class LockScreenService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        notifyStartId = startId;
         if (intent != null) {
             if (intent.getAction() == null) {
                 if (lockReceive == null) {

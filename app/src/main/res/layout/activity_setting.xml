@@ -87,57 +87,6 @@
         android:background="@android:color/darker_gray"/>
 
     <LinearLayout
-        android:id="@+id/setting_viewgroup_notification"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:background="@android:color/white"
-        >
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/setting_textview_notificationtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/settingTitle"
-                android:text="잠금화면 상태바 설정"/>
-
-            <TextView
-                android:id="@+id/setting_textview_notificationsummary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/settingSummary"
-                />
-        </LinearLayout>
-
-        <Switch
-            android:id="@+id/setting_switch_notificationOnOff"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textOn="On"
-            android:textOff="Off"
-            android:thumb="@drawable/on_off_switch_selector"
-            android:track="@drawable/on_off_switch_track"
-            android:layout_gravity="center"
-            android:paddingRight="10dp"
-            />
-
-    </LinearLayout>
-
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
-
-    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:orientation="horizontal"

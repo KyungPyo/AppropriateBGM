@@ -71,17 +71,14 @@ public class SettingActivity extends AppCompatActivity{
         mPref = new CheckPref(this);        // 공유 프레퍼런스 객체
 
         lockSummary = (TextView) findViewById(R.id.setting_textview_locksummary);
-        notifySummary = (TextView) findViewById(R.id.setting_textview_notificationsummary);
         notiplayerSummary = (TextView) findViewById(R.id.setting_textview_notiplayersummary);
 
         lockOnOffSwitch = (Switch) findViewById(R.id.setting_switch_lockscreenOnOff);
-        notifyOnOffSwitch = (Switch) findViewById(R.id.setting_switch_notificationOnOff);
         notiplayerOnOffSwitch = (Switch) findViewById(R.id.setting_switch_notiplayerOnOff);
 
         tutorialViewGroup = (LinearLayout) findViewById(R.id.setting_viewgroup_tutorial);
 
         lockOnOffSwitch.setOnClickListener(onClickListener);
-        notifyOnOffSwitch.setOnClickListener(onClickListener);
         notiplayerOnOffSwitch.setOnClickListener(onClickListener);
         tutorialViewGroup.setOnClickListener(onClickListener);
 
@@ -112,12 +109,10 @@ public class SettingActivity extends AppCompatActivity{
     public void onResume() {
         try {
             lockOnOffSwitch.setChecked(mPref.getLockerOnOff());
-            notifyOnOffSwitch.setChecked(mPref.getAlarmOnOff());
             notiplayerOnOffSwitch.setChecked(mPref.getNotiplayerOnOff());
+
             setSummaryText("lockscreen", mPref.getLockerOnOff());
-            setSummaryText("notification", mPref.getAlarmOnOff());
             setSummaryText("notiplayer", mPref.getNotiplayerOnOff());
-//        setSummaryText("differenttaskplay", mPref.getDifferentTaskPlayOnOff());
             super.onResume();
         } catch (Exception e) {
             e.printStackTrace();
@@ -169,23 +164,30 @@ public class SettingActivity extends AppCompatActivity{
                 mPref.setLockerOnOff();
                 setBinderNotificationOnOff();
             }
-            else if(v.getId() == R.id.setting_switch_notificationOnOff)
-            {
-                settingSwitch = (Switch) v;
-                Boolean notifyChecked = settingSwitch.isChecked();
-                mPref.setAlarmOnOff(notifyChecked);
-                setBinderNotificationOnOff();
-                setSummaryText("notification", notifyChecked);
-            }
             else if(v.getId() == R.id.setting_switch_notiplayerOnOff)
             {
                 settingSwitch = (Switch) v;
                 Boolean notifyChecked = settingSwitch.isChecked();
-                mPref.setNotiplayerOnOff(notifyChecked);
                 if(notifyChecked) {
-                    intent.setClass(getApplicationContext(), NotiPlayer.class);
-                    startService(intent);
-                    setSummaryText("notiplayer", notifyChecked);
+                    if(favoriteRealListCheck()) {
+                        intent.setClass(getApplicationContext(), NotiPlayer.class);
+                        startService(intent);
+                        setSummaryText("notiplayer", notifyChecked);
+                    }
+                    else
+                    {
+                        AlertDialog.Builder noLocker_Dig = new AlertDialog.Builder(SettingActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+                        noLocker_Dig.setTitle("즐겨찾기 목록이 존재하지 않습니다!")
+                                .setNegativeButton(R.string.ctgdialog_checkbtn_text, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface indialog, int which) {
+                                        indialog.cancel();
+                                    }
+                                });
+                        noLocker_Dig.show();
+                        settingSwitch.setChecked(!notifyChecked);
+                        mPref.setNotiplayerOnOff(notifyChecked);
+                    }
                 }
                 else
                 {
@@ -193,6 +195,7 @@ public class SettingActivity extends AppCompatActivity{
                     stopService(intent);
                     setSummaryText("notiplayer", notifyChecked);
                 }
+                mPref.setNotiplayerOnOff(notifyChecked);
             }
             else if(v.getId() == R.id.setting_viewgroup_tutorial)
             {
@@ -213,14 +216,6 @@ public class SettingActivity extends AppCompatActivity{
                 lockSummary.setText("잠금화면 사용 상태입니다.");
             } else {
                 lockSummary.setText("잠금화면 해제 상태입니다.");
-            }
-        }
-        else if(title.equals("notification"))
-        {
-            if (checked) {
-                notifySummary.setText("사용중입니다.");
-            } else {
-                notifySummary.setText("사용중이 아닙니다");
             }
         }
         else if(title.equals("notiplayer"))

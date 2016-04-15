@@ -38,7 +38,7 @@ public class NotiPlayer extends Service{
     private BroadcastReceiver nextReceiver;
     private BroadcastReceiver exitReceiver;
 
-    private static int notifyStartId = 1;   //notification 고유 ID 번호
+    private static int PLAYERNOTIFYSTARTID = 1;   //notification 고유 ID 번호
     private int indexNum = 0;           // 실제 즐겨찾기 목록 index 설정
     private Boolean playCheck = false;  //play 유무 (false 시에 재생버튼 / true시에 일시정지 버튼 보이기 위해서)
 
@@ -67,7 +67,7 @@ public class NotiPlayer extends Service{
     @Override
     public void onDestroy() {
         Log.e("destroy","destroy");
-        nm.cancel(notifyStartId);
+        nm.cancel(PLAYERNOTIFYSTARTID);
         unregisterReceiver(backReceiver);
         unregisterReceiver(playReceiver);
         unregisterReceiver(nextReceiver);
@@ -114,7 +114,7 @@ public class NotiPlayer extends Service{
         if(checkPref.getNotiplayerOnOff()) {
             setListeners(contentView);
             indexNum = 0;
-            nm.notify(notifyStartId, notification);
+            nm.notify(PLAYERNOTIFYSTARTID, notification);
             Log.e("startforeground","start");
         }
         return START_STICKY_COMPATIBILITY;
@@ -140,7 +140,7 @@ public class NotiPlayer extends Service{
                 mView.setTextViewText(R.id.notification_bgmtitle, realBgmNameList.get(indexNum).getBgmName());
                 mView.setImageViewResource(R.id.notification_bgmplaybtn, R.drawable.ic_play_circle_outline_white_24dp);
                 playCheck = false;
-                nm.notify(notifyStartId,notification);  // 노티피케이션의 텍스트를 업데이트 하고 싶을 경우에는 setTextviewText를 한다고 해도 노티피케이션이 바로 업데이트 되는 것이 아니라
+                nm.notify(PLAYERNOTIFYSTARTID,notification);  // 노티피케이션의 텍스트를 업데이트 하고 싶을 경우에는 setTextviewText를 한다고 해도 노티피케이션이 바로 업데이트 되는 것이 아니라
                 // 다시 띄워주는 형식을 반복해야 한다. 즉, 노티피케이션 자체를 다시 띄워 업데이트 하는 형식이다.
             }
         }, new IntentFilter("RemoteBack"));
@@ -161,7 +161,7 @@ public class NotiPlayer extends Service{
                     mView.setImageViewResource(R.id.notification_bgmplaybtn, R.drawable.ic_play_circle_outline_white_24dp);
                     playCheck = false;
                 }
-                nm.notify(notifyStartId, notification);  // 노티피케이션의 텍스트를 업데이트 하고 싶을 경우에는 setTextviewText를 한다고 해도 노티피케이션이 바로 업데이트 되는 것이 아니라
+                nm.notify(PLAYERNOTIFYSTARTID, notification);  // 노티피케이션의 텍스트를 업데이트 하고 싶을 경우에는 setTextviewText를 한다고 해도 노티피케이션이 바로 업데이트 되는 것이 아니라
                 // 다시 띄워주는 형식을 반복해야 한다. 즉, 노티피케이션 자체를 다시 띄워 업데이트 하는 형식이다.
             }
         }, new IntentFilter("RemotePlay"));
@@ -185,7 +185,7 @@ public class NotiPlayer extends Service{
                 mView.setTextViewText(R.id.notification_bgmtitle, realBgmNameList.get(indexNum).getBgmName());
                 mView.setImageViewResource(R.id.notification_bgmplaybtn, R.drawable.ic_play_circle_outline_white_24dp);
                 playCheck = false;
-                nm.notify(notifyStartId, notification);
+                nm.notify(PLAYERNOTIFYSTARTID, notification);
             }
         }, new IntentFilter("RemoteNext"));
         PendingIntent pNext = PendingIntent.getBroadcast(this, 0, new Intent("RemoteNext"), 0);
@@ -196,7 +196,7 @@ public class NotiPlayer extends Service{
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                nm.cancel(notifyStartId);
+                nm.cancel(PLAYERNOTIFYSTARTID);
                 checkPref.setNotiplayerOnOff(false);
                 //((SettingActivity)(SettingActivity.mContext)).onResume();
 
