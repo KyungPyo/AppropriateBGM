@@ -198,6 +198,7 @@ public class DBManager extends SQLiteOpenHelper {
                     deleteList.add(cursor.getString(0));
                 }
             }
+            cursor.close();
 
             deleteQuery.append("DELETE FROM BGMList WHERE bgm_path in (");
             for (int i=0; i<deleteList.size(); i++) {
@@ -291,6 +292,7 @@ public class DBManager extends SQLiteOpenHelper {
                     }
                 }
             }
+            notExistList.close();
 
             if (deleteList.length() > 1) {
                 // 즐겨찾기 테이블에서 먼저 해당 bgm_path를 참조하고 있는 레코드 값을 null로 만들어준다.
@@ -398,6 +400,7 @@ public class DBManager extends SQLiteOpenHelper {
                 bgmInfo = new BGMInfo(cursor.getString(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3));
                 result.add(bgmInfo);
             }
+            cursor.close();
 
             return result;
         } catch (SQLiteException e){
@@ -428,6 +431,7 @@ public class DBManager extends SQLiteOpenHelper {
                 category = new Category(cursor.getInt(0), cursor.getString(1));
                 result.add(category);
             }
+            cursor.close();
 
             return result;
         } catch (SQLiteException e){
@@ -461,6 +465,7 @@ public class DBManager extends SQLiteOpenHelper {
                 favorite = new Favorite(cursor.getInt(0), cursor.getString(1), cursor.getString(2));
                 result.add(favorite);
             }
+            cursor.close();
 
             return result;
         } catch (SQLiteException e) {
@@ -489,11 +494,12 @@ public class DBManager extends SQLiteOpenHelper {
                 return null;
             }
 
-            // Favorite 개수만큼 반복하면서 해당 번호에 설정된 즐겨찾기가 있으면 값을 넣어서 보내고 없으면 null로 보낸다.
+            // Favorite 개수만큼 반복하면서 해당 번호에 설정된 즐겨찾기가 있으면 값을 넣어서 보낸다.(값이 있는 것만)
             while(cursor.moveToNext()){
                 favorite = new Favorite(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getInt(3));
                 result.add(favorite);
             }
+            cursor.close();
 
             return result;
         } catch (SQLiteException e) {
@@ -516,8 +522,10 @@ public class DBManager extends SQLiteOpenHelper {
 
             cursor.moveToNext();
             if (cursor.getInt(0) == 0) {
+                cursor.close();
                 return false;
             } else {
+                cursor.close();
                 return true;
             }
         } catch (SQLiteException e){
@@ -541,8 +549,10 @@ public class DBManager extends SQLiteOpenHelper {
 
             cursor.moveToNext();
             if (cursor.getInt(0) == 0) {
+                cursor.close();
                 return false;
             } else {
+                cursor.close();
                 return true;
             }
         } catch (SQLiteException e){
@@ -566,8 +576,10 @@ public class DBManager extends SQLiteOpenHelper {
 
             cursor.moveToNext();
             if (cursor.getInt(0) == 0) {    // 내장파일이 아닌 경우 0이 기본값으로 입력되어있다.
+                cursor.close();
                 return false;
             } else {
+                cursor.close();
                 return true;
             }
         } catch (SQLiteException e){
@@ -592,8 +604,10 @@ public class DBManager extends SQLiteOpenHelper {
 
             cursor.moveToNext();
             if (cursor.getInt(0) == 0) {
+                cursor.close();
                 return false;
             } else {
+                cursor.close();
                 return true;
             }
         } catch (SQLiteException e){
@@ -670,6 +684,7 @@ public class DBManager extends SQLiteOpenHelper {
             } else {
                 Log.i("insertCategory", "카테고리명 중복");
             }
+            cursor.close();
         } catch (SQLiteException e){
             Log.e("insertCategory", e.toString());
         }
@@ -693,6 +708,7 @@ public class DBManager extends SQLiteOpenHelper {
             } else {
                 Log.i("insertCategory", "카테고리명 중복");
             }
+            cursor.close();
         } catch (SQLiteException e){
             Log.e("updateCategory", e.toString());
         }
@@ -736,6 +752,7 @@ public class DBManager extends SQLiteOpenHelper {
                 query = "INSERT INTO BanList(bgm_path) VALUES (\"" + banPath + "\")";
                 mDataBase.execSQL(query);
             }
+            cursor.close();
         } catch (SQLiteException e){
             Log.e("insertCategory", e.toString());
         }
