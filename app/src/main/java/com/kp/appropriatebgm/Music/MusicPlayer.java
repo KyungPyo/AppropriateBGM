@@ -137,7 +137,7 @@ public class MusicPlayer {
             if (paused) {       // 일시정지 중이면
                 music.start();  // 바로 다시 재생
                 paused = false;
-            } else if (released) {
+            } else if (released) {  // 새로 파일을 등록해야하면(등록됐던 파일이 release 됐을때 포함)
                 if (filePath == null)
                     music = MediaPlayer.create(targetContext, fileCode);
                 else
@@ -145,7 +145,7 @@ public class MusicPlayer {
 
                 music.seekTo(0);
                 music.start();
-                released = false;
+                released = false;   // 파일이 release 되지 않았음
             } else {
                 stopBgm();
                 try {
@@ -163,7 +163,7 @@ public class MusicPlayer {
     }
     public void stopBgm(){
         if (music != null) {
-            if (released) {
+            if (released) { // 파일이 이미 release 되어있으면 release 여부만 바꿔준다
                 released = false;
             } else {
                 paused = false;

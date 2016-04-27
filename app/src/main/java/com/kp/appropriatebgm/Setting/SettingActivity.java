@@ -21,7 +21,6 @@ import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.DBController.Favorite;
 import com.kp.appropriatebgm.LockScreen.LockNotificationInterface;
 import com.kp.appropriatebgm.LockScreen.LockScreenService;
-import com.kp.appropriatebgm.NotiPlayer;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.Tutorial.TutorialActivity;
 

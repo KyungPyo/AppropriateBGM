@@ -7,11 +7,20 @@ public class Favorite {
     private int favoriteId;
     private String bgmPath;
     private String bgmName;
+    private int innerfile;
 
     public Favorite(int favoriteId, String bgmPath, String bgmName) {
         this.favoriteId = favoriteId;
         this.bgmPath = bgmPath;
         this.bgmName = bgmName;
+        this.innerfile = 0;
+    }
+
+    public Favorite(int favoriteId, String bgmPath, String bgmName, int innerfile) {
+        this.favoriteId = favoriteId;
+        this.bgmPath = bgmPath;
+        this.bgmName = bgmName;
+        this.innerfile = innerfile;
     }
 
     public void setFavoriteId(int favoriteId) {
@@ -32,5 +41,12 @@ public class Favorite {
     }
     public String getBgmName() {
         return bgmName;
+    }
+    public int getInnerfileCode() { return innerfile; }
+    public boolean isInnerfile(){
+        if(innerfile != 0)
+            return true;
+        else
+            return false;
     }
 }

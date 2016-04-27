@@ -469,6 +469,39 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
+    // Method : Favorite List 불러오기(값이 있는 것만)
+    // Return Value : ArrayList<Favorite> (BGMList 테이블에 저장된 정보 리스트)
+    // Parameter : void
+    // Use : DB에 저장된 전체 Favorite 정보를 불러오는 메소드. bgm_path 값이 있는 것만 보내준다.
+    public ArrayList<Favorite> getFavoriteListNotNull(){
+        ArrayList<Favorite> result = new ArrayList<>();
+        Cursor cursor;
+        String query;
+        Favorite favorite;
+
+        query = "SELECT f.favorite_id, f.bgm_path, b.bgm_name, b.innerfile FROM favorite AS f JOIN bgmlist AS b " +
+                "ON f.bgm_path = b.bgm_path ORDER BY f.favorite_id";
+
+        try {
+            cursor = mDataBase.rawQuery(query, null);
+
+            if (cursor == null) {
+                return null;
+            }
+
+            // Favorite 개수만큼 반복하면서 해당 번호에 설정된 즐겨찾기가 있으면 값을 넣어서 보내고 없으면 null로 보낸다.
+            while(cursor.moveToNext()){
+                favorite = new Favorite(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getInt(3));
+                result.add(favorite);
+            }
+
+            return result;
+        } catch (SQLiteException e) {
+            Log.e("getFavoriteListNotNull", e.toString());
+            return null;
+        }
+    }
+
     // Method : 카테고리명이 중복되는지 확인
     // Return Value : boolean(중복되면 true, 중복안되면 false)
     // Parameter : categoryName(중복여부 확인하려는 카테고리명)
