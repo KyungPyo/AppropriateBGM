@@ -2,10 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:background="#30000000"
-    android:minHeight="150dp"
+    android:minHeight="100dp"
     android:padding="5dp"
     android:id="@+id/notification_layout"
-    android:layout_height="100dp">
+    android:layout_height="62dp">
 
     <ImageView
         android:id="@+id/notification_icon"

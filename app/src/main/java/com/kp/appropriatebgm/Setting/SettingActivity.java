@@ -110,7 +110,6 @@ public class SettingActivity extends AppCompatActivity{
         try {
             lockOnOffSwitch.setChecked(mPref.getLockerOnOff());
             notiplayerOnOffSwitch.setChecked(mPref.getNotiplayerOnOff());
-
             setSummaryText("lockscreen", mPref.getLockerOnOff());
             setSummaryText("notiplayer", mPref.getNotiplayerOnOff());
             super.onResume();
@@ -189,8 +188,7 @@ public class SettingActivity extends AppCompatActivity{
                         mPref.setNotiplayerOnOff(notifyChecked);
                     }
                 }
-                else
-                {
+                else {
                     intent.setClass(getApplicationContext(), NotiPlayer.class);
                     stopService(intent);
                     setSummaryText("notiplayer", notifyChecked);
