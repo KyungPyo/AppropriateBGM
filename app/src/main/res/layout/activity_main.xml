@@ -318,6 +318,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:onClick="onClickMenuSelection"
                 android:paddingLeft="10dp">
 
                 <ImageView
@@ -328,14 +329,11 @@
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_record" />
 
-                <Button
-                    android:id="@+id/main_menubtn_to_record"
+                <TextView
+                    android:id="@+id/main_menutxt_to_record"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@color/pressed"
                     android:gravity="left|center_vertical"
-                    android:onClick="onClickMenuSelection"
                     android:padding="20dp"
                     android:text="녹 음"
                     android:textColor="@color/mainActionBar"
@@ -347,6 +345,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:onClick="onClickMenuSelection"
                 android:paddingLeft="10dp">
 
                 <ImageView
@@ -356,14 +355,11 @@
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_favorite" />
 
-                <Button
-                    android:id="@+id/main_menubtn_to_favorite"
+                <TextView
+                    android:id="@+id/main_menutxt_to_favorite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@color/pressed"
                     android:gravity="left|center_vertical"
-                    android:onClick="onClickMenuSelection"
                     android:padding="20dp"
                     android:text="즐 겨 찾 기"
                     android:textColor="@color/mainActionBar"
@@ -375,6 +371,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:onClick="onClickMenuSelection"
                 android:paddingLeft="10dp">
 
                 <ImageView
@@ -384,14 +381,11 @@
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_category" />
 
-                <Button
-                    android:id="@+id/main_menubtn_to_category"
+                <TextView
+                    android:id="@+id/main_menutxt_to_category"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@color/pressed"
                     android:gravity="left|center_vertical"
-                    android:onClick="onClickMenuSelection"
                     android:padding="20dp"
                     android:text="카 테 고 리 설 정"
                     android:textColor="@color/mainActionBar"
@@ -403,6 +397,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:onClick="onClickMenuSelection"
                 android:paddingLeft="10dp">
 
                 <ImageView
@@ -412,18 +407,38 @@
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_setting" />
 
-                <Button
-                    android:id="@+id/main_menubtn_to_setting"
+                <TextView
+                    android:id="@+id/main_menutxt_to_setting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@color/pressed"
                     android:gravity="left|center_vertical"
-                    android:onClick="onClickMenuSelection"
                     android:padding="20dp"
                     android:text="환 경 설 정"
                     android:textColor="@color/mainActionBar"
                     android:textSize="20dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:orientation="horizontal"
+                android:paddingBottom="20dp">
+
+                <ImageView
+                    android:id="@+id/main_switch_lockerplayer"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_lockerplayer_off"
+                    android:layout_weight="5"/>
+
+                <ImageView
+                    android:id="@+id/main_switch_fastplayer"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_lockerplayer_on"
+                    android:layout_weight="5"/>
+
             </LinearLayout>
 
         </LinearLayout>

@@ -434,27 +434,27 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent();
         ComponentName componentName = null;
         switch (v.getId()) {
-            case R.id.main_menubtn_to_record: {
+            case R.id.main_group_recording: {
                 componentName = new ComponentName("com.kp.appropriatebgm", "com.kp.appropriatebgm.record.RecordActivity");
                 intent.setComponent(componentName);
                 startActivityForResult(intent, 0);
                 setOriginalCondition();
                 break;
             }
-            case R.id.main_menubtn_to_favorite: {
+            case R.id.main_group_favorite: {
                 intent.setClass(getApplicationContext(), FavoriteActivity.class);
                 //메인액티비티에 영향을 주는 것이 없으므로 Result 를 받지 않아도 된다.
                 startActivity(intent);
                 setOriginalCondition();
                 break;
             }
-            case R.id.main_menubtn_to_category: {
+            case R.id.main_group_category: {
                 intent.setClass(getApplicationContext(), CategoryActivity.class);
                 startActivityForResult(intent, 0);
                 setOriginalCondition();
                 break;
             }
-            case R.id.main_menubtn_to_setting:{
+            case R.id.main_group_setting:{
                 intent.setClass(getApplicationContext(), SettingActivity.class);
                 startActivity(intent);
                 setOriginalCondition();
