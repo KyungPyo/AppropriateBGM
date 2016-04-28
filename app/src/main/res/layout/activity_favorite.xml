@@ -1,38 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/list_select"
     tools:context="com.example.choi.favoriteactivitytest.FavoriteActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/favorite_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
         android:background="@color/mainActionBar"
-        android:layout_alignParentTop="true">
+        android:minHeight="?attr/actionBarSize">
 
-        <TextView
-            android:id="@+id/favorite_textView_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="즐겨찾기 목록"
-            android:textSize="21dp"
-            android:layout_gravity="left"/>
+        <RelativeLayout
+            android:id="@+id/favorite_group_addanddelete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <Switch
-            android:id="@+id/favorite_switch_onOffSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textOn="On"
-            android:textOff="Off"
-            android:thumb="@drawable/on_off_switch_selector"
-            android:track="@drawable/on_off_switch_track"
-            android:checked="false"
-            android:layout_gravity="right"
-            android:paddingRight="10dp"
-            />
+            <TextView
+                android:id="@+id/favorite_textView_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="즐겨찾기 목록"
+                android:textSize="21dp"
+                android:layout_centerVertical="true" />
+
+            <ImageButton
+                android:id="@+id/favorite_btn_deletefavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_delete_white_24dp"
+                android:title="삭제"
+                android:layout_centerVertical="true"
+                android:background="@color/mainActionBar"
+                android:layout_margin="5dp"
+                android:paddingRight="7dp"
+                android:paddingLeft="7dp"/>
+
+            <ImageButton
+                android:id="@+id/favorite_btn_addfavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/favorite_btn_deletefavorite"
+                android:src="@drawable/ic_add_white_24dp"
+                android:title="추가"
+                android:layout_centerVertical="true"
+                android:background="@color/mainActionBar"
+                android:layout_margin="5dp"
+                />
+
+
+        </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
 
@@ -40,11 +63,21 @@
     <ListView
         android:id="@+id/favorite_listView_favoriteList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/list_select"
+        android:layout_height="wrap_content"
         android:layout_below="@id/favorite_toolbar"
+        android:background="@drawable/bottom_border"
         android:divider="@color/listViewDivider"
         android:dividerHeight="1dp"
+        android:paddingBottom="2dp"
         />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/favorite_btn_checkdelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/mainActionBar"
+        android:src="@drawable/ic_delete_white_24dp" />
 
 </RelativeLayout>

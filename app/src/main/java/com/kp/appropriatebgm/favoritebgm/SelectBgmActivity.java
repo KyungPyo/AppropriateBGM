@@ -26,6 +26,7 @@ import com.kp.appropriatebgm.DBController.Favorite;
 import com.kp.appropriatebgm.R;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.lang.String;
 
@@ -33,22 +34,22 @@ public class SelectBgmActivity extends AppCompatActivity {
 
     BGMInfo selectedBGM = null;
     ArrayList<BGMInfo> bgms;
+    ArrayList<Favorite> favoriteList;
     DBManager dbManager = DBManager.getInstance(this);//DB
     Toolbar toolbar;
     ImageView searchButton;
 
     ArrayList<Category> categoryList;
+    ArrayList<BGMInfo> checkedBgmList;
 
     ListView list;
     BGMListAdapter adapter;
     EditText editSearch;
-    int position;
     boolean isVisible = false;
 
     CategoryListAdapterForMain categoryAdapter;
     Button save;
     Button cancel;
-    Button clear_favorite;
     Spinner cateSpinner;
 
     TextView selectTextView;
@@ -60,38 +61,9 @@ public class SelectBgmActivity extends AppCompatActivity {
         this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         init();
-        addHeaderToList();
+        //addHeaderToList();
         getCategory();
         setListeners();
-
-    }
-
-    // Method : 리스트에 헤더 추가
-    // Return Value : void
-    // Parameter : void
-    // Use :  List뷰의 Header에 비워두기 버튼을 추가한다.
-    private void addHeaderToList() {
-
-        View headerView = getLayoutInflater().inflate(R.layout.favorite_listview_header_layout, null);
-        clear_favorite = (Button) headerView.findViewById(R.id.favorite_btn_clearItem);
-        //비워두기 버튼 클릭 리스너
-        clear_favorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = getIntent();
-                position = intent.getIntExtra("position", 0);
-
-                //해당 position은 DB에서 Favorite_id 이므로 해당 id가 있는 row를 지운다.
-                dbManager.updateFavorite(position, null);//DB
-
-                intent.putExtra("position", position);
-
-                setResult(RESULT_OK, intent);
-                finish();
-            }
-        });
-        list.addHeaderView(headerView);
-        list.setAdapter(adapter);
 
     }
 
@@ -207,7 +179,10 @@ public class SelectBgmActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                selectedBGM = bgms.get(position - 1);
+                if(isCollision(favoriteList,bgms.get(position))){
+                    Toast.makeText(getApplicationContext(), "중복된 BGM 입니다.", Toast.LENGTH_SHORT).show();
+                    list.setItemChecked(position,false);
+                }
 
             }
         });
@@ -216,14 +191,15 @@ public class SelectBgmActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = getIntent();
-                position = intent.getIntExtra("position", 0);
-                if (selectedBGM == null) {//리스크 클릭이 안된 상태에서 확인을 눌렀을 때 취소
+                checkedBgmList=loadCheckedListItem();
+                if (checkedBgmList.size()==0) {//리스크 클릭이 안된 상태에서 확인을 눌렀을 때 취소
                     setResult(RESULT_CANCELED);
                     finish();
-                } else if(isCollision(dbManager.getFavoriteList(),selectedBGM)){
-                    Toast.makeText(getApplicationContext(), "중복된 파일이 즐겨찾기에 존재합니다.", Toast.LENGTH_SHORT).show();
-                } else{
-                    dbManager.updateFavorite(position,selectedBGM.getBgmPath());//DB
+                }else{
+
+                    for(int i=0;i<checkedBgmList.size();i++){
+                        dbManager.insertFavorite(checkedBgmList.get(i).getBgmPath());
+                    }
 
                     setResult(RESULT_OK, intent);
                     finish();
@@ -260,16 +236,31 @@ public class SelectBgmActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.favorite_toolbar);
         selectTextView=(TextView)findViewById(R.id.selectbgm_textView_select);
         list = (ListView) findViewById(R.id.musicList);
+        checkedBgmList = new ArrayList<>();
+        favoriteList=dbManager.getFavoriteList();
         bgms = dbManager.getBGMList(1);
 
         adapter = new BGMListAdapter(this, bgms);
         save = (Button) findViewById(R.id.favorite_btn_save);
         cancel = (Button) findViewById(R.id.favorite_btn_cancel);
 
-        // Position에 따라 툴바 TextView 변경
-        Intent intent = getIntent();
-        position = intent.getIntExtra("position", 0);
-        selectTextView.setText((position+1)+"번째 즐겨찾기에 등록");
 
+        list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        list.setAdapter(adapter);
+
+    }
+
+    // Method : list상에 check가 되어있는 item을 저장한다.
+    // Return Value : ArrayList<BGMInfo>
+    // Parameter : void
+    // Use : list의 모든 아이템을 탐색하여 check가 true인 item만 checkedBgmList에 추가해 리턴해줌
+    private ArrayList<BGMInfo> loadCheckedListItem() {
+        ArrayList<BGMInfo> checkedBgmList = new ArrayList<>();
+        for (int i = 0; i < list.getCount(); i++) {
+            if (list.isItemChecked(i)) {
+                checkedBgmList.add(adapter.getItem(i));
+            }
+        }
+        return checkedBgmList;
     }
 }
