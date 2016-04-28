@@ -430,13 +430,15 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:src="@drawable/ic_lockerplayer_off"
+                    android:onClick="onClickMenuSelection"
                     android:layout_weight="5"/>
 
                 <ImageView
                     android:id="@+id/main_switch_fastplayer"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/ic_lockerplayer_on"
+                    android:src="@drawable/ic_fastplayer_off"
+                    android:onClick="onClickMenuSelection"
                     android:layout_weight="5"/>
 
             </LinearLayout>

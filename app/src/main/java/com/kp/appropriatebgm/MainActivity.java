@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mainDrawer;
     private RelativeLayout mainLayout;
     private LinearLayout menuLayout;
+    private ImageView menuLockerplayerToggle;
+    private ImageView menuFastplayerToggle;
 
     private ListView bgmListView;
     private CategoryListAdapterForMain categoryAdapter;
@@ -180,6 +182,8 @@ public class MainActivity extends AppCompatActivity {
         mainDrawer = (DrawerLayout) findViewById(R.id.main_layout_drawer);
         mainLayout = (RelativeLayout) findViewById(R.id.main_layout_main);
         menuLayout = (LinearLayout) findViewById(R.id.main_layout_menu);
+        menuLockerplayerToggle = (ImageView) findViewById(R.id.main_switch_lockerplayer);
+        menuFastplayerToggle = (ImageView) findViewById(R.id.main_switch_fastplayer);
 
         bgmListView = (ListView) findViewById(R.id.main_list_soundlist);
         categorySpinner = (Spinner) findViewById(R.id.main_spinner_category);
@@ -429,35 +433,50 @@ public class MainActivity extends AppCompatActivity {
     // Method : 메뉴버튼 클릭 이벤트
     // Return Value : void
     // Parameter : View(클릭한 뷰 정보)
-    // Use : 메뉴안에 선택할 수 있는 버튼을 눌렀을 때 발생하는 이벤트 처리. 다른 액티비티로 이동하는데 사용된다.
+    // Use : 메뉴안에 선택할 수 있는 버튼을 눌렀을 때 발생하는 이벤트 처리.
+    //       다른 액티비티로 이동하거나, 잠금재생과 빠른재생기능 토글에 사용된다.
     public void onClickMenuSelection(View v) {
         Intent intent = new Intent();
         ComponentName componentName = null;
         switch (v.getId()) {
-            case R.id.main_group_recording: {
+            case R.id.main_group_recording: {   // 메뉴 녹음 버튼
                 componentName = new ComponentName("com.kp.appropriatebgm", "com.kp.appropriatebgm.record.RecordActivity");
                 intent.setComponent(componentName);
                 startActivityForResult(intent, 0);
                 setOriginalCondition();
                 break;
             }
-            case R.id.main_group_favorite: {
+            case R.id.main_group_favorite: {    // 메뉴 즐겨찾기 버튼
                 intent.setClass(getApplicationContext(), FavoriteActivity.class);
                 //메인액티비티에 영향을 주는 것이 없으므로 Result 를 받지 않아도 된다.
                 startActivity(intent);
                 setOriginalCondition();
                 break;
             }
-            case R.id.main_group_category: {
+            case R.id.main_group_category: {    // 메뉴 카테고리 버튼
                 intent.setClass(getApplicationContext(), CategoryActivity.class);
                 startActivityForResult(intent, 0);
                 setOriginalCondition();
                 break;
             }
-            case R.id.main_group_setting:{
+            case R.id.main_group_setting:{      // 메뉴 설정 버튼
                 intent.setClass(getApplicationContext(), SettingActivity.class);
                 startActivity(intent);
                 setOriginalCondition();
+                break;
+            }
+            case R.id.main_switch_lockerplayer:{    // 메뉴 잠금재생 토글
+                if( checkPref.getLockerOnOff() ) {
+                    // 켜져 있었으면 꺼짐으로 변경
+                    menuLockerplayerToggle.setImageResource(R.drawable.ic_lockerplayer_off);
+                } else {
+                    // 꺼져 있었으면 켜짐으로 변경
+                    menuLockerplayerToggle.setImageResource(R.drawable.ic_lockerplayer_on);
+                }
+                break;
+            }
+            case R.id.main_switch_fastplayer:{      // 메뉴 빠른재생 토글
+
                 break;
             }
         }
