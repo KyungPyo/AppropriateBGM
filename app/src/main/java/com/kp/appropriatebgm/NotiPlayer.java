@@ -8,16 +8,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.DBController.Favorite;
-import com.kp.appropriatebgm.Setting.SettingActivity;
 
 import java.util.ArrayList;
 
@@ -28,7 +25,6 @@ public class NotiPlayer extends Service{
 
     private DBManager dbManager;
     private ArrayList<Favorite> bgmfavoriteArrayList;
-    private ArrayList<Favorite> realBgmNameList;
     private NotificationManager nm;
     private Notification notification;
     private RemoteViews contentView;
@@ -88,25 +84,18 @@ public class NotiPlayer extends Service{
         notification.tickerText = "빠른 재생을 실행합니다";
         notification.icon = R.mipmap.ic_launcher;
 
-        contentView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.notification_lockscreenplay);
+        contentView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.notification_fastplay);
 
-        bgmfavoriteArrayList=dbManager.getFavoriteList();   //DB
-        realBgmNameList = new ArrayList<>();
-        for(int i=0; i < bgmfavoriteArrayList.size() ; i++) {
-            if (bgmfavoriteArrayList.get(i).getBgmPath() != null) {
-                realBgmNameList.add(bgmfavoriteArrayList.get(i));
-            }
-        }
+        bgmfavoriteArrayList=dbManager.getFavoriteListNotNull();   //DB
 
-        if(realBgmNameList.size() == 0)
+        if(bgmfavoriteArrayList.size() == 0)
         {
             contentView.setTextViewText(R.id.notification_bgmtitle,"즐겨찾기 목록이 존재하지 않습니다.");
         }
         else
         {
-            contentView.setTextViewText(R.id.notification_bgmtitle,realBgmNameList.get(0).getBgmName());
-            bgmPath = realBgmNameList.get(0).getBgmPath();
-//                Log.e("getconvertid", contentView.getLayoutId() + "");
+            contentView.setTextViewText(R.id.notification_bgmtitle,bgmfavoriteArrayList.get(0).getBgmName());
+            bgmPath = bgmfavoriteArrayList.get(0).getBgmPath();
         }
 
         notification.contentView = contentView;
@@ -129,7 +118,7 @@ public class NotiPlayer extends Service{
             @Override
             public void onReceive(Context context, Intent intent) {
                 if(indexNum == 0) {
-                    indexNum = realBgmNameList.size() - 1;
+                    indexNum = bgmfavoriteArrayList.size() - 1;
                     Log.e("indexloof<<", "-");
                 }
                 else
@@ -140,11 +129,11 @@ public class NotiPlayer extends Service{
 
                 //
 
-                mView.setTextViewText(R.id.notification_bgmtitle, realBgmNameList.get(indexNum).getBgmName());
+                mView.setTextViewText(R.id.notification_bgmtitle, bgmfavoriteArrayList.get(indexNum).getBgmName());
                 mView.setImageViewResource(R.id.notification_bgmplaybtn, R.drawable.ic_play_circle_outline_white_24dp);
                 playCheck = false;
                 nm.notify(PLAYERNOTIFYSTARTID,notification);  // 노티피케이션의 텍스트를 업데이트 하고 싶을 경우에는 setTextviewText를 한다고 해도 노티피케이션이 바로 업데이트 되는 것이 아니라
-                // 다시 띄워주는 형식을 반복해야 한다. 즉, 노티피케이션 자체를 다시 띄워 업데이트 하는 형식이다.
+                                                                // 다시 띄워주는 형식을 반복해야 한다. 즉, 노티피케이션 자체를 다시 띄워 업데이트 하는 형식이다.
             }
         }, new IntentFilter("RemoteBack"));
         PendingIntent pBack = PendingIntent.getBroadcast(this, 0, new Intent("RemoteBack"), 0);
@@ -166,7 +155,7 @@ public class NotiPlayer extends Service{
                 }
 
                 nm.notify(PLAYERNOTIFYSTARTID, notification);  // 노티피케이션의 텍스트를 업데이트 하고 싶을 경우에는 setTextviewText를 한다고 해도 노티피케이션이 바로 업데이트 되는 것이 아니라
-                // 다시 띄워주는 형식을 반복해야 한다. 즉, 노티피케이션 자체를 다시 띄워 업데이트 하는 형식이다.
+                                                                // 다시 띄워주는 형식을 반복해야 한다. 즉, 노티피케이션 자체를 다시 띄워 업데이트 하는 형식이다.
             }
         }, new IntentFilter("RemotePlay"));
         PendingIntent pPlay = PendingIntent.getBroadcast(this, 0, new Intent("RemotePlay"), 0);
@@ -176,7 +165,7 @@ public class NotiPlayer extends Service{
         this.registerReceiver(nextReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if(indexNum == realBgmNameList.size() - 1) {
+                if(indexNum == bgmfavoriteArrayList.size() - 1) {
                     indexNum = 0;
                     Log.e("indexloof>>", "- ");
                 }
@@ -186,7 +175,7 @@ public class NotiPlayer extends Service{
                 }
                 Log.e("indexnum next", indexNum + "");
 
-                mView.setTextViewText(R.id.notification_bgmtitle, realBgmNameList.get(indexNum).getBgmName());
+                mView.setTextViewText(R.id.notification_bgmtitle, bgmfavoriteArrayList.get(indexNum).getBgmName());
                 mView.setImageViewResource(R.id.notification_bgmplaybtn, R.drawable.ic_play_circle_outline_white_24dp);
                 playCheck = false;
                 nm.notify(PLAYERNOTIFYSTARTID, notification);

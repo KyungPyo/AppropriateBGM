@@ -198,6 +198,7 @@ public class DBManager extends SQLiteOpenHelper {
                     deleteList.add(cursor.getString(0));
                 }
             }
+            cursor.close();
 
             deleteQuery.append("DELETE FROM BGMList WHERE bgm_path in (");
             for (int i=0; i<deleteList.size(); i++) {
@@ -291,6 +292,7 @@ public class DBManager extends SQLiteOpenHelper {
                     }
                 }
             }
+            notExistList.close();
 
             if (deleteList.length() > 1) {
                 // 즐겨찾기 테이블에서 먼저 해당 bgm_path를 참조하고 있는 레코드 값을 null로 만들어준다.
@@ -398,6 +400,7 @@ public class DBManager extends SQLiteOpenHelper {
                 bgmInfo = new BGMInfo(cursor.getString(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3));
                 result.add(bgmInfo);
             }
+            cursor.close();
 
             return result;
         } catch (SQLiteException e){
@@ -428,6 +431,7 @@ public class DBManager extends SQLiteOpenHelper {
                 category = new Category(cursor.getInt(0), cursor.getString(1));
                 result.add(category);
             }
+            cursor.close();
 
             return result;
         } catch (SQLiteException e){
@@ -461,10 +465,45 @@ public class DBManager extends SQLiteOpenHelper {
                 favorite = new Favorite(cursor.getInt(0), cursor.getString(1), cursor.getString(2));
                 result.add(favorite);
             }
+            cursor.close();
 
             return result;
         } catch (SQLiteException e) {
             Log.e("getFavoriteList", e.toString());
+            return null;
+        }
+    }
+
+    // Method : Favorite List 불러오기(값이 있는 것만)
+    // Return Value : ArrayList<Favorite> (BGMList 테이블에 저장된 정보 리스트)
+    // Parameter : void
+    // Use : DB에 저장된 전체 Favorite 정보를 불러오는 메소드. bgm_path 값이 있는 것만 보내준다.
+    public ArrayList<Favorite> getFavoriteListNotNull(){
+        ArrayList<Favorite> result = new ArrayList<>();
+        Cursor cursor;
+        String query;
+        Favorite favorite;
+
+        query = "SELECT f.favorite_id, f.bgm_path, b.bgm_name, b.innerfile FROM favorite AS f JOIN bgmlist AS b " +
+                "ON f.bgm_path = b.bgm_path ORDER BY f.favorite_id";
+
+        try {
+            cursor = mDataBase.rawQuery(query, null);
+
+            if (cursor == null) {
+                return null;
+            }
+
+            // Favorite 개수만큼 반복하면서 해당 번호에 설정된 즐겨찾기가 있으면 값을 넣어서 보낸다.(값이 있는 것만)
+            while(cursor.moveToNext()){
+                favorite = new Favorite(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getInt(3));
+                result.add(favorite);
+            }
+            cursor.close();
+
+            return result;
+        } catch (SQLiteException e) {
+            Log.e("getFavoriteListNotNull", e.toString());
             return null;
         }
     }
@@ -483,8 +522,10 @@ public class DBManager extends SQLiteOpenHelper {
 
             cursor.moveToNext();
             if (cursor.getInt(0) == 0) {
+                cursor.close();
                 return false;
             } else {
+                cursor.close();
                 return true;
             }
         } catch (SQLiteException e){
@@ -508,8 +549,10 @@ public class DBManager extends SQLiteOpenHelper {
 
             cursor.moveToNext();
             if (cursor.getInt(0) == 0) {
+                cursor.close();
                 return false;
             } else {
+                cursor.close();
                 return true;
             }
         } catch (SQLiteException e){
@@ -533,8 +576,10 @@ public class DBManager extends SQLiteOpenHelper {
 
             cursor.moveToNext();
             if (cursor.getInt(0) == 0) {    // 내장파일이 아닌 경우 0이 기본값으로 입력되어있다.
+                cursor.close();
                 return false;
             } else {
+                cursor.close();
                 return true;
             }
         } catch (SQLiteException e){
@@ -559,8 +604,10 @@ public class DBManager extends SQLiteOpenHelper {
 
             cursor.moveToNext();
             if (cursor.getInt(0) == 0) {
+                cursor.close();
                 return false;
             } else {
+                cursor.close();
                 return true;
             }
         } catch (SQLiteException e){
@@ -574,17 +621,35 @@ public class DBManager extends SQLiteOpenHelper {
 
     /*****  DB 등록 요청(insert/update)  *****/
 
-    // Method : Favorite 등록 및 삭제
+    // Method : Favorite 등록
     // Return Value : void
-    // Parameter : favoriteId(업데이트할 favoriteId), bgmPath(등록할 bgm)
-    // Use : 즐겨찾기 등록을 요청하면 DB에 해당 bgm의 경로를 등록한다. bgmPath를 null로 보내주면 해당 즐겨찾기를 삭제한다.
+    // Parameter :bgmPath(등록할 bgm경로)
+    // Use : 즐겨찾기 등록을 요청하면 DB에 입력받은 bgm의 경로를 새롭게 등록한다.
+    public void insertFavorite(String bgmPath){
+        StringBuffer query = new StringBuffer();
+
+        query.append("INSERT INTO Favorite(bgm_path) VALUES (\"");
+        query.append(bgmPath);
+        query.append("\")");
+
+        try {
+            mDataBase.execSQL(query.toString());
+        } catch (SQLiteException e) {
+            Log.e("insertBGM", e.toString());
+        }
+    }
+
+    // Method : Favorite 수정
+    // Return Value : void
+    // Parameter : favoriteId(업데이트할 favoriteId), bgmPath(등록할 bgm경로)
+    // Use : 즐겨찾기 수정을 요청하면 DB에 해당 번호에 입력받은 bgm의 경로를 등록한다.
     public void updateFavorite(int favoriteId, String bgmPath){
         StringBuffer query = new StringBuffer();
 
         if (bgmPath != null){   // Favorite 등록
             query.append("UPDATE favorite SET bgm_path=\"");
             query.append(bgmPath + "\"");
-        } else {                // Favorite 삭제
+        } else {                // Favorite 삭제 (1.1.2 이하 버전)
             query.append("UPDATE favorite SET bgm_path=null");
         }
         query.append(" WHERE favorite_id=");
@@ -637,6 +702,7 @@ public class DBManager extends SQLiteOpenHelper {
             } else {
                 Log.i("insertCategory", "카테고리명 중복");
             }
+            cursor.close();
         } catch (SQLiteException e){
             Log.e("insertCategory", e.toString());
         }
@@ -660,6 +726,7 @@ public class DBManager extends SQLiteOpenHelper {
             } else {
                 Log.i("insertCategory", "카테고리명 중복");
             }
+            cursor.close();
         } catch (SQLiteException e){
             Log.e("updateCategory", e.toString());
         }
@@ -703,6 +770,7 @@ public class DBManager extends SQLiteOpenHelper {
                 query = "INSERT INTO BanList(bgm_path) VALUES (\"" + banPath + "\")";
                 mDataBase.execSQL(query);
             }
+            cursor.close();
         } catch (SQLiteException e){
             Log.e("insertCategory", e.toString());
         }
@@ -711,6 +779,30 @@ public class DBManager extends SQLiteOpenHelper {
 
 
     /*****  DB 레코드 삭제(delete)  *****/
+
+    // Method : 즐겨찾기 삭제
+    // Return Value : void
+    // Parameter : favoriteIdList(삭제할 즐겨찾기 번호 목록을 가지고 있는 배열)
+    // Use : CategoryActivity에서 삭제할 즐겨찾기를 여러개 선택해서 삭제할 때 사용한다. 한개도 삭제 가능하다.
+    public void deleteFavorite(int[] favoriteIdList){
+        StringBuffer deleteQuery = new StringBuffer();
+
+        deleteQuery.append("DELETE FROM Favorite WHERE favorite_id in(");
+        for(int i=0; i<favoriteIdList.length; i++){
+            deleteQuery.append(favoriteIdList[i]);
+            if(i+1 < favoriteIdList.length) {
+                deleteQuery.append(",");
+            }
+        }
+        deleteQuery.append(")");
+
+        try {
+            mDataBase.execSQL(deleteQuery.toString());
+            mDataBase.execSQL("VACUUM");
+        } catch (SQLiteException e) {
+            Log.e("deleteCategory", e.toString());
+        }
+    }
 
     // Method : 카테고리 삭제
     // Return Value : void

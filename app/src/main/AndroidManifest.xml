@@ -54,7 +54,7 @@
         <service android:name=".LockScreen.LockScreenService"
             android:screenOrientation="portrait" />
 
-        <service android:name=".NotiPlayer"
+        <service android:name=".Setting.NotiPlayer"
             android:screenOrientation="portrait" />
 
         <receiver

@@ -87,12 +87,10 @@ public class RecordActivity extends AppCompatActivity {
             recordManager.start(); //레코드매니저 실행
             while (true) {
                 if (!recordManager.isRecording() || currentRecordTimeMs > RECORD_MAXTIME ) {  // 녹음 제한시간
-                    Log.i("end3", "??");
                     recordManager.stop();
                     break;
                 }
                 if (isCancelled()) {  // 작업이 취소되었으면
-                    Log.i("end2", "??");
                     if (recordManager.isRecording()) {
                         recordManager.stop();
                     }
@@ -105,7 +103,6 @@ public class RecordActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     if (recordManager.isRecording())
                         recordManager.stop();
-                    Log.i("end", "??");
                     break;
                 }
             }

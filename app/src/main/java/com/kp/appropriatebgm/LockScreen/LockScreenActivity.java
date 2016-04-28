@@ -28,7 +28,7 @@ import java.util.Date;
 /**
  * Created by GD on 2016-02-11.
  */
-public class LockScreenActivity extends AppCompatActivity implements UnlockScreenWidget.OnUnlockListener{
+public class LockScreenActivity extends AppCompatActivity{
 
     ArrayList<Favorite> bgmfavoriteArrayList;
     DBManager dbManager;//DB
@@ -38,7 +38,6 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
     private final SimpleDateFormat apm_format = new SimpleDateFormat("aa");
     private final SimpleDateFormat time_format = new SimpleDateFormat("h:mm");
     private final SimpleDateFormat day_format = new SimpleDateFormat("M월 d일 E요일");
-//    private UnlockScreenWidget slide_widget;
     TextView apm_clock;
     TextView time_clock;
     TextView day_clock;
@@ -72,8 +71,6 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
             }
         });
 
-//        slide_widget = (UnlockScreenWidget) findViewById(R.id.lockscreen_widget_unlock);
-//        slide_widget.setOnUnlockListener(this);
         timeInit();
 
         // 가로 listView 설정
@@ -85,10 +82,10 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
     // Return value : void
     // paremeter : void
     // Use : 잠금화면 액티비티를 종료한다.
-    @Override
-    public void onUnlock() {
-        finish();
-    }
+//    @Override
+//    public void onUnlock() {
+//        finish();
+//    }
 
     // Method : 액티비티 시작 함수
     // Return value : void
@@ -192,10 +189,8 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
     // Use : 가로로 스크롤 되는 버튼을 만들기 위함. 즐겨찾기에 등록되어있는 BGM들을 뽑아내서 이미지 버튼으로 만들어 넣는다.
     //       하나하나마다 즐겨찾기 정보를 저장하고 있고, 클릭했을 때 해당 BGM이 재생되는 이벤트 리스너를 등록한다.
     public void addHorizontalListBtn(LinearLayout targetGroup){
-        bgmfavoriteArrayList=dbManager.getFavoriteList();   //DB
+        bgmfavoriteArrayList=dbManager.getFavoriteListNotNull();   //DB
         for(int i=0; i < bgmfavoriteArrayList.size() ; i++) {
-            if (bgmfavoriteArrayList.get(i).getBgmPath() != null)
-            {
                 bgmListButton = new LockScreenBgmButton(this);
                 bgmListButton.setBtnInfo(bgmfavoriteArrayList.get(i));
                 bgmListButton.setOnClickListener(new View.OnClickListener() {
@@ -216,7 +211,6 @@ public class LockScreenActivity extends AppCompatActivity implements UnlockScree
                     }
                 });
                 targetGroup.addView(bgmListButton);
-            }
         }
     }
 
