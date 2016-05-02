@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.telephony.TelephonyManager;
+import android.util.Log;
+
+import com.kp.appropriatebgm.Setting.NotiPlayer;
 
 /**
  * Created by GD on 2016-02-11.
@@ -21,7 +24,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         SharedPreferences preferences = context.getSharedPreferences("AppSetting",
                 Context.MODE_PRIVATE);
-
+        Log.e("ddddd", "boot lock");
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
 
         if (state != null && (TelephonyManager.EXTRA_STATE_OFFHOOK.equals(state)
@@ -43,6 +46,12 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
                 context.startActivity(in);
 
+            }
+        }
+        if (preferences.getBoolean("notificationPlay", false)) {
+            if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+                Intent i = new Intent(context, NotiPlayer.class);
+                context.startService(i);
             }
         }
     }

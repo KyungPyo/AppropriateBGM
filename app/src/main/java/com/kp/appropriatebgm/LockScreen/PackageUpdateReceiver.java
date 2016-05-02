@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.kp.appropriatebgm.Setting.NotiPlayer;
 
 /**
  * Created by Choi on 2016-02-15.
@@ -25,6 +28,14 @@ public class PackageUpdateReceiver extends BroadcastReceiver {
             if (intent.getAction().equals(Intent.ACTION_PACKAGE_REPLACED)) {
                 Intent i = new Intent(context, LockScreenService.class);
                 context.startService(i);
+            }
+        }
+
+        if (preferences.getBoolean("notificationPlay", false)) {
+            if (intent.getAction().equals(Intent.ACTION_PACKAGE_REPLACED)) {
+                Intent i = new Intent(context, NotiPlayer.class);
+                context.startService(i);
+                Log.e("dddd", "update222222");
             }
         }
     }

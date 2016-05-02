@@ -11,12 +11,14 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.kp.appropriatebgm.CheckPref;
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.DBController.Favorite;
+import com.kp.appropriatebgm.LockScreen.LockScreenReceiver;
 import com.kp.appropriatebgm.Music.MusicPlayer;
 import com.kp.appropriatebgm.R;
 
@@ -66,6 +68,8 @@ public class NotiPlayer extends Service{
 
         dbManager = DBManager.getInstance(getApplicationContext());
 
+        Log.e("dddd","oncreate service");
+
     }
 
     // Method : Notification 제거 생명주기함수
@@ -74,23 +78,25 @@ public class NotiPlayer extends Service{
     // Use : 등록한 Notification과 Receiver를 해제한다
     @Override
     public void onDestroy() {
-        nm.cancel(PLAYERNOTIFYSTARTID);
+        Log.e("onDestory", "gogo");
         unregisterReceiver(backReceiver);
         unregisterReceiver(playReceiver);
         unregisterReceiver(nextReceiver);
         unregisterReceiver(exitReceiver);
+        //nm.cancel(PLAYERNOTIFYSTARTID);
         super.onDestroy();
     }
 
     // Method : Notification 실행시 발생 이벤트
     // Return Value : void
-    // Parameter : -입력요망-
-    // Use : -입력요망-
+    // Parameter : intent(해당 인텐트), flags(재실행 모드 구분 (재전송된 intent인지 아닌지)), startId(스타트 아이디 - 다른 메소드에서 서비스 종료 시 사용)
+    // Use : startService를 통해 서비스가 시작되면 이 메소드가 호출되서 노티피케이션을 띄웁니다.
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification.Builder builder = new Notification.Builder(getApplicationContext());
+        Log.e("onStartCommand", "gogo");
 
         notification = builder.build();
         notification.when = System.currentTimeMillis();
@@ -152,10 +158,9 @@ public class NotiPlayer extends Service{
                 } else {
                     rView.setTextViewText(R.id.notification_bgmtitle,"즐겨찾기 목록이 존재하지 않습니다.");
                 }
+                // 노티피케이션 내 요소(텍스트, 이미지)를 메소드(setTextViewText,setImageViewResource)를 통해 수정하고 notify를 통해 노티피케이션을 업데이트 시켜준다.
                 nm.notify(PLAYERNOTIFYSTARTID,notification);
-                ///////////// 다시써
-                // 노티피케이션의 텍스트를 업데이트 하고 싶을 경우에는 setTextviewText를 한다고 해도 노티피케이션이 바로 업데이트 되는 것이 아니라
-                // 다시 띄워주는 형식을 반복해야 한다. 즉, 노티피케이션 자체를 다시 띄워 업데이트 하는 형식이다.
+
             }
         }, new IntentFilter("RemoteBack"));
         PendingIntent pBack = PendingIntent.getBroadcast(this, 0, new Intent("RemoteBack"), 0);
@@ -177,8 +182,8 @@ public class NotiPlayer extends Service{
                     PlaybtnTask playbtnTask = new PlaybtnTask(rView, musicPlayer);
                     playbtnTask.execute();
                 }
-                nm.notify(PLAYERNOTIFYSTARTID, notification);  // 노티피케이션의 텍스트를 업데이트 하고 싶을 경우에는 setTextviewText를 한다고 해도 노티피케이션이 바로 업데이트 되는 것이 아니라
-                // 다시 띄워주는 형식을 반복해야 한다. 즉, 노티피케이션 자체를 다시 띄워 업데이트 하는 형식이다.
+                // 노티피케이션 내 요소(텍스트, 이미지)를 메소드(setTextViewText,setImageViewResource)를 통해 수정하고 notify를 통해 노티피케이션을 업데이트 시켜준다.
+                nm.notify(PLAYERNOTIFYSTARTID, notification);
             }
         }, new IntentFilter("RemotePlay"));
         PendingIntent pPlay = PendingIntent.getBroadcast(this, 0, new Intent("RemotePlay"), 0);
@@ -209,6 +214,7 @@ public class NotiPlayer extends Service{
                     rView.setTextViewText(R.id.notification_bgmtitle, "즐겨찾기 목록이 존재하지 않습니다.");
                 }
                 playCheck = false;
+                // 노티피케이션 내 요소(텍스트, 이미지)를 메소드(setTextViewText,setImageViewResource)를 통해 수정하고 notify를 통해 노티피케이션을 업데이트 시켜준다.
                 nm.notify(PLAYERNOTIFYSTARTID, notification);
             }
         }, new IntentFilter("RemoteNext"));
@@ -228,10 +234,10 @@ public class NotiPlayer extends Service{
                 checkPref.setNotiplayerOnOff(false);
                 //((SettingActivity)(SettingActivity.mContext)).onResume();
 
-                if(notification!=null) {
-                    intent.setClass(getApplicationContext(), NotiPlayer.class);
-                    stopService(intent);
-                }
+//                if(notification!=null) {
+//                    intent.setClass(getApplicationContext(), NotiPlayer.class);
+//                    stopService(intent);
+//                }
             }
         }, new IntentFilter("RemoteExit"));
         PendingIntent pExit = PendingIntent.getBroadcast(this, 0, new Intent("RemoteExit"), 0);

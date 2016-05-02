@@ -37,14 +37,11 @@ public class SettingActivity extends AppCompatActivity{
     public static Context mContext;
 
     private TextView lockSummary;
-    private TextView notifySummary;
     private TextView notiplayerSummary;
     private Switch lockOnOffSwitch;
-    private Switch notifyOnOffSwitch;
     private Switch notiplayerOnOffSwitch;
     private LinearLayout tutorialViewGroup;
     private ArrayList<Favorite> bgmfavoriteArrayList;
-    private ArrayList<Favorite> realBgmNameList;
     private DBManager dbManager;
     //Use : 서비스 연결 객체 선언
     private ServiceConnection lockServiceConnection;
@@ -254,14 +251,8 @@ public class SettingActivity extends AppCompatActivity{
 
     public boolean favoriteRealListCheck()
     {
-        bgmfavoriteArrayList = dbManager.getFavoriteList();
-        realBgmNameList = new ArrayList<>();
-        for(int i=0; i < bgmfavoriteArrayList.size() ; i++) {
-            if (bgmfavoriteArrayList.get(i).getBgmPath() != null) {
-                realBgmNameList.add(bgmfavoriteArrayList.get(i));
-            }
-        }
-        if(realBgmNameList.size() == 0)
+        bgmfavoriteArrayList = dbManager.getFavoriteListNotNull();
+        if(bgmfavoriteArrayList.size() == 0)
         {
             return false;
         }

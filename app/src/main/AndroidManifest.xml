@@ -68,17 +68,6 @@
             </intent-filter>
         </receiver>
 
-        <receiver
-            android:name=".LockScreen.PackageUpdateReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REPLACED" />
-
-                <data android:scheme="package" />
-            </intent-filter>
-        </receiver>
-
         <activity android:name=".Tutorial.TutorialActivity"
             android:screenOrientation="portrait"/>
     </application>

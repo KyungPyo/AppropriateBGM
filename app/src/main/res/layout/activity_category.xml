@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#CCFFEEFF"
+        android:background="@color/list_select"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="com.example.gd.category.CategoryActivity">
 
@@ -33,7 +33,9 @@
             android:id="@+id/category_listView_categoryList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#0000" />
+            android:divider="@color/listViewDivider"
+            android:dividerHeight="1dp"
+            android:paddingBottom="2dp" />
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton

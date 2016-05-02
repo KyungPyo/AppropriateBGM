@@ -199,6 +199,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                     fab.setEnabled(true);
                     setCheckBoxVisibility(true);
                     ctg_actionbar_add_button.setEnabled(false);
+                    ctg_Listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
                 }
 
                 // Use ; 삭제 버튼이 보이는 경우 원래 리스트 상태로 돌아가려고 할 때 숨기도록 한다.
@@ -208,6 +209,7 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
                     fab.setEnabled(false);
                     setCheckBoxVisibility(false);
                     ctg_actionbar_add_button.setEnabled(true);
+                    ctg_Listview.setChoiceMode(ListView.CHOICE_MODE_NONE);
                 }
                 break;
         }
@@ -221,8 +223,11 @@ public class CategoryActivity extends AppCompatActivity implements AdapterView.O
     public void onItemClick(AdapterView<?> parent, View view, int position, long lid) {
         final int pos = position;
         final int itemId = ctgAdapter.getlistId(position);
+        if(position < 2){
+            ctg_Listview.setItemChecked(position, false);
+        }
 
-        if(position>=2 && ctgAdapter.getCheckBoxVisibility() == false) {
+        if(position >= 2 && ctgAdapter.getCheckBoxVisibility() == false) {
             final CharSequence[] property_items = {"이름 변경", "삭 제", "취 소"};
             final AlertDialog.Builder alertDig = new AlertDialog.Builder(view.getContext(), AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
             alertDig.setTitle(R.string.ctg_long_property);
