@@ -188,9 +188,9 @@ public class FavoriteActivity extends AppCompatActivity {
     }
 
     // Method : list상에 check가 되어있는 item을 저장한다.
-    // Return Value : ArrayList<BGMInfo>
+    // Return Value : void
     // Parameter : void
-    // Use : list의 모든 아이템을 탐색하여 check가 true인 item만 checkedBgmList에 추가해 리턴해줌
+    // Use : list의 모든 아이템을 탐색하여 check가 true인 item만 checkedFavoriteList에 추가해 리턴해줌
     void loadCheckedListItem() {
         checkedFavoriteList = new ArrayList<>();
         for (int i = 0; i < favoriteList.getCount(); i++) {
