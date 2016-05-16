@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -13,7 +14,6 @@ import android.widget.TextView;
 import com.kp.appropriatebgm.CheckPref;
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.DBController.Favorite;
-import com.kp.appropriatebgm.LockScreen.LockNotificationInterface;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.Tutorial.TutorialActivity;
 
@@ -26,7 +26,6 @@ import java.util.ArrayList;
 public class SettingActivity extends AppCompatActivity{
 
     private CheckPref mPref;
-    private LockNotificationInterface binder = null;
     private Context mContext;
     private PlayerServieceController servieceController;
 
@@ -123,6 +122,7 @@ public class SettingActivity extends AppCompatActivity{
                 settingSwitch = (Switch) v;
                 Boolean notifyChecked = settingSwitch.isChecked();
                 if(notifyChecked) {
+                    Log.e("dddd", "true");
                     if(servieceController.startFastPlayerService()) {
                         setSummaryText("notiplayer", notifyChecked);
                     } else {

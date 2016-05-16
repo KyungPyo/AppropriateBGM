@@ -80,11 +80,9 @@ public class NotiPlayer extends Service{
         unregisterReceiver(backReceiver);
         unregisterReceiver(playReceiver);
         unregisterReceiver(nextReceiver);
-        if(musicPlayer != null)
-        {
-            nm.cancel(PLAYERNOTIFYSTARTID);
-            musicPlayer.stopBgm();
-        }
+        unregisterReceiver(exitReceiver);
+        nm.cancel(PLAYERNOTIFYSTARTID);
+
         super.onDestroy();
     }
 
@@ -124,9 +122,13 @@ public class NotiPlayer extends Service{
             setListeners(contentView);
             indexNum = 0;
             nm.notify(PLAYERNOTIFYSTARTID, notification);
-            Log.e("onstart", "ddddnotiplayer");
         }
-        Log.e("onstart", "dddd");
+        else
+        {
+            if(notification != null) {
+                nm.cancel(PLAYERNOTIFYSTARTID);
+            }
+        }
         return START_STICKY_COMPATIBILITY;
     }
 
@@ -137,7 +139,6 @@ public class NotiPlayer extends Service{
     public void setListeners(RemoteViews view)
     {
         final RemoteViews rView = view;
-        Log.e("onstart","listener");
         // BackButton
         this.registerReceiver(backReceiver = new BroadcastReceiver() {
             @Override
@@ -237,6 +238,10 @@ public class NotiPlayer extends Service{
                 {
                     checkPref.setNotiplayerOnOff();
                     nm.cancel(PLAYERNOTIFYSTARTID);
+                    unregisterReceiver(backReceiver);
+                    unregisterReceiver(playReceiver);
+                    unregisterReceiver(nextReceiver);
+                    unregisterReceiver(exitReceiver);
                 }
             }
         }, new IntentFilter("RemoteExit"));

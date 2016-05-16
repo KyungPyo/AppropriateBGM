@@ -22,6 +22,7 @@ public class PackageUpdateReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         SharedPreferences preferences = context.getSharedPreferences("AppSetting",
                 Context.MODE_PRIVATE);
+        Log.e("broadcast","packageupdate");
 
 
         if (preferences.getBoolean("LockerOn", false)) {
