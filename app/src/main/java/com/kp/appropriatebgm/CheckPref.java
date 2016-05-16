@@ -176,9 +176,13 @@ public class CheckPref {
     // Return Value : boolean (on이면 true, off 이면 false)
     // Parameter : void
     // Use : 노티피케이션 뮤직플레이어의 on off를 저장하여 노티피케이션 여부를 확인
-    public void setNotiplayerOnOff(boolean isOn){
+    public void setNotiplayerOnOff(){
         SharedPreferences.Editor prefEditor = settingPref.edit();
-        prefEditor.putBoolean("notificationPlay",isOn);
+        if(settingPref.getBoolean("notificationPlay", false)) {
+            prefEditor.putBoolean("notificationPlay", false);
+        } else {
+            prefEditor.putBoolean("notificationPlay", true);
+        }
         prefEditor.apply();
     }
 

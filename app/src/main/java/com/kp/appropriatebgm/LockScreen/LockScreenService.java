@@ -12,15 +12,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
-import android.os.RemoteException;
+import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 
 import com.kp.appropriatebgm.CheckPref;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.Setting.SettingActivity;
-
-import java.util.ArrayList;
 
 /**
  * Created by GD on 2016-02-11.
@@ -32,48 +30,10 @@ public class LockScreenService extends Service {
     private NotificationManager nm;
     private static int LOCKSCREENNOTIFYSTARTID = 2;
 
-
-    LockNotificationInterface.Stub binder = new LockNotificationInterface.Stub() {
-
-        @Override
-        public void setNotificationOnOff() throws RemoteException {
-
-            CheckPref checkPref = new CheckPref(getApplicationContext());
-
-            Intent noIntent = new Intent(getApplicationContext(), SettingActivity.class);
-            noIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            PendingIntent notificationIntent = PendingIntent.getActivity(getApplicationContext(), 0, noIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            // 원래 노티피케이션 누르면 settingActivity로 넘어가는 부분인데, 지금 커스텀 노티피케이션이라 작동 안됨
-
-            nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-            if(checkPref.getLockerOnOff()){
-
-                    notification = new NotificationCompat.Builder(getApplicationContext())
-                            .setContentTitle("브금술사")
-                            .setContentText("빠른 재생이 실행중입니다.")
-                            .setSmallIcon(R.mipmap.ic_launcher)
-                            .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                            .setContentIntent(notificationIntent)
-                            .build();
-
-                    nm.notify(LOCKSCREENNOTIFYSTARTID, notification);
-                    //startForeground(notifyStartId, notification);
-            } else {
-                if(notification != null) {
-                    //stopForeground(true);
-                    nm.cancel(LOCKSCREENNOTIFYSTARTID);   //nm.cancel(1); //cancel 코드를 실행시키면 버튼이 제대로 작동하지가 않는다...
-                }
-            }
-
-            //이게 음악 어플처럼 Task Killer 작동해도 살아있게 해주는 거, Foreground 에서 돌리겠다는 뜻
-
-        }
-
-    };
-
+    @Nullable
+    @Override
     public IBinder onBind(Intent intent) {
-        return binder;
+        return null;
     }
 
     // Method : 서비스 시작 초기화
@@ -91,11 +51,6 @@ public class LockScreenService extends Service {
         filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
         filter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
         registerReceiver(lockReceive, filter);
-        try {
-            binder.setNotificationOnOff();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     // Method : 서비스 시작 초기화
@@ -105,6 +60,37 @@ public class LockScreenService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
+
+        CheckPref checkPref = new CheckPref(getApplicationContext());
+
+        Intent noIntent = new Intent(getApplicationContext(), SettingActivity.class);
+        noIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        PendingIntent notificationIntent = PendingIntent.getActivity(getApplicationContext(), 0, noIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // 원래 노티피케이션 누르면 settingActivity로 넘어가는 부분인데, 지금 커스텀 노티피케이션이라 작동 안됨
+
+        nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        if(checkPref.getLockerOnOff()){
+
+            notification = new NotificationCompat.Builder(getApplicationContext())
+                    .setContentTitle("브금술사")
+                    .setContentText("빠른 재생이 실행중입니다.")
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                    .setContentIntent(notificationIntent)
+                    .build();
+
+            nm.notify(LOCKSCREENNOTIFYSTARTID, notification);
+            //startForeground(notifyStartId, notification);
+        } else {
+            if(notification != null) {
+                //stopForeground(true);
+                nm.cancel(LOCKSCREENNOTIFYSTARTID);   //nm.cancel(1); //cancel 코드를 실행시키면 버튼이 제대로 작동하지가 않는다...
+            }
+        }
+
+        //이게 음악 어플처럼 Task Killer 작동해도 살아있게 해주는 거, Foreground 에서 돌리겠다는 뜻
+
         if (intent != null) {
             if (intent.getAction() == null) {
                 if (lockReceive == null) {
@@ -134,7 +120,7 @@ public class LockScreenService extends Service {
     // use ; 서비스가 종료되는 경우 등록했던 브로드캐스트 리시버를 해제한다.
     @Override
     public void onDestroy() {
-
+        nm.cancel(LOCKSCREENNOTIFYSTARTID);
         if (lockReceive != null) {
             unregisterReceiver(lockReceive);
         }
@@ -145,29 +131,7 @@ public class LockScreenService extends Service {
 
     }
 
-//    public void setNotificationOnOff(int startId, SharedPreferences preferences) {
-//        notification = new NotificationCompat.Builder(getApplicationContext())
-//                .setContentTitle("적절한브금")
-//                .setContentText("빠른 재생이 실행중입니다.")
-//                .setSmallIcon(R.mipmap.ic_launcher)
-//                .setAutoCancel(true)
-//                .setContentIntent(notificationIntent)
-//                .build();
-//
-//
-//        //이게 음악 어플처럼 Task Killer 작동해도 살아있게 해주는 거, Foreground 에서 돌리겠다는 뜻
-//        startForeground(1, notification);
-//
-//        if (!preferences.getBoolean("alarmOnOff", false)) {
-//            stopForeground(true);
-//            NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//
-//            notification = new Notification(0, "", System.currentTimeMillis());
-//
-//            nm.notify(startId, notification);
-//            nm.cancel(startId);
-//        }
-//    }
+
 
     @Override
     public boolean onUnbind(Intent intent) {

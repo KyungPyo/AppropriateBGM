@@ -1,15 +1,9 @@
 package com.kp.appropriatebgm.Setting;
 
 
-import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -20,7 +14,6 @@ import com.kp.appropriatebgm.CheckPref;
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.DBController.Favorite;
 import com.kp.appropriatebgm.LockScreen.LockNotificationInterface;
-import com.kp.appropriatebgm.LockScreen.LockScreenService;
 import com.kp.appropriatebgm.R;
 import com.kp.appropriatebgm.Tutorial.TutorialActivity;
 
@@ -34,7 +27,8 @@ public class SettingActivity extends AppCompatActivity{
 
     private CheckPref mPref;
     private LockNotificationInterface binder = null;
-    public static Context mContext;
+    private Context mContext;
+    private PlayerServieceController servieceController;
 
     private TextView lockSummary;
     private TextView notiplayerSummary;
@@ -43,8 +37,6 @@ public class SettingActivity extends AppCompatActivity{
     private LinearLayout tutorialViewGroup;
     private ArrayList<Favorite> bgmfavoriteArrayList;
     private DBManager dbManager;
-    //Use : 서비스 연결 객체 선언
-    private ServiceConnection lockServiceConnection;
 
     // Return Value : void
     // Parameter : savedInstateState
@@ -65,6 +57,7 @@ public class SettingActivity extends AppCompatActivity{
     {
         mContext = this;
         mPref = new CheckPref(this);        // 공유 프레퍼런스 객체
+        servieceController = new PlayerServieceController(mContext);
 
         lockSummary = (TextView) findViewById(R.id.setting_textview_locksummary);
         notiplayerSummary = (TextView) findViewById(R.id.setting_textview_notiplayersummary);
@@ -78,23 +71,6 @@ public class SettingActivity extends AppCompatActivity{
         notiplayerOnOffSwitch.setOnClickListener(onClickListener);
         tutorialViewGroup.setOnClickListener(onClickListener);
 
-        lockServiceConnection = new ServiceConnection() {
-
-            // Return Value : void
-            // Parameter : ComponentName(컴포넌트 이름(패키지)), service(서비스)
-            // Use : 서비스 연결 되었을 경우 aidl의 인터페이스를 통해 서비스 객체를 받는다.
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                binder = LockNotificationInterface.Stub.asInterface(service);
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-            }
-        };
-
-        Intent serviceintent = new Intent(SettingActivity.this, LockScreenService.class);
-        bindService(serviceintent, lockServiceConnection, BIND_AUTO_CREATE);
     }
 
     // Method : onResume (일시정지 후 시작)
@@ -126,73 +102,41 @@ public class SettingActivity extends AppCompatActivity{
         //       재생관련 알림 스위치 on/off에 따라 화면 꺼짐 시, 다른 작업 수행 시 종료할지 말지를 검사
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent();
             Switch settingSwitch;
             if(v.getId() == R.id.setting_switch_lockscreenOnOff) {
                 settingSwitch = (Switch) v;
                 Boolean lockChecked = settingSwitch.isChecked();
                 if (lockChecked) {
-                    if(favoriteRealListCheck()) {
-                        intent.setClass(getApplicationContext(), LockScreenService.class);
-                        startService(intent);
+                    if(servieceController.startLockerPlayerService()) {
                         setSummaryText("lockscreen", lockChecked);
-                    }
-                    else
-                    {
-                        AlertDialog.Builder noLocker_Dig = new AlertDialog.Builder(SettingActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
-                        noLocker_Dig.setTitle("즐겨찾기 목록이 존재하지 않습니다!")
-                                .setNegativeButton(R.string.ctgdialog_checkbtn_text, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface indialog, int which) {
-                                        indialog.cancel();
-                                    }
-                                });
-                        noLocker_Dig.show();
+                    } else {
                         settingSwitch.setChecked(!lockChecked);
-                        mPref.setLockerOnOff();
                     }
                 } else {
-                    intent.setClass(getApplicationContext(), LockScreenService.class);
-                    stopService(intent);
+                    servieceController.stopLockerPlayerService();
                     setSummaryText("lockscreen", lockChecked);
                 }
-                mPref.setLockerOnOff();
-                setBinderNotificationOnOff();
+
             }
             else if(v.getId() == R.id.setting_switch_notiplayerOnOff)
             {
                 settingSwitch = (Switch) v;
                 Boolean notifyChecked = settingSwitch.isChecked();
                 if(notifyChecked) {
-                    if(favoriteRealListCheck()) {
-                        intent.setClass(getApplicationContext(), NotiPlayer.class);
-                        startService(intent);
+                    if(servieceController.startFastPlayerService()) {
                         setSummaryText("notiplayer", notifyChecked);
-                    }
-                    else
-                    {
-                        AlertDialog.Builder noLocker_Dig = new AlertDialog.Builder(SettingActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
-                        noLocker_Dig.setTitle("즐겨찾기 목록이 존재하지 않습니다!")
-                                .setNegativeButton(R.string.ctgdialog_checkbtn_text, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface indialog, int which) {
-                                        indialog.cancel();
-                                    }
-                                });
-                        noLocker_Dig.show();
+                    } else {
                         settingSwitch.setChecked(!notifyChecked);
-                        mPref.setNotiplayerOnOff(notifyChecked);
                     }
                 }
                 else {
-                    intent.setClass(getApplicationContext(), NotiPlayer.class);
-                    stopService(intent);
+                    servieceController.stopFastPlayerService();
                     setSummaryText("notiplayer", notifyChecked);
                 }
-                mPref.setNotiplayerOnOff(notifyChecked);
             }
             else if(v.getId() == R.id.setting_viewgroup_tutorial)
             {
+                Intent intent = new Intent();
                 intent.setClass(getApplicationContext(), TutorialActivity.class);
                 startActivity(intent);
             }
@@ -207,9 +151,9 @@ public class SettingActivity extends AppCompatActivity{
     {
         if(title.equals("lockscreen")) {
             if (checked) {
-                lockSummary.setText("잠금화면 사용 상태입니다.");
+                lockSummary.setText("사용합니다.");
             } else {
-                lockSummary.setText("잠금화면 해제 상태입니다.");
+                lockSummary.setText("사용하지 않습니다.");
             }
         }
         else if(title.equals("notiplayer"))
@@ -223,41 +167,16 @@ public class SettingActivity extends AppCompatActivity{
 
     }
 
-    // Method : 바인드 서비스 종료
-    // Return value : void
+    // Method : 즐겨찾기 목록 존재확인
+    // Return value : 목록이 하나라도 있으면 true, 아니면 false
     // parameter : void
-    // use ; 액티비티가 종료될 시기에 onCreate에서 bindService의 서비스 연결을 해제(unbind)해준다.
-    @Override
-    protected void onDestroy() {
-        unbindService(lockServiceConnection);
-        super.onDestroy();
-    }
-
-    // Method : 알림 on/off 설정
-    // Return value : void
-    // parameter : void
-    // use ; 서비스 액티비티에서 aidl을 통해 설정해 준 알림 띄우는 함수를 서비스를 연결한 뒤에 함수를 받아온다. (통신)
-    //       remoteException 예외 처리를 꼭 해주어야 함!
-    public void setBinderNotificationOnOff()
-    {
-        try{
-            binder.setNotificationOnOff();
-        }
-        catch (RemoteException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean favoriteRealListCheck()
+    // use : 사용자가 등록한 즐겨찾기가 하나이상 있는 지 확인하여 리턴한다.
+    public boolean isFavoriteListExist()
     {
         bgmfavoriteArrayList = dbManager.getFavoriteListNotNull();
-        if(bgmfavoriteArrayList.size() == 0)
-        {
+        if(bgmfavoriteArrayList.size() == 0) {
             return false;
-        }
-        else
-        {
+        } else {
             return true;
         }
     }

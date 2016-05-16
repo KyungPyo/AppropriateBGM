@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class DBManager extends SQLiteOpenHelper {
 
     static final String DB_NAME = "AppropriateBGM_DB";
-    static final int DB_VERSION = 4;
+    static final int DB_VERSION = 5;
     final String recordtempFilePath = Environment.getExternalStorageDirectory() + File.separator + R.string.app_name + File.separator + "record_temp.mp3";
 
     Context mContext = null;
@@ -147,10 +147,21 @@ public class DBManager extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         mDataBase = db;
-        if (oldVersion  < 4) {
+        if (oldVersion  < 4) {  // version 1.1.2 미만
             dropTableDB();           // 테이블 삭제
             SQLiteCreateQuery();    // 테이블 생성 안된것이 있으면 생성
             SQLiteInsertQuery();
+        }
+        if (oldVersion < 5) {   // version 2.0.0 미만
+            String deleteQuery = "DELETE FROM Favorite WHERE bgm_path=null";
+
+            try {
+                mDataBase.execSQL(deleteQuery);
+                mDataBase.execSQL("VACUUM");
+            } catch (SQLiteException e) {
+                Log.e("update", e.toString());
+                e.printStackTrace();
+            }
         }
         insertInnerBGM();
         insertBasicCategory();

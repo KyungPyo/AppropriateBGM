@@ -39,6 +39,7 @@ import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.DBController.Favorite;
 import com.kp.appropriatebgm.Music.MusicPlayer;
 import com.kp.appropriatebgm.Music.PlaybackBarTask;
+import com.kp.appropriatebgm.Setting.PlayerServieceController;
 import com.kp.appropriatebgm.Setting.SettingActivity;
 import com.kp.appropriatebgm.Tutorial.TutorialActivity;
 import com.kp.appropriatebgm.favoritebgm.BGMListAdapter;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isFilemanageOpen = false;
     private MusicPlayer musicPlayer = null;
     private PlaybackBarTask playbackBarTask;
+    private PlayerServieceController servieceController;
 
     // View 선언
     private ViewGroup btnFileManage;
@@ -168,6 +170,12 @@ public class MainActivity extends AppCompatActivity {
             playbackBarTask.cancel(true);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initIcons();
+    }
+
     // Method : 초기설정
     // Return Value : void
     // Parameter : void
@@ -175,6 +183,8 @@ public class MainActivity extends AppCompatActivity {
     private void initMember() {
 
         mPref = new CheckPref(this);
+        servieceController = new PlayerServieceController(this);
+
         toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         btnFileManage = (ViewGroup) findViewById(R.id.main_group_filemanage);
         groupFileManage = (ViewGroup) findViewById(R.id.main_group_filemanagegroup);
@@ -237,6 +247,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Method : 화면에 보이는 아이콘 상태 설정
+    // Return Value : void
+    // Parameter : void
+    // Use : 상황에 따라 변해야하는 아이콘들을 변경시켜준다.
+    private void initIcons() {
+        // 잠금재생 기능 활성화 여부에 따른 아이콘 변화
+        if ( checkPref.getLockerOnOff() ) {
+            menuLockerplayerToggle.setImageResource(R.drawable.ic_lockerplayer_on);
+        } else {
+            menuLockerplayerToggle.setImageResource(R.drawable.ic_lockerplayer_off);
+        }
+
+        // 빠른재생 기능 활성화 여부에 따른 아이콘 변화
+        if ( checkPref.getNotiplayerOnOff() ) {
+            menuFastplayerToggle.setImageResource(R.drawable.ic_fastplayer_on);
+        } else {
+            menuFastplayerToggle.setImageResource(R.drawable.ic_fastplayer_off);
+        }
+    }
+
     // Method : 메뉴 레이아웃 설정
     // Return Value : void
     // Parameter : void
@@ -260,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                initIcons();
             }
 
             @Override
@@ -467,16 +498,28 @@ public class MainActivity extends AppCompatActivity {
             }
             case R.id.main_switch_lockerplayer:{    // 메뉴 잠금재생 토글
                 if( checkPref.getLockerOnOff() ) {
+                    servieceController.stopLockerPlayerService();
                     // 켜져 있었으면 꺼짐으로 변경
                     menuLockerplayerToggle.setImageResource(R.drawable.ic_lockerplayer_off);
                 } else {
-                    // 꺼져 있었으면 켜짐으로 변경
-                    menuLockerplayerToggle.setImageResource(R.drawable.ic_lockerplayer_on);
+                    if (servieceController.startLockerPlayerService()) {
+                        // 꺼져 있었으면 켜짐으로 변경
+                        menuLockerplayerToggle.setImageResource(R.drawable.ic_lockerplayer_on);
+                    }
                 }
                 break;
             }
             case R.id.main_switch_fastplayer:{      // 메뉴 빠른재생 토글
-
+                if( checkPref.getNotiplayerOnOff() ) {
+                    servieceController.stopFastPlayerService();
+                    // 켜져 있었으면 꺼짐으로 변경
+                    menuFastplayerToggle.setImageResource(R.drawable.ic_fastplayer_off);
+                } else {
+                    if (servieceController.startFastPlayerService()) {
+                        // 꺼져 있었으면 켜짐으로 변경
+                        menuFastplayerToggle.setImageResource(R.drawable.ic_fastplayer_on);
+                    }
+                }
                 break;
             }
         }
@@ -509,7 +552,6 @@ public class MainActivity extends AppCompatActivity {
         }
         mainDrawer.closeDrawers();
     }
-
 
     // Method : Intent Result 별 이벤트
     // Return Value : void
@@ -597,7 +639,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 
     // Method : 카테고리 이동시 뜨는 다이얼로그 세팅
     // Return Value : void

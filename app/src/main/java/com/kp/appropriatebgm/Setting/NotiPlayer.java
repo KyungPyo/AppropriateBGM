@@ -11,14 +11,12 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.kp.appropriatebgm.CheckPref;
 import com.kp.appropriatebgm.DBController.DBManager;
 import com.kp.appropriatebgm.DBController.Favorite;
-import com.kp.appropriatebgm.LockScreen.LockScreenReceiver;
 import com.kp.appropriatebgm.Music.MusicPlayer;
 import com.kp.appropriatebgm.R;
 
@@ -38,7 +36,7 @@ public class NotiPlayer extends Service{
     private BroadcastReceiver backReceiver;
     private BroadcastReceiver playReceiver;
     private BroadcastReceiver nextReceiver;
-    private BroadcastReceiver exitReceiver;
+    public BroadcastReceiver exitReceiver;
     private MusicPlayer musicPlayer;
 
     private static int PLAYERNOTIFYSTARTID = 1;   //notification 고유 ID 번호
@@ -68,7 +66,7 @@ public class NotiPlayer extends Service{
 
         dbManager = DBManager.getInstance(getApplicationContext());
 
-        Log.e("dddd","oncreate service");
+        Log.e("dddd", "oncreate service");
 
     }
 
@@ -82,8 +80,11 @@ public class NotiPlayer extends Service{
         unregisterReceiver(backReceiver);
         unregisterReceiver(playReceiver);
         unregisterReceiver(nextReceiver);
-        unregisterReceiver(exitReceiver);
-        //nm.cancel(PLAYERNOTIFYSTARTID);
+        if(musicPlayer != null)
+        {
+            nm.cancel(PLAYERNOTIFYSTARTID);
+            musicPlayer.stopBgm();
+        }
         super.onDestroy();
     }
 
@@ -123,7 +124,9 @@ public class NotiPlayer extends Service{
             setListeners(contentView);
             indexNum = 0;
             nm.notify(PLAYERNOTIFYSTARTID, notification);
+            Log.e("onstart", "ddddnotiplayer");
         }
+        Log.e("onstart", "dddd");
         return START_STICKY_COMPATIBILITY;
     }
 
@@ -134,6 +137,7 @@ public class NotiPlayer extends Service{
     public void setListeners(RemoteViews view)
     {
         final RemoteViews rView = view;
+        Log.e("onstart","listener");
         // BackButton
         this.registerReceiver(backReceiver = new BroadcastReceiver() {
             @Override
@@ -229,15 +233,11 @@ public class NotiPlayer extends Service{
                 if (musicPlayer != null && musicPlayer.isPlaying()) {
                     musicPlayer.stopBgm();
                 }
-
-                nm.cancel(PLAYERNOTIFYSTARTID);
-                checkPref.setNotiplayerOnOff(false);
-                //((SettingActivity)(SettingActivity.mContext)).onResume();
-
-//                if(notification!=null) {
-//                    intent.setClass(getApplicationContext(), NotiPlayer.class);
-//                    stopService(intent);
-//                }
+                else
+                {
+                    checkPref.setNotiplayerOnOff();
+                    nm.cancel(PLAYERNOTIFYSTARTID);
+                }
             }
         }, new IntentFilter("RemoteExit"));
         PendingIntent pExit = PendingIntent.getBroadcast(this, 0, new Intent("RemoteExit"), 0);
