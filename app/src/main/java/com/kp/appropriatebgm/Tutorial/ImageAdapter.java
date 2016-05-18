@@ -18,11 +18,12 @@ public class ImageAdapter extends PagerAdapter {
     private int[] GalImages = new int[] {
             R.drawable.tutorial_main1,
             R.drawable.tutorial_main2,
+            R.drawable.tutorial_main3,
+            R.drawable.tutorial_favorite,
+            R.drawable.tutorial_locker,
+            R.drawable.tutorial_fastplayer,
             R.drawable.tutorial_record,
-            R.drawable.tutorial_category,
-            R.drawable.tutorial_favorite_1,
-            R.drawable.tutorial_favorite_2,
-            R.drawable.tutorial_locker
+            R.drawable.tutorial_category
 
     };
     ImageAdapter(Context context){
