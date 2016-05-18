@@ -66,8 +66,6 @@ public class NotiPlayer extends Service{
 
         dbManager = DBManager.getInstance(getApplicationContext());
 
-        Log.e("dddd", "oncreate service");
-
     }
 
     // Method : Notification 제거 생명주기함수
@@ -76,7 +74,6 @@ public class NotiPlayer extends Service{
     // Use : 등록한 Notification과 Receiver를 해제한다
     @Override
     public void onDestroy() {
-        Log.e("onDestory", "gogo");
         unregisterReceiver(backReceiver);
         unregisterReceiver(playReceiver);
         unregisterReceiver(nextReceiver);
@@ -95,7 +92,6 @@ public class NotiPlayer extends Service{
 
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification.Builder builder = new Notification.Builder(getApplicationContext());
-        Log.e("onStartCommand", "gogo");
 
         notification = builder.build();
         notification.when = System.currentTimeMillis();
@@ -152,7 +148,6 @@ public class NotiPlayer extends Service{
                 {
                     indexNum--;
                 }
-                Log.d("indexnum back", indexNum + "");
 
                 if (musicPlayer != null && musicPlayer.isPlaying()) {
                     musicPlayer.stopBgm();
@@ -296,6 +291,9 @@ public class NotiPlayer extends Service{
                     try {
                         // 재생할 동안 대기
                         Thread.sleep(100);
+                        if (!checkPref.getNotiplayerOnOff()) {
+                            taskMusicPlayer.stopBgm();
+                        }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
