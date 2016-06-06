@@ -364,9 +364,9 @@ public class DBManager extends SQLiteOpenHelper {
             if (isVideoFile) {  // 파일이 동영상이면 다음파일로
                 continue;
             } else {            // 동영상파일이 아니면 DB에 추가
-                // 파일명에서 확장자 빼고 저장. 파일명 문자열의 처음부터(0) ~ 파일명 문자열 길이 - [파일확장자 길이+1(.때문에 1더)]
+                // 파일명에서 확장자 빼고 저장. ( . 으로 나눈 파일명에서 첫번째)
                 try {
-                    filename = filename.substring(0, filename.length() - (fileExtend.length()+1) );
+                    filename = splitFileName[0];
                     query = new StringBuffer();
                     query.append("INSERT INTO BGMList(bgm_path, bgm_name) VALUES(");
                     query.append("\"" + filepath + "\",");
