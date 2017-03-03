@@ -3,9 +3,9 @@ package com.kp.appropriatebgm.Setting;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -34,6 +34,7 @@ public class SettingActivity extends AppCompatActivity{
     private Switch lockOnOffSwitch;
     private Switch notiplayerOnOffSwitch;
     private LinearLayout tutorialViewGroup;
+    private LinearLayout policyViewGroup;
     private ArrayList<Favorite> bgmfavoriteArrayList;
     private DBManager dbManager;
 
@@ -66,9 +67,12 @@ public class SettingActivity extends AppCompatActivity{
 
         tutorialViewGroup = (LinearLayout) findViewById(R.id.setting_viewgroup_tutorial);
 
+        policyViewGroup = (LinearLayout) findViewById(R.id.setting_viewgroup_policy);
+
         lockOnOffSwitch.setOnClickListener(onClickListener);
         notiplayerOnOffSwitch.setOnClickListener(onClickListener);
         tutorialViewGroup.setOnClickListener(onClickListener);
+        policyViewGroup.setOnClickListener(onClickListener);
 
     }
 
@@ -102,6 +106,7 @@ public class SettingActivity extends AppCompatActivity{
         @Override
         public void onClick(View v) {
             Switch settingSwitch;
+            // 잠금재생 스위치 클릭
             if(v.getId() == R.id.setting_switch_lockscreenOnOff) {
                 settingSwitch = (Switch) v;
                 Boolean lockChecked = settingSwitch.isChecked();
@@ -117,12 +122,12 @@ public class SettingActivity extends AppCompatActivity{
                 }
 
             }
+            // 빠른재생 스위치 클릭
             else if(v.getId() == R.id.setting_switch_notiplayerOnOff)
             {
                 settingSwitch = (Switch) v;
                 Boolean notifyChecked = settingSwitch.isChecked();
                 if(notifyChecked) {
-                    Log.e("dddd", "true");
                     if(servieceController.startFastPlayerService()) {
                         setSummaryText("notiplayer", notifyChecked);
                     } else {
@@ -134,10 +139,16 @@ public class SettingActivity extends AppCompatActivity{
                     setSummaryText("notiplayer", notifyChecked);
                 }
             }
+            // 사용방법 클릭
             else if(v.getId() == R.id.setting_viewgroup_tutorial)
             {
                 Intent intent = new Intent();
                 intent.setClass(getApplicationContext(), TutorialActivity.class);
+                startActivity(intent);
+            }
+            // 개인정보처리방침 클릭
+            else if(v.getId() == R.id.setting_viewgroup_policy){
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://goo.gl/W2ELxB"));
                 startActivity(intent);
             }
         }
